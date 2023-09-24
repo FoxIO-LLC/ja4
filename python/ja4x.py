@@ -2,6 +2,7 @@
 # All rights reserved.
 # Patent Pending
 # JA4X is licenced under the FoxIO License 1.1. For full license text, see the repo root.
+# Credit: W.
 
 from hashlib import sha256
 from common import sha_encode, cache_update
