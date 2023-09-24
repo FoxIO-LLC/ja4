@@ -15,7 +15,7 @@ JA4X | X.509 fingerprint
 
 ## Requirements
 
-You must install tshark (wireshark.org) and add the folder for tshark to your system PATH
+You must install tshark (wireshark.org) and add the folder for tshark to your system PATH  
 (System properties > Environment Variables... > Edit Path)
 
 ## Usage
