@@ -10,7 +10,7 @@ JA4+ support is being added to:
 [GreyNoise](https://www.greynoise.io/)  
 [Hunt](https://hunt.io/)  
 [Driftnet](https://driftnet.io/)  
-[Darksail](darksail.ai)  
+[Darksail](https://darksail.ai)  
 with more to be announced...
 
 ## Examples
