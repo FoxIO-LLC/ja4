@@ -111,18 +111,18 @@ For example:
 0005,000a,000b,000d,0012,0015,0017,001b,0023,002b,002d,0033,4469,ff01 = 6d807ffa2a79
 ```
 
-### Example Client Hello
+### Example
 
-The JA4 fingerprint would be:  
+JA4 fingerprint:  
 t (TLS over TCP)  
 13 (TLS version 1.3)  
 d (SNI exists so it’s going to a domain)  
 15 (15 cipher suites ignoring grease)  
 16 (16 extensions ignoring grease)  
 h2 (first and last characters of the first ALPN extension value)  
-“_”  
-8daaf6152771 (truncated sha256 hash of the list of ciphers sorted)  
-“_”  
+_  
+8daaf6152771 (truncated sha256 hash of the list of ciphers sorted)
+_  
 e5627efa2ab1 (truncated sha256 hash of the list of extensions sorted, SNI and ALPN removed, followed by the list of signature algorithms)
 ```
 JA4 = t13d1516h2_8daaf6152771_e5627efa2ab1  
