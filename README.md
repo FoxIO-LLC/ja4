@@ -84,6 +84,7 @@ Ben Schofield
 Matthias Vallentin  
 Valeriy Vorotyntsev  
 Timothy Noel  
+Gary Lipsky  
 And engineers working at GreyNoise, Hunt, Google, ExtraHop, F5, Driftnet and others.  
 
 Contact John Althouse at john@foxio.io for licensing and questions.
