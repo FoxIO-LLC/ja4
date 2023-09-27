@@ -14,6 +14,8 @@ _
 Example JA4X = 96a6439c8f5c_96a6439c8f5c_aae71e8db6d7
 ```
 
+When truncating SHA256 we are using the first 12 characters.
+
 We use only the hex values for the RDNs, comma separated, to build out the fingerprint string. As an example: 
 ```
 Issuer = 550403,550406,550408,55040a = 96a6439c8f5c
