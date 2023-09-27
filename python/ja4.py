@@ -24,14 +24,15 @@ def signal_handler(sig, frame):
 def version_check(ver):
     vers = ver.split('.')
     major = vers[0]
+    minor = vers[1]
     last = vers[2] if len(vers) >= 3 else 0
 
     version_error = f"You are running an older version of tshark. JA4 is designed to work with tshark version 4.0.6 and above.\
     \nSome functionality may not work properly with older versions."
-    if int(major) < 4: 
+    if int(major) < 4:
         print(version_error)
     else:
-        if int(last) < 6:
+        if int(major) = 4 and int(minor) == 0 and int(last) < 6:
             print(version_error)
 
 
