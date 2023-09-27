@@ -2,7 +2,7 @@
 
 JA4+ is a suite of network fingerprinting methods that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
 
-Please read this blog post for more details: [JA4+ Network Fingerprinting](https://blog.foxio.io/ja4-network-fingerprinting-9376fe9ca637)
+Please read this blog post for more details: [JA4+ Network Fingerprinting](https://medium.com/foxio/ja4-network-fingerprinting-9376fe9ca637)
 
 This repo includes JA4+ scripts in Python as well as Rust Binaries. 
 
@@ -11,6 +11,7 @@ JA4+ support is being added to:
 [Hunt](https://hunt.io/)  
 [Driftnet](https://driftnet.io/)  
 [Darksail](https://darksail.ai)  
+[Arkime](https://arkime.com/)  
 with more to be announced...
 
 ## Examples
