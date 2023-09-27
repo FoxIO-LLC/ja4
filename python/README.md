@@ -1,17 +1,33 @@
 # JA4+
 
 Recommended to have tshark version 4.0.6 or later for full functionality. See: https://pkgs.org/search/?q=tshark  
-Ubuntu:  
+
+### JA4+ on Ubuntu  
 ```
 sudo apt install tshark
+python3 ja4.py
 ```
 
-### Steps to use JA4+ on Windows
-1) Install the latest python3 on windows using the Windows Installer (64-bit) option from https://www.python.org/downloads/windows/
-2) Install wireshark for windows from https://www.wireshark.org/download.html, this will automatically install tshark.exe
-Typically, you should be able to see the tshark.exe file at the location where wireshark is installed, for example: C:\Program Files\Wireshark\thsark.exe
-3) You have to add the location of tshark to your "PATH" environment variable in Windows. This is important for pyshark to work correctly.
-   (System properties > Environment Variables... > Edit Path)
+### JA4+ on Mac
+1) Install python3 https://www.python.org/downloads/macos/
+2) Install Wireshark https://www.wireshark.org/download.html which will install tshark
+3) Add tshark to $PATH
+```
+ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
+python3 ja4.py
+```
+
+### JA4+ on Windows
+1) Install python3 using the Windows Installer https://www.python.org/downloads/windows/
+2) Install Wireshark for Windows from https://www.wireshark.org/download.html, this will install tshark.exe  
+tshark.exe is at the location where wireshark is installed, for example: C:\Program Files\Wireshark\thsark.exe  
+3) Add the location of tshark to your "PATH" environment variable in Windows. This is important for pyshark to work correctly.  
+   (System properties > Environment Variables... > Edit Path)  
+4) Open cmd, navigate the ja4 folder
+```
+python3 ja4.py
+```
+
 
 ## Usage
 A set of python scripts for extracting JA4 fingerprints from PCAP files
