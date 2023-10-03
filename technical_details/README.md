@@ -1,7 +1,10 @@
 # JA4+ Technical Details  
-[JA4](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md) - TLS Client Fingerprinting  
-[JA4S](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md) - TLS Server/Session Fingerprinting  
-[JA4H](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md) - HTTP Client Fingerprinting  
-[JA4L](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md) - Light Distance Locality  
-[JA4X](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md) - X509 TLS Certificate Fingerprinting  
-[JA4SSH](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md) - SSH Traffic Fingerprinting
+[JA4: TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
+[JA4S: TLS Server/Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
+[JA4H: HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
+[JA4L: Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
+[JA4X: X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
+[JA4SSH: SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
+
+### JA4+ General Rules
+1. If a hashed field is empty, the output is 000s instead of a hash of an empty field. This is more conducive for analysis.
