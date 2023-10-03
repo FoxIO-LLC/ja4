@@ -167,7 +167,7 @@ ge (HTTP Method)
 20 (HTTP Version)
 c (There’s a cookie)
 r (There’s a referer)
-13 (13 header fields minus Cookie)
+11 (13 header fields minus Cookie and Referer as those are accounted for above)
 enus (Accept-Language)
 _
 974ebe531c03 (hash of http header fields)
