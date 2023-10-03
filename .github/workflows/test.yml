@@ -1,0 +1,85 @@
+# Borrowed from https://github.com/jonhoo/rust-ci-conf/blob/6332a3af21a58f811a681a98cd44d0f5da8a1891/.github/workflows/test.yml
+# See the [screencast] by Jon Gjengset.
+#
+# [screencast]: https://www.youtube.com/watch?v=xUH-4y92jPg
+
+name: test
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  required:
+    name: ubuntu / ${{ matrix.toolchain }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: [stable, beta]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install ${{ matrix.toolchain }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - run: cargo generate-lockfile
+        if: hashFiles('rust/Cargo.lock') == ''
+      # https://twitter.com/jonhoo/status/1571290371124260865
+      - name: cargo test
+        run: cargo test --locked --all-features --all-targets --workspace
+        working-directory: rust/
+      # https://github.com/rust-lang/cargo/issues/6669
+      - name: cargo test --doc
+        run: cargo test --locked --all-features --doc --workspace
+        working-directory: rust/
+
+  minimal:
+    name: ubuntu / stable / minimal-versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install nightly for -Zminimal-versions
+        uses: dtolnay/rust-toolchain@nightly
+      - run: rustup default stable
+      - run: cargo +nightly update -Zminimal-versions --workspace
+        working-directory: rust/
+      - run: cargo test --locked --all-features --all-targets --workspace
+        working-directory: rust/
+
+  os-check:
+    name: ${{ matrix.os }} / stable
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # NOTE: Don't use GitHub-hosted macOS runners in a non-public repository --
+          # they consume CI/CD minutes like crazy; see
+          # https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions#minute-multipliers
+          - windows-latest
+          #- macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+      - run: cargo generate-lockfile
+        if: hashFiles('rust/Cargo.lock') == ''
+      - name: cargo test
+        run: cargo test --locked --all-features --all-targets --workspace
+        working-directory: rust/
