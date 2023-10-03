@@ -1,0 +1,66 @@
+//! Light distance (latency) fingerprints -- JA4L-C (client), JA4L-S (server)
+
+mod tcp;
+mod udp;
+
+use serde::Serialize;
+
+use crate::{Packet, PacketNum, Result};
+pub(crate) use {tcp::Timestamps as TcpTimestamps, udp::Timestamps as UdpTimestamps};
+
+#[derive(Debug, Serialize)]
+pub(crate) struct Fingerprints {
+    ja4l_c: String,
+    ja4l_s: String,
+}
+
+pub(crate) trait Timestamps: Default {
+    fn update(self, pkt: &Packet) -> Result<Self>
+    where
+        Self: Sized;
+
+    /// Returns the JA4L-C and JA4L-S fingerprints.
+    fn finish(self) -> Option<Fingerprints>;
+}
+
+#[derive(Debug)]
+pub(crate) struct PacketTimestamp {
+    #[cfg_attr(not(debug_assertions), allow(dead_code))]
+    #[allow(dead_code)]
+    packet: PacketNum,
+    pub(crate) timestamp: i64,
+}
+
+impl PacketTimestamp {
+    pub(crate) fn new(pkt: &Packet) -> Result<Self> {
+        Ok(Self {
+            packet: pkt.num,
+            timestamp: pkt.timestamp_micros()?,
+        })
+    }
+}
+
+#[derive(Debug)]
+// "ip.ttl" and "ipv6.hlim" are `u8`.
+//
+// Proofs:
+//
+// - https://github.com/wireshark/wireshark/blob/385e37ce0ef24058c8f0cceab0ba7b76b1b70624/epan/dissectors/packet-ip.c#L2639
+// - https://github.com/wireshark/wireshark/blob/385e37ce0ef24058c8f0cceab0ba7b76b1b70624/epan/dissectors/packet-ipv6.c#L3830-L3831
+pub(crate) struct Ttl(u8);
+
+impl Ttl {
+    pub(crate) fn new(pkt: &Packet) -> Result<Self> {
+        let ttl = if let Some(ip) = pkt.find_proto("ip") {
+            ip.first("ip.ttl")?.parse::<u8>()?
+        } else if let Some(ipv6) = pkt.find_proto("ipv6") {
+            // "hlim" stands for "Hop Limit"
+            ipv6.first("ipv6.hlim")?.parse::<u8>()?
+        } else {
+            // SAFETY: We've established in `SocketPair::new` that either "ip" or "ipv6"
+            // layer exists.
+            panic!("BUG");
+        };
+        Ok(Self(ttl))
+    }
+}
