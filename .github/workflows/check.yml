@@ -1,0 +1,92 @@
+# Borrowed from https://github.com/jonhoo/rust-ci-conf/blob/6332a3af21a58f811a681a98cd44d0f5da8a1891/.github/workflows/check.yml
+# See the [screencast] by Jon Gjengset.
+#
+# [screencast]: https://www.youtube.com/watch?v=xUH-4y92jPg
+
+name: check
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  fmt:
+    name: stable / fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: cargo fmt --check --all
+        run: cargo fmt --check --all
+        working-directory: rust/
+
+  clippy:
+    name: ${{ matrix.toolchain }} / clippy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [stable, beta]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install ${{ matrix.toolchain }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: clippy
+      - name: cargo clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          # Github Actions don't support `working-dir` in the `uses` context.
+          # Specify `--manifest-path` as a workaround.
+          #
+          # See https://github.com/actions-rs/clippy-check/issues/28
+          args: --all-features --workspace --manifest-path rust/Cargo.toml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  doc:
+    name: nightly / doc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install nightly
+        uses: dtolnay/rust-toolchain@nightly
+      - name: cargo doc
+        run: cargo doc --no-deps --all-features --document-private-items --workspace
+        working-directory: rust/
+
+  hack:
+    name: ubuntu / stable / features
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: cargo install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+      # Intentionally no target specifier; see https://github.com/jonhoo/rust-ci-conf/pull/4
+      - name: cargo hack
+        run: cargo hack --feature-powerset --workspace check
+        working-directory: rust/

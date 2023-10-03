@@ -1,0 +1,82 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build release binaries for'
+        required: true
+        type: string
+  push:
+    tags:
+      - v[0-9]+.*
+  release:
+    types: [created]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  RUSTFLAGS: --deny warnings -Cdebuginfo=0
+  RUSTDOCFLAGS: --deny warnings
+
+jobs:
+  create-release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: rust/CHANGELOG.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-upload:
+    name: ${{ matrix.job.target }}
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          # NOTE: Use compute resources sparingly. Don't use GitHub-hosted macOS runners
+          # in a non-public repository -- they consume CI/CD minutes like crazy; see
+          # https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions#minute-multipliers
+          - { os: ubuntu-latest, target: x86_64-unknown-linux-musl }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc }
+          #- { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
+          #- { os: ubuntu-latest, target: aarch64-unknown-linux-gnu }
+          #- { os: ubuntu-latest, target: aarch64-unknown-linux-musl }
+          #- { os: macos-latest, target: x86_64-apple-darwin }
+          #- { os: macos-latest, target: aarch64-apple-darwin }
+          #- { os: macos-latest, target: universal-apple-darwin }
+
+    steps:
+    - name: Check for release
+      id: is-release
+      shell: bash
+      run: |
+        is_release=false
+        if [[ $GITHUB_REF =~ ^refs/tags/v[0-9].* ]]; then
+            is_release=true
+        fi
+        echo "is_release=$is_release" >> $GITHUB_OUTPUT
+
+    - uses: actions/checkout@v4
+      if: steps.is-release.outputs.is_release
+      with:
+        submodules: true
+    - uses: actions/checkout@v4
+      if: ${{ !steps.is-release.outputs.is_release }}
+      with:
+        ref: ${{ inputs.tag }}
+        submodules: true
+
+    - uses: taiki-e/upload-rust-binary-action@v1
+      with:
+        bin: ja4,ja4x
+        archive: ja4-$tag-$target
+        target: ${{ matrix.job.target }}
+        include: rust/ja4/README.md
+        token: ${{ secrets.GITHUB_TOKEN }}
+        manifest_path: rust/Cargo.toml
