@@ -40,7 +40,7 @@ def delete_keys(keys, x):
 # we print final results from the cache
 
 def get_cache(x):
-    if x['hl'] == 'http':
+    if x['hl'] in [ 'http', 'http2']:
         return http_cache
     elif x['hl'] == 'quic':
         return quic_cache

@@ -3,7 +3,7 @@
 # Patent Pending
 # JA4 is Open-Source, Licensed under BSD 3-Clause
 # JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH) are licenced under the FoxIO License 1.1. For full license text, see the repo root.
-# 
+#
 #!/usr/bin/env python3
 
 import os, sys, json
@@ -24,6 +24,7 @@ def signal_handler(sig, frame):
 def version_check(ver):
     vers = ver.split('.')
     major = vers[0]
+    minor = vers[1]
     last = vers[2] if len(vers) >= 3 else 0
 
     version_error = f"You are running an older version of tshark. JA4 is designed to work with tshark version 4.0.6 and above.\
@@ -31,7 +32,7 @@ def version_check(ver):
     if int(major) < 4: 
         print(version_error)
     else:
-        if int(last) < 6:
+        if int(major) == 4 and int(minor) == 0 and int(last) < 6:
             print(version_error)
 
 
@@ -48,6 +49,11 @@ keymap = {
         'timestamp': 'time_epoch'
     },
     'ip': {
+        'src': 'src',
+        'dst': 'dst',
+        'ttl': 'ttl'
+    },
+    'ipv6': {
         'src': 'src',
         'dst': 'dst',
         'ttl': 'ttl'
@@ -79,6 +85,7 @@ keymap = {
         'domain': 'handshake_extensions_server_name',
         'supported_versions': 'handshake_extensions_supported_version',
         'alpn': 'handshake_extensions_alps_alpn_str',
+        'alpn_list': 'handshake_extensions_alpn_str',
         'signature_algorithms': 'handshake_sig_hash_alg',
     },
     'x509af': {
@@ -175,7 +182,12 @@ def to_ja4s(x, debug_stream):
     if 'supported_versions' in x:
         x['version'] = get_supported_version(x['supported_versions'])
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
-    alpn = x['alpn'] if 'alpn' in x else '00'
+  
+    alpn = '00' 
+    if 'alpn' in x: 
+        alpn = x['alpn']
+    elif 'alpn_list' in x and isinstance(x['alpn_list'], list):
+        alpn = x['alpn_list'][0]
 
     x['JA4S'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{extensions}"
     x['JA4S_r'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{','.join(x['extensions'])}"
@@ -212,7 +224,12 @@ def to_ja4(x, debug_stream):
     if 'supported_versions' in x:
         x['version'] = get_supported_version(x['supported_versions'])
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
-    alpn = x['alpn'] if 'alpn' in x else '00'
+
+    alpn = '00' 
+    if 'alpn' in x: 
+        alpn = x['alpn']
+    elif 'alpn_list' in x and isinstance(x['alpn_list'], list):
+        alpn = x['alpn_list'][0]
 
     x['JA4'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{sorted_ciphers}_{sorted_extensions}"
     x['JA4_o'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{original_ciphers}_{original_extensions}"
@@ -327,9 +344,6 @@ def layer_update(x, pkt, layer):
     l = None
     x['hl'] = layer
 
-    if layer == 'http2':
-        print(pkt)
-
     if layer == 'quic':
         quic = pkt['layers'].pop('quic', None) 
         if quic:
@@ -439,16 +453,17 @@ def main():
 
             x = {}
             layer_update(x, pkt, 'frame')
-            layer_update(x, pkt, 'ip')
+            layer_update(x, pkt, 'ip') if 'ipv6' not in x['protos'] else layer_update(x, pkt, 'ipv6')
 
             if 'tcp' in x['protos']:
                 layer_update(x, pkt, 'tcp') 
                 if 'ocsp' in x['protos'] or 'x509ce' in x['protos']:
                     layer_update(x, pkt, 'x509af') 
                 elif 'http' in x['protos']:
-                    layer_update(x, pkt, 'http') 
-                elif 'http2' in x['protos']:
-                    layer_update(x, pkt, 'http2') 
+                    if 'http2' in x['protos']:
+                        layer_update(x, pkt, 'http2') 
+                    else:
+                        layer_update(x, pkt, 'http') 
                 elif 'tls' in x['protos']:
                     layer_update(x, pkt, 'tls') 
                 elif 'ssh' in x['protos']:
@@ -471,6 +486,7 @@ def main():
             # to start recording this entry and then the tuple as well
             #print (idx, x['stream'], x['protos'])
             x['stream'] = int(x['stream'])
+
             [ cache_update(x, key, x[key], STREAM) for key in [ 'stream', 'src', 'dst', 'srcport', 'dstport', 'protos' ] ] #if x['srcport'] != '443' else None
 
             # Added for SSH
@@ -489,10 +505,10 @@ def main():
                     if TCP_FLAGS[x['flags']] == 'SYN':
                         cache_update(x, 'A', x['timestamp'], STREAM)
                         cache_update(x, 'timestamp', x['timestamp'], STREAM)
-                        cache_update(x, 'client_ttl', x['ttl'], STREAM)
+                        cache_update(x, 'client_ttl', x['ttl'], STREAM) if 'ttl' in x else None
                     if TCP_FLAGS[x['flags']] == 'SYN-ACK':
                         cache_update(x, 'B', x['timestamp'], STREAM)
-                        cache_update(x, 'server_ttl', x['ttl'], STREAM)
+                        cache_update(x, 'server_ttl', x['ttl'], STREAM) if 'ttl' in x else None
                     if TCP_FLAGS[x['flags']] == 'ACK' and 'ack' in x and x['ack'] == '1' and 'seq' in x and x['seq'] == '1':
                         cache_update(x, 'C', x['timestamp'], STREAM)
                         calculate_ja4_latency(x, 'tcp', STREAM)
@@ -521,9 +537,10 @@ def main():
                 to_ja4x(x, STREAM) 
                 display(x)
 
-            if x['hl'] in ['http', 'http2'] and 'headers' in x and 'method' in x:
-                to_ja4h(x, STREAM)
-                display(x)
+            if x['hl'] in ['http', 'http2']:
+                if 'headers' in x and 'method' in x:
+                    to_ja4h(x, STREAM)
+                    display(x)
 
             if 'extensions' in x and x['type'] == '1':
                 try:
