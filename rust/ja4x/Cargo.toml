@@ -1,10 +1,10 @@
 [package]
 name = "ja4x"
-description = "generate JA4X fingerprint for a X.509 certificate"
+description = "generate JA4X fingerprints for X.509 certificates"
 version.workspace = true
 edition = "2021"
 authors = ["Valeriy V. Vorotyntsev <valery.vv@gmail.com>"]
-license-file.workspace = true
+license.workspace = true
 repository.workspace = true
 keywords = ["ja4x", "ja4", "fingerprint", "x509", "der"]
 categories = ["command-line-utilities"]
