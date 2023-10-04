@@ -1,10 +1,10 @@
 [package]
 name = "ja4"
-description = "JA4 suite of passive network fingerprint methods"
+description = "JA4 suite of passive network fingerprinting methods"
 version.workspace = true
 edition = "2021"
 authors = ["Valeriy V. Vorotyntsev <valery.vv@gmail.com>"]
-license-file.workspace = true
+license.workspace = true
 repository.workspace = true
 keywords = ["ja4", "fingerprint", "pcap"]
 categories = ["network-programming"]
