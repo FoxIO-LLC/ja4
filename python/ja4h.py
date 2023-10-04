@@ -30,8 +30,12 @@ def to_ja4h(x, debug_stream=-1):
     header_len = '{:02d}'.format(len(x['headers']))
 
     if 'cookies' in x:
-        x['cookie_fields'] = [ y.split('=')[0] for y in x['cookies'].split(';') ]
-        x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'].split(';') ]
+        if isinstance(x['cookies'], list):
+            x['cookie_fields'] = [ y.split('=')[0] for y in x['cookies'] ]
+            x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'] ]
+        else:
+            x['cookie_fields'] = [ y.split('=')[0] for y in x['cookies'].split(';') ]
+            x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'].split(';') ]
 
         unsorted_cookie_fields = x['cookie_fields'][:]
         unsorted_cookie_values = x['cookie_values'][:]
