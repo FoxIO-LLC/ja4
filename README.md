@@ -12,7 +12,8 @@ JA4+ support is being added to:
 [Driftnet](https://driftnet.io/)  
 [Darksail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
-with more to be announced...
+[GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
+with more to be announced...  
 
 ## Examples
 
