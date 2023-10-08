@@ -56,7 +56,9 @@ impl Stream {
             CLIENT_HELLO => {
                 debug_assert_eq!(
                     tls_handshake_type.display(),
-                    "Handshake Type: Client Hello (1)"
+                    "Handshake Type: Client Hello (1)",
+                    "packet={}",
+                    pkt.num
                 );
                 // We only process a single TLS Client Hello packet per stream.
                 if self.client.is_none() {
@@ -573,7 +575,7 @@ fn tls_extensions_server(tls: &Proto) -> Vec<u16> {
     assert_eq!(tls.name(), "tls");
 
     tls.fields("tls.handshake.extension.type").filter_map(|md| {
-        md.value().parse().map_err(|e| {
+        md.value().parse::<u16>().map_err(|e| {
             tracing::debug!(packet = %tls.packet_num, value = md.value(), showname = md.display(), error = %e, "Invalid TLS extension");
         }).ok()
     })

@@ -11,7 +11,7 @@ use ja4x::x509_parser;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    #[error("tshark not found: {source}")]
+    #[error("unable to run 'tshark': {source}")]
     TsharkNotFound { source: io::Error },
     #[error("failed to parse `tshark --version` output")]
     ParseTsharkVersion,

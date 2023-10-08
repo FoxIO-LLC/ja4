@@ -14,10 +14,7 @@ mod stream;
 mod time;
 mod tls;
 
-use std::{
-    io::{self, Write as _},
-    path::PathBuf,
-};
+use std::{io::Write, path::PathBuf};
 
 use clap::Parser;
 use rtshark::RTSharkBuilder;
@@ -68,7 +65,7 @@ pub struct Cli {
 
 impl Cli {
     /// Write JSON with JA4 fingerprints to the standard output.
-    pub fn run(self) -> Result<()> {
+    pub fn run<W: Write>(self, writer: &mut W) -> Result<()> {
         let conf = Conf::load()?;
         let Cli {
             json,
@@ -117,12 +114,12 @@ impl Cli {
         // BrokenPipe error. Rust throws it when the stdout is piped to `head`.
         if json {
             for rec in streams.into_out(flags) {
-                serde_json::to_writer(io::stdout(), &rec)?;
-                writeln!(io::stdout())?;
+                serde_json::to_writer(&mut *writer, &rec)?;
+                writeln!(writer)?;
             }
         } else {
             let s = serde_yaml::to_string(&streams.into_out(flags).collect::<Vec<_>>())?;
-            io::stdout().write_all(s.as_bytes())?;
+            writer.write_all(s.as_bytes())?;
         }
         Ok(())
     }
@@ -211,4 +208,30 @@ fn test_parse_tshark_version() {
         Some("3.6.2")
     );
     assert!(parse_tshark_version("What the TShark?!").is_none());
+}
+
+// XXX-FIXME(vvv): `test_insta` fails on Windows; see https://github.com/FoxIO-LLC/ja4/issues/10
+#[cfg(not(windows))]
+#[test]
+fn test_insta() {
+    insta::glob!(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../.."),
+        "pcap/*.pcap*",
+        |path| {
+            let cli = Cli {
+                json: false,
+                with_raw: false,
+                original_order: false,
+                keylog_file: None,
+                with_packet_numbers: false,
+                pcap: path.to_path_buf(),
+            };
+
+            let mut output = Vec::<u8>::new();
+            cli.run(&mut output).unwrap();
+            let output = String::from_utf8(output).unwrap();
+
+            insta::assert_snapshot!(output);
+        }
+    );
 }
