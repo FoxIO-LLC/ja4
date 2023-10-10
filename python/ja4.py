@@ -202,12 +202,15 @@ def to_ja4(x, debug_stream):
         print (f"computing ja4 for stream {x['stream']}")
     ptype = 'q' if x['quic'] else 't'
 
-    ext_len = '{:02d}'.format(len(x['extensions']))
-    cache_update(x, 'client_extensions', x['extensions'], debug_stream)
+    x['extensions'] = [ '0x{:04x}'.format(int(k)) for k in x['extensions'] ]
+    ext_len = '{:02d}'.format(len([ x for x in x['extensions'] if x not in GREASE_TABLE]))
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
-    x['extensions'] = [ '0x{:04x}'.format(int(k)) for k in x['extensions'] if k != '0']
     x['signature_algorithms'] = [ y[2:] for y in x['signature_algorithms'] ]
+
+    # ignore SNI and ALPN extensions
+    x['extensions'] = [ x for x in x['extensions'] if x not in ['0x0000', '0x0010'] ]
+    cache_update(x, 'client_extensions', x['extensions'], debug_stream)
 
     # Modified to include original rendering
     x['sorted_extensions'], _len, _ = get_hex_sorted(x['extensions'])
