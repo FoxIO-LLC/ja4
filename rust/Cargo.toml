@@ -3,7 +3,7 @@ members = ["ja4", "ja4x"]
 resolver = "2"
 
 [workspace.package]
-version = "0.14.0"
+version = "0.15.0"
 license = "LicenseRef-FoxIO-Proprietary"
 repository = "https://github.com/FoxIO-LLC/ja4"
 
@@ -20,3 +20,13 @@ serde_yaml = "0.9"
 sha2 = "0.10"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# [https://insta.rs/docs/quickstart/#optional-faster-runs]
+#
+# `insta` benefits from being compiled in release mode, even as dev dependency.
+# It will compile slightly slower once, but use less memory, have faster diffs
+# and just generally be more fun to use. To achieve that, opt `insta` and `similar`
+# (the diffing library) into higher optimization:
+[profile.dev.package]
+insta.opt-level = 3
+similar.opt-level = 3

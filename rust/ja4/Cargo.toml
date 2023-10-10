@@ -35,4 +35,5 @@ tracing-subscriber.workspace = true
 
 [dev-dependencies]
 expect-test = "1.4"
+insta = { version = "1.33", features = ["glob", "yaml"] }
 pretty_assertions = "1.4"
