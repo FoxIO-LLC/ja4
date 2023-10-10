@@ -13,20 +13,55 @@ JA4+ support is being added to:
 [Darksail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
+[Suricata](https://github.com/OISF/suricata/pull/9545)  
 with more to be announced...  
 
 ## Examples
 
 | Application |JA4+ Fingerprints |
 |----|----|
-| Chrome | JA4=t13d1518h2_8daaf6152771_e5627efa2ab1 (TCP) <br/> JA4=q13d0310h3_55b375c5d22e_cd85d2d88918 (QUIC) |
+| Chrome | JA4=t13d1516h2_8daaf6152771_e5627efa2ab1 (TCP) <br/> JA4=q13d0310h3_55b375c5d22e_cd85d2d88918 (QUIC) <br/> JA4=t13d1516h2_8daaf6152771_02713d6af862 (ECH) |
 | IcedID Malware Dropper | JA4H=ge11cn020000_9ed1ff1f7b03_cd8dafe26982 |
 | IcedID Malware | JA4=t13d201100_2b729b4bf6f3_9e7b989ebec8 <br/> JA4S=t120300_c030_5e2616a54c73 |
 | Sliver Malware | JA4=t13d190900_9dc949149365_97f8aa674fd9 <br/> JA4S=t130200_1301_a56c5b993250 <br/> JA4X=000000000000_4f24da86fad6_bf0f0589fc03 <br/> JA4X=000000000000_7c32fa18c13e_bf0f0589fc03 |
 | Cobalt Strike | JA4H=ge11cn060000_4e59edc1297a_4da5efaf0cbd <br/> JA4X=2166164053c1_2166164053c1_30d204a01551 |
 | SoftEther VPN | JA4=t13d880900_fcb5b95cb75a_b0d3b4ac2a14 (client) <br/> JA4S=t130200_1302_a56c5b993250 <br/> JA4X=d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae |
+| Qakbot | JA4X=2bab15409345_af684594efb4_000000000000 |
+| Pikabot | JA4X=1a59268f55e5_1a59268f55e5_795797892f9c |
+| Darkgate | JA4H=po10nn060000_cdb958d032b0 |
+| LummaC2 | JA4H=po11nn050000_d253db9d024b |
 | Evilginx | JA4=t13d191000_9dc949149365_e7c285222651 |
 | Reverse SSH Shell | JA4SSH=c76s76_c71s59_c0s70 |
+
+## Binaries
+
+Recommended to have tshark version 4.0.6 or later for full functionality. See: https://pkgs.org/search/?q=tshark  
+
+Download the latest JA4 binaries from: [Releases](https://github.com/FoxIO-LLC/ja4/releases).
+
+### JA4+ on Ubuntu  
+```
+sudo apt install tshark
+./ja4 [options] [pcap]
+```
+
+### JA4+ on Mac
+1) Install Wireshark https://www.wireshark.org/download.html which will install tshark
+2) Add tshark to $PATH
+```
+ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
+./ja4 [options] [pcap]
+```
+
+### JA4+ on Windows
+1) Install Wireshark for Windows from https://www.wireshark.org/download.html which will install tshark.exe  
+tshark.exe is at the location where wireshark is installed, for example: C:\Program Files\Wireshark\thsark.exe  
+2) Add the location of tshark to your "PATH" environment variable in Windows.  
+   (System properties > Environment Variables... > Edit Path)  
+3) Open cmd, navigate the ja4 folder
+```
+ja4 [options] [pcap]
+```
 
 ## Database
 
