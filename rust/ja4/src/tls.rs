@@ -46,59 +46,60 @@ impl Stream {
         else {
             return Ok(());
         };
-        let tls_handshake_type = tls.find("tls.handshake.type").unwrap();
 
         const CLIENT_HELLO: &str = "1";
         const SERVER_HELLO: &str = "2";
         const CERTIFICATE: &str = "11";
 
-        match tls_handshake_type.value() {
-            CLIENT_HELLO => {
-                debug_assert_eq!(
-                    tls_handshake_type.display(),
-                    "Handshake Type: Client Hello (1)",
-                    "packet={}",
-                    pkt.num
-                );
-                // We only process a single TLS Client Hello packet per stream.
-                if self.client.is_none() {
-                    self.client = Some(ClientStats::new(pkt, &tls, store_pkt_num)?);
+        for tls_handshake_type in tls.fields("tls.handshake.type") {
+            match tls_handshake_type.value() {
+                CLIENT_HELLO => {
+                    debug_assert_eq!(
+                        tls_handshake_type.display(),
+                        "Handshake Type: Client Hello (1)",
+                        "packet={}",
+                        pkt.num
+                    );
+                    // We only process a single TLS Client Hello packet per stream.
+                    if self.client.is_none() {
+                        self.client = Some(ClientStats::new(pkt, &tls, store_pkt_num)?);
+                    }
                 }
-            }
-            SERVER_HELLO => {
-                debug_assert_eq!(
-                    tls_handshake_type.display(),
-                    "Handshake Type: Server Hello (2)"
-                );
-                // We only need data from a single TLS Server Hello packet per stream.
-                if self.server.is_none() {
-                    self.server = ServerStats::try_new(pkt, &tls, store_pkt_num)?;
+                SERVER_HELLO => {
+                    debug_assert_eq!(
+                        tls_handshake_type.display(),
+                        "Handshake Type: Server Hello (2)"
+                    );
+                    // We only need data from a single TLS Server Hello packet per stream.
+                    if self.server.is_none() {
+                        self.server = ServerStats::try_new(pkt, &tls, store_pkt_num)?;
+                    }
                 }
-            }
-            CERTIFICATE => {
-                debug_assert_eq!(
-                    tls_handshake_type.display(),
-                    "Handshake Type: Certificate (11)"
-                );
+                CERTIFICATE => {
+                    debug_assert_eq!(
+                        tls_handshake_type.display(),
+                        "Handshake Type: Certificate (11)"
+                    );
 
-                let mut recs = Vec::new();
-                for hexdump in tls.values("tls.handshake.certificate") {
-                    let der = hexdump
-                        .split(':')
-                        .map(|s| u8::from_str_radix(s, 16).map_err(|e| e.into()))
-                        .collect::<Result<Vec<_>>>()?;
-                    let (rem, x509) = X509Certificate::from_der(&der)?;
-                    debug_assert!(rem.is_empty());
-                    recs.push(ja4x::X509Rec::from(x509));
-                }
-                debug_assert!(!recs.is_empty());
+                    let mut recs = Vec::new();
+                    for hexdump in tls.values("tls.handshake.certificate") {
+                        let der = hexdump
+                            .split(':')
+                            .map(|s| u8::from_str_radix(s, 16).map_err(|e| e.into()))
+                            .collect::<Result<Vec<_>>>()?;
+                        let (rem, x509) = X509Certificate::from_der(&der)?;
+                        debug_assert!(rem.is_empty());
+                        recs.push(ja4x::X509Rec::from(x509));
+                    }
+                    debug_assert!(!recs.is_empty());
 
-                self.x509.push(X509Stats {
-                    packet: store_pkt_num.then_some(pkt.num),
-                    recs,
-                });
+                    self.x509.push(X509Stats {
+                        packet: store_pkt_num.then_some(pkt.num),
+                        recs,
+                    });
+                }
+                _ => {}
             }
-            _ => {}
         }
         Ok(())
     }
