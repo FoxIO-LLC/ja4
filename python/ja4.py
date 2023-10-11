@@ -56,7 +56,7 @@ keymap = {
     'ipv6': {
         'src': 'src',
         'dst': 'dst',
-        'ttl': 'ttl'
+        'ttl': 'hlim'
     },
     'tcp': {
          'flags': 'flags',
