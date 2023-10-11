@@ -73,6 +73,25 @@ expression: output
   tls_server_name: self.events.data.microsoft.com
   ja4: t12d190800_d83cc789557e_7af1ed941c26
   ja4s: t120300_c030_09f674154ab3
+  tls_certs:
+  - x509:
+    - ja4x: a373a9f83c6b_2bab15409345_0f2217ba412e
+      issuerCountryName: US
+      issuerOrganizationName: Microsoft Corporation
+      issuerCommonName: Microsoft Azure TLS Issuing CA 05
+      subjectCountryName: US
+      subjectStateOrProvinceName: WA
+      subjectLocalityName: Redmond
+      subjectOrganizationName: Microsoft Corporation
+      subjectCommonName: '*.events.data.microsoft.com'
+    - ja4x: 7d5dbb3783b4_a373a9f83c6b_c34b04c10969
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert Global Root G2
+      subjectCountryName: US
+      subjectOrganizationName: Microsoft Corporation
+      subjectCommonName: Microsoft Azure TLS Issuing CA 05
   ja4l_c: 46_128
   ja4l_s: 49308_110
 - stream: 12
@@ -84,6 +103,21 @@ expression: output
   tls_server_name: www.bing.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1205h2_c030_015e35fdd027
+  tls_certs:
+  - x509:
+    - ja4x: a373a9f83c6b_7022c563de38_0ce9ea683d50
+      issuerCountryName: US
+      issuerOrganizationName: Microsoft Corporation
+      issuerCommonName: Microsoft RSA TLS CA 02
+      subjectCommonName: www.bing.com
+    - ja4x: 7d5dbb3783b4_a373a9f83c6b_44440d41940c
+      issuerCountryName: IE
+      issuerOrganizationName: Baltimore
+      issuerOrganizationalUnit: CyberTrust
+      issuerCommonName: Baltimore CyberTrust Root
+      subjectCountryName: US
+      subjectOrganizationName: Microsoft Corporation
+      subjectCommonName: Microsoft RSA TLS CA 02
   ja4l_c: 55_128
   ja4l_s: 3217_119
 - stream: 13

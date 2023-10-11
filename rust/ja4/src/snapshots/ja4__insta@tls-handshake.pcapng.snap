@@ -482,6 +482,25 @@ expression: output
   tls_server_name: login.live.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t120400_c030_4e8089b08790
+  tls_certs:
+  - x509:
+    - ja4x: a373a9f83c6b_2bab15409345_7bf9a7bf7029
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerCommonName: DigiCert SHA2 Secure Server CA
+      subjectCountryName: US
+      subjectStateOrProvinceName: Washington
+      subjectLocalityName: Redmond
+      subjectOrganizationName: Microsoft Corporation
+      subjectCommonName: login.live.com
+    - ja4x: 7d5dbb3783b4_a373a9f83c6b_44440d41940c
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert Global Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectCommonName: DigiCert SHA2 Secure Server CA
 - stream: 44
   transport: tcp
   src: 192.168.1.168

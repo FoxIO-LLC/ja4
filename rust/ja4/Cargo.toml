@@ -23,7 +23,7 @@ indexmap.workspace = true
 itertools.workspace = true
 ja4x = { path = "../ja4x" }
 owo-colors = "3.5"
-rtshark = "2.6"
+rtshark = "=2.6.0"  # CAUTION: rtshark >= 2.7.0 breaks JA4 (TLS client) and JA4L-C/S fingerprints
 semver = "1.0"
 serde.workspace = true
 serde_json.workspace = true
