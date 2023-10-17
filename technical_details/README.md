@@ -8,3 +8,6 @@
 
 ### JA4+ General Rules
 1. If a hashed field is empty, the output is 000s instead of a hash of an empty field. This is more conducive for analysis.
+
+### Note:
+All JA4+ methods listed above are patent pending. See Licensing in the repo root. We are commited to work with vendors and open source projects to help have JA4+ can be implemented. Please contact john@foxio.io with any questions.
