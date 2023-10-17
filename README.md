@@ -86,6 +86,8 @@ Additional JA4+ methods are in the works...
 
 ## Licensing
 
+All JA4+ methods are patent pending.
+
 JA4: TLS Client Fingerprinting is open-source, BSD 3-Clause, same as JA3. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
 
 JA4+, which includes JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, are licensed under the FoxIO License 1.1. This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, then that is permitted. If, for example, a vendor would like to implement JA4+ into one of their products, they would need to purchase an OEM license from us.
