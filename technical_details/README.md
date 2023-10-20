@@ -10,4 +10,4 @@
 1. If a hashed field is empty, the output is 000s instead of a hash of an empty field. This is more conducive for analysis.
 
 ### License
-All JA4+ methods listed above are patent pending. See Licensing in the repo root. We are commited to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
+See [Licensing](https://github.com/FoxIO-LLC/ja4/tree/main#licensing) in the repo root. We are commited to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
