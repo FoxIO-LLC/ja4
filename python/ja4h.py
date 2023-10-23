@@ -26,7 +26,7 @@ def to_ja4h(x, debug_stream=-1):
 
     raw_headers = x['headers'][:]
 
-    x['headers'] = [ '-'.join([ y.capitalize() for y in h.split('-')]) for h in x['headers'] ]
+    #x['headers'] = [ '-'.join([ y.capitalize() for y in h.split('-')]) for h in x['headers'] ]
     header_len = '{:02d}'.format(len(x['headers']))
 
     if 'cookies' in x:
