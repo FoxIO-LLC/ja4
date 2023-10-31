@@ -14,6 +14,7 @@ JA4+ support is being added to:
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
 [Suricata](https://github.com/OISF/suricata/pull/9545)  
+Wireshark  
 with more to be announced...  
 
 ## Examples
