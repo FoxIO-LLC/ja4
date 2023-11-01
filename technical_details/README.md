@@ -13,7 +13,6 @@
 4. '_r' denotes a raw, unhashed fingerprint. '_ro' denotes a raw, unhashed fingerprint in its original ordering (not sorted). So a raw ja4 fingerprint is represented as 'ja4_r'.  
 5. If a hashed section is empty, the output is 000000000000 instead of a hash of an empty section. This is more conducive for analysis.
 6. If a search only contains the first two sections of a fingerprint, for example JA4H=ge11cn060000_4e59edc1297a, that is an implied * at the end of the fingerprint as the fingerprint generating tool would output all fields, for example JA4H=ge11cn060000_4e59edc1297a_4da5efaf0cbd_000000000000.
-7. 
 
 
 ### License
