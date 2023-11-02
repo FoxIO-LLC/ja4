@@ -57,3 +57,6 @@ Most open source licenses impose no conditions on end users of software, only on
 
 Please reach out to us [here](https://www.fox-io.com/) for a seperate OEM license.
 
+#
+
+This FAQ is not legal advice, but it has been written in consultation with open source licensing expert [Heather Meeker](https://www.linkedin.com/in/heathermeeker/).
