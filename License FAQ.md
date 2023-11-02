@@ -10,7 +10,7 @@ This licensing allows us to provide JA4+ to the world in a way that is open and 
 
 ## Open Source Combinations
 
-If you are an end user/organization, skip to [here]().  
+If you are an end user/organization, skip to [here](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md#what-if-i-am-an-end-user).  
 If you are an open source software contributor, continue below.
 
 ### Can I combine and distribute JA4+ with my open source software?
