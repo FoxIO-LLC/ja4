@@ -87,15 +87,15 @@ Additional JA4+ methods are in the works...
 
 ## Licensing
 
-JA4: TLS Client Fingerprinting is open-source, BSD 3-Clause, same as JA3 and FoxIO is not planning to pursue patent coverage for JA4 TLS Client Fingerprinting. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
+JA4: TLS Client Fingerprinting is open-source, BSD 3-Clause, same as JA3. FoxIO does not have patent claims and is not planning to pursue patent coverage for JA4 TLS Client Fingerprinting. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
 
-JA4+, which includes JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, are licensed under the FoxIO License 1.1. This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to purchase an OEM license from us.
+JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, (collectively referred to as JA4+) are licensed under the FoxIO License 1.1. This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
 
 All JA4+ methods are patent pending.
 
-JA4+ can be implemented into open source tools by calling JA4+ as a plugin from a separate repository. We are working on building these plugins/modules for different open source tools so the community can more easily utilize JA4+ for free. It will take a while to get to all of them but we're working on it!
+JA4+ can and is being implemented into open source tools, see the [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
 
-This licensing allows us to provide JA4+ to the world in a way that is open and easily usable by most, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open-source projects to help make that happen.
+This licensing allows us to provide JA4+ to the world in a way that is open and easily usable by most, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
 
 ## Q&A
 
