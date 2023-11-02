@@ -6,7 +6,7 @@ __JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, (collectively referr
 
 All JA4+ methods are patent pending.
 
-This licensing allows us to provide JA4+ to the world in a way that is open and easily usable by most, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
+This licensing allows us to provide JA4+ to the world in a way that is open and immediately usable, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
 
 ## Open Source Combinations
 
