@@ -31,7 +31,7 @@ The GNU General Public License, requires that if you distribute a “Work based 
 
 You can [combine a GPL program](https://www.gnu.org/licenses/old-licenses/gpl-2.0-faq.html#LinkingWithGPL) and JA4+, and distribute them together, as long as they communicate "at arm’s length.” For example, communication over sockets, pipes, API, or via shell commands, is usually considered sufficient separation, but communication via linking or memory sharing is not. For example, how [Wireshark](https://www.wireshark.org/), a GPL licensed tool, is distributed with and uses Npcap, a [non-open source library](https://raw.githubusercontent.com/nmap/npcap/master/LICENSE).
 
-If JA4+ is provided as a plugin, distributed separately and installed by the end user, that would be permitted by GPL as GPL has no requirements in the absence of distribution.
+"If JA4+ is provided as a plugin, distributed separately without GPL code, that would be permitted by GPL as GPL has no requirements in the absence of distribution. An end user could then choose to download GPL software and JA4+ and use them together.
 
 This is a general description and is not intended to provide you with legal advice. If you need more help understanding GPL, you should contact an open source licensing specialist. If you need an exception from GPL, that might be available from the authors of the GPL software, but FoxIO cannot provide it.
 
