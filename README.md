@@ -13,8 +13,10 @@ JA4+ support is being added to:
 [Darksail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://github.com/OISF/suricata/pull/9545)  
+[Suricata](https://github.com/OISF/suricata/pull/9634)  
 [Wireshark](https://twitter.com/4A4133/status/1719366965918126125)  
+[Zeek](https://twitter.com/4A4133/status/1721606329964331035)  
+[nzyme](https://www.nzyme.org/)  
 with more to be announced...  
 
 ## Examples
