@@ -40,7 +40,7 @@ SAMPLE_COUNT = 200
 raw_fingerprint = False
 original_rendering = False
 
-TCP_FLAGS = { '0x0002': 'SYN', '0x0012': 'SYN-ACK', '0x0010': 'ACK', '0x0011': 'FIN-ACK' }
+TCP_FLAGS = { 'SYN': 0x0002, 'ACK': 0x0010, 'FIN': 0x0001 }
 
 keymap = {
     'frame': {
@@ -501,21 +501,22 @@ def main():
                 cache_update(x, 'stats', [], STREAM)
                 entry = get_cache(x)[x['stream']]
                 update_ssh_entry(entry, x, ssh_sample_count, STREAM)
-                if 'flags' in x and x['flags'] in TCP_FLAGS and TCP_FLAGS[x['flags']] == 'FIN-ACK':
+                if 'flags' in x and int(x['flags'], 0) & TCP_FLAGS['FIN'] and int(x['flags'], 0) & TCP_FLAGS['ACK']:
                     finalize_ja4ssh(x['stream']) 
 
             # Timestamp recording happens on cache here
             # This is for TCP
             if 'tcp' in x['protos']: # and 'tls' not in x['protos']:
-                if 'flags' in x and x['flags'] in TCP_FLAGS:
-                    if TCP_FLAGS[x['flags']] == 'SYN':
+                if 'flags' in x:
+                    flags = int(x['flags'], 0)
+                    if (flags & TCP_FLAGS['SYN']) and not (flags & TCP_FLAGS['ACK']):
                         cache_update(x, 'A', x['timestamp'], STREAM)
                         cache_update(x, 'timestamp', x['timestamp'], STREAM)
                         cache_update(x, 'client_ttl', x['ttl'], STREAM) if 'ttl' in x else None
-                    if TCP_FLAGS[x['flags']] == 'SYN-ACK':
+                    if (flags & TCP_FLAGS['SYN']) and (flags & TCP_FLAGS['ACK']):
                         cache_update(x, 'B', x['timestamp'], STREAM)
                         cache_update(x, 'server_ttl', x['ttl'], STREAM) if 'ttl' in x else None
-                    if TCP_FLAGS[x['flags']] == 'ACK' and 'ack' in x and x['ack'] == '1' and 'seq' in x and x['seq'] == '1':
+                    if (flags & TCP_FLAGS['ACK']) and not (flags & TCP_FLAGS['SYN']) and 'ack' in x and x['ack'] == '1' and 'seq' in x and x['seq'] == '1':
                         cache_update(x, 'C', x['timestamp'], STREAM)
                         calculate_ja4_latency(x, 'tcp', STREAM)
 
