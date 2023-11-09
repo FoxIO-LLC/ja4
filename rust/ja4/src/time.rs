@@ -32,7 +32,6 @@ pub(crate) trait Timestamps: Default {
 
 #[derive(Debug)]
 pub(crate) struct PacketTimestamp {
-    #[cfg_attr(not(debug_assertions), allow(dead_code))]
     #[allow(dead_code)]
     packet: PacketNum,
     pub(crate) timestamp: i64,

@@ -12,7 +12,7 @@ use crate::{
     conf::Conf,
     http, ssh,
     time::{self, TcpTimestamps, Timestamps, UdpTimestamps},
-    tls, FormatFlags, Packet, PacketNum, Proto, Result,
+    tls, FormatFlags, Packet, Proto, Result,
 };
 
 /// User-facing record containing data obtained from a TCP or UDP stream.
@@ -374,18 +374,4 @@ impl StreamId2<'_> {
             Ok(None)
         }
     }
-}
-
-/// A fingerprint that was obtained from a single packet.
-///
-/// `PacketFingerprint` can represent JA4 (TLS client), JA4S (TLS server), or
-/// JA4H (HTTP client) fingerprint. Other types of fingerprints are derived from
-/// multiple packets.
-#[derive(Debug, Serialize)]
-// HACK: Use a configuration parameter to enable serialization of packet numbers.
-#[cfg_attr(not(debug_assertions), serde(transparent))]
-struct PacketFingerprint {
-    #[cfg_attr(not(debug_assertions), serde(skip_serializing), allow(dead_code))]
-    packet: PacketNum,
-    fp: String,
 }

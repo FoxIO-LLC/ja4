@@ -531,7 +531,7 @@ checksum = "af150ab688ff2122fcef229be89cb50dd66af9e01a4ff320cc137eecc9bacc38"
 
 [[package]]
 name = "ja4"
-version = "0.15.1"
+version = "0.15.2"
 dependencies = [
  "clap",
  "color-eyre",
@@ -559,7 +559,7 @@ dependencies = [
 
 [[package]]
 name = "ja4x"
-version = "0.15.1"
+version = "0.15.2"
 dependencies = [
  "clap",
  "color-eyre",
