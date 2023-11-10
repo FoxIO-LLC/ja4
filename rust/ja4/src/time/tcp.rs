@@ -207,10 +207,12 @@ impl Timestamp {
 
         let t = || PacketTimestamp::new(pkt);
 
-        Ok(match tcp.first("tcp.flags")? {
-            "0x0002" => Some(Self::Syn((t()?, Ttl::new(pkt)?))),
-            "0x0012" => Some(Self::SynAck((t()?, Ttl::new(pkt)?))),
-            "0x0010" => Some(Self::Ack(t()?)),
+        let ack = tcp.first("tcp.flags.ack")?;
+        let syn = tcp.first("tcp.flags.syn")?;
+        Ok(match (syn, ack) {
+            ("1", "0") => Some(Self::Syn((t()?, Ttl::new(pkt)?))),
+            ("1", "1") => Some(Self::SynAck((t()?, Ttl::new(pkt)?))),
+            ("0", "1") => Some(Self::Ack(t()?)),
             _ => None,
         })
     }
