@@ -15,7 +15,7 @@ JA4+ support is being added to:
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
 [Suricata](https://github.com/OISF/suricata/pull/9634)  
 [Wireshark](https://twitter.com/4A4133/status/1719366965918126125)  
-[Zeek](https://twitter.com/4A4133/status/1721606329964331035)  
+[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
 with more to be announced...  
 
