@@ -1,6 +1,8 @@
 # JA4+ for Zeek
 This will add JA4+ fingerprints to zeek logs.
 
+Note: Only works on Zeek Version 6+, we're working on compatibility for old versions.
+
 Included fingerprints:  
 JA4 - ```ssl.log```
 
