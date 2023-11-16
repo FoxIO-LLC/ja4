@@ -17,6 +17,9 @@ JA4+ support is being added to:
 [Wireshark](https://twitter.com/4A4133/status/1719366965918126125)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
+[CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
+[NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
+[NGINX](https://hub.docker.com/r/thatcherthornberry/nginx-ja4)  
 with more to be announced...  
 
 ## Examples
