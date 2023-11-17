@@ -99,12 +99,13 @@ def sha_encode(values):
 def get_hex_sorted(values, sort=True):
     if not isinstance(values, list):
         values = [ values ]
-    c = [ x[2:] for x in values if x not in GREASE_TABLE]
-    actual_length = len(c)
 
-    # remove SNI and ALPN values
-    unwanted = { '0000', '0010' }
-    c = list(set(c).difference(unwanted))
+    # remove GREASE and calculate length
+    c = [ x[2:] for x in values if x not in GREASE_TABLE ]
+    actual_length = len(c)
+    # now remove SNI and ALPN values
+    c = [ x for x in c if x not in ['0000', '0010']]
+
     c.sort() if sort else None
 
     return ','.join(c), '{:02d}'.format(actual_length), sha_encode(c)
