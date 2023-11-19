@@ -14,7 +14,7 @@ JA4+ support is being added to:
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
 [Suricata](https://github.com/OISF/suricata/pull/9634)  
-[Wireshark](https://twitter.com/4A4133/status/1719366965918126125)  
+[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
 [CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
@@ -38,6 +38,11 @@ with more to be announced...
 | LummaC2 | JA4H=po11nn050000_d253db9d024b |
 | Evilginx | JA4=t13d191000_9dc949149365_e7c285222651 |
 | Reverse SSH Shell | JA4SSH=c76s76_c71s59_c0s70 |
+
+## Plugins
+
+[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
+[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 
 ## Binaries
 
