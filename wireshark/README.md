@@ -5,7 +5,7 @@
 This has been tested on Wireshark ver. 4.2.0
 
 ## Install
-1. Copy ```ja4.dll``` to your global plugins directory under epan.  
+1. Copy [ja4.dll](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/ja4.dll) to your global plugins directory under epan.  
 Windows: ```C:\Program Files\Wireshark\plugins\4.2\epan\```  
 Mac: ```/Applications/Wireshark.app/Contents/PlugIns/wireshark/4-2/epan/```  
 2. Start Wireshark
