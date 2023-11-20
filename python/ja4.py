@@ -373,7 +373,10 @@ def layer_update(x, pkt, layer):
     if layer == 'x509af' and l:
         [ x.update({key: l[f'tls_tls_{item}']}) for key, item in keymap['tls'].items() if f'tls_tls_{item}' in l ]
         x.update({'issuer_sequence': l['x509if_x509if_rdnSequence']}) if 'x509if_x509if_rdnSequence' in l else None
-        x.update({'rdn_oids': l['x509if_x509if_id']}) if 'x509if_x509if_id' in l else None
+        if 'x509if_x509if_id' in l:
+            x.update({'rdn_oids':l['x509if_x509if_id']})
+        if 'x509if_x509if_oid' in l:
+            x.update({'rdn_oids':l['x509if_x509if_oid']})
         x.update({'printable_certs': l['x509sat_x509sat_printableString']}) if 'x509sat_x509sat_printableString' in l else None
 
     # Some extension types are a list bug #29
