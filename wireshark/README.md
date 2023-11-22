@@ -3,11 +3,13 @@
 ![JA4](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/screenshot.png)
 
 This has been tested on Wireshark ver. 4.2.0
+The current plugin is for Windows, a Mac version is coming soon.
+Source code is coming soon.
 
 ## Install
 1. Copy [ja4.dll](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/ja4.dll) to your global plugins directory under epan.  
 Windows: ```C:\Program Files\Wireshark\plugins\4.2\epan\```  
-Mac: ```/Applications/Wireshark.app/Contents/PlugIns/wireshark/4-2/epan/```  
+Mac: ```/Applications/Wireshark.app/Contents/PlugIns/wireshark/4-2/epan/```  (Mac version coming soon)
 2. Start Wireshark
 
 ## Config
