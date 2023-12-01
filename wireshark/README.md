@@ -2,7 +2,7 @@
 
 ![JA4](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/screenshot.png)
 
-This has been tested on Wireshark ver. 4.2.0 on Mac and Windows, ver 4.0.2 on Linux.
+This has been tested on Wireshark ver. 4.2.0 on Mac and Windows, ver 4.0.6 on Linux.
 
 Create an issue or contact john@foxio.io with any questions.
 
