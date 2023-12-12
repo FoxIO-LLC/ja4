@@ -210,9 +210,9 @@ impl Timestamp {
         let ack = tcp.first("tcp.flags.ack")?;
         let syn = tcp.first("tcp.flags.syn")?;
         Ok(match (syn, ack) {
-            ("1", "0") => Some(Self::Syn((t()?, Ttl::new(pkt)?))),
-            ("1", "1") => Some(Self::SynAck((t()?, Ttl::new(pkt)?))),
-            ("0", "1") => Some(Self::Ack(t()?)),
+            ("1", "0") | ("True", "False") => Some(Self::Syn((t()?, Ttl::new(pkt)?))),
+            ("1", "1") | ("True", "True") => Some(Self::SynAck((t()?, Ttl::new(pkt)?))),
+            ("0", "1") | ("False", "True") => Some(Self::Ack(t()?)),
             _ => None,
         })
     }

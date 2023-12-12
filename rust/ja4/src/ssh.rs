@@ -223,7 +223,7 @@ impl PacketCounts {
                     self.nr_ssh_server_packets += 1;
                 }
             }
-        } else if tcp.first("tcp.flags.ack")? == "1" {
+        } else if ["1", "True"].contains(&tcp.first("tcp.flags.ack")?) {
             match sender {
                 Sender::Client => self.nr_tcp_client_acks += 1,
                 Sender::Server => self.nr_tcp_server_acks += 1,
