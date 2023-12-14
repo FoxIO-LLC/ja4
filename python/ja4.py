@@ -234,8 +234,11 @@ def to_ja4(x, debug_stream):
     alpn = '00' 
     if 'alpn' in x: 
         alpn = x['alpn']
-    elif 'alpn_list' in x and isinstance(x['alpn_list'], list):
-        alpn = x['alpn_list'][0]
+    elif 'alpn_list' in x:
+        if isinstance(x['alpn_list'], list):
+            alpn = x['alpn_list'][0]
+        else:
+            alpn = x['alpn_list']
 
     x['JA4'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{sorted_ciphers}_{sorted_extensions}"
     x['JA4_o'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{original_ciphers}_{original_extensions}"
