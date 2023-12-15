@@ -584,9 +584,16 @@ fn tls_extensions_server(tls: &Proto) -> Vec<u16> {
 }
 
 fn first_last(s: &str) -> (Option<char>, Option<char>) {
+    let replace_nonascii_with_9 = |c: char| {
+        if c.is_ascii() {
+            c
+        } else {
+            '9'
+        }
+    };
     let mut chars = s.chars();
-    let first = chars.next();
-    let last = chars.next_back();
+    let first = chars.next().map(replace_nonascii_with_9);
+    let last = chars.next_back().map(replace_nonascii_with_9);
     (first, last)
 }
 
@@ -596,6 +603,16 @@ fn test_first_last() {
     assert_eq!(first_last("a"), (Some('a'), None));
     assert_eq!(first_last("ab"), (Some('a'), Some('b')));
     assert_eq!(first_last("abc"), (Some('a'), Some('c')));
+}
+
+#[test]
+fn test_first_last_non_ascii() {
+    assert_eq!('�', char::REPLACEMENT_CHARACTER);
+    assert_eq!(first_last("�"), (Some('9'), None));
+    assert_eq!(first_last("��"), (Some('9'), Some('9')));
+    assert_eq!(first_last("�x�"), (Some('9'), Some('9')));
+    assert_eq!(first_last("x�"), (Some('x'), Some('9')));
+    assert_eq!(first_last("�x"), (Some('9'), Some('x')));
 }
 
 #[cfg(test)]
