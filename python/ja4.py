@@ -184,13 +184,15 @@ def to_ja4s(x, debug_stream):
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
   
     alpn = '00' 
-    if 'alpn' in x: 
-        alpn = x['alpn']
-    elif 'alpn_list' in x:
+    if 'alpn_list' in x:
         if isinstance(x['alpn_list'], list):
             alpn = x['alpn_list'][0]
         else:
             alpn = x['alpn_list']
+    if len(alpn) > 2:
+        alpn = f"{alpn[0]}{alpn[-1]}"
+    if ord(alpn[0]) > 127:
+        alpn = '99'
 
     x['JA4S'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{extensions}"
     x['JA4S_r'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{','.join(x['extensions'])}"
@@ -232,13 +234,17 @@ def to_ja4(x, debug_stream):
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
 
     alpn = '00' 
-    if 'alpn' in x: 
-        alpn = x['alpn']
-    elif 'alpn_list' in x:
+    if 'alpn_list' in x:
         if isinstance(x['alpn_list'], list):
             alpn = x['alpn_list'][0]
         else:
             alpn = x['alpn_list']
+
+    if len(alpn) > 2:
+        alpn = f"{alpn[0]}{alpn[-1]}"
+
+    if ord(alpn[0]) > 127:
+        alpn = '99'
 
     x['JA4'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{sorted_ciphers}_{sorted_extensions}"
     x['JA4_o'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{original_ciphers}_{original_extensions}"
