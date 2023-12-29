@@ -55,7 +55,7 @@ Most open source licenses impose no conditions on end users of software, only on
 
 ### What if I want to use JA4+ in my commercial product?
 
-Please reach out to us [here](https://www.fox-io.com/) for a seperate OEM license.
+Please reach out to us [here](https://www.fox-io.com/) for a separate OEM license.
 
 #
 
