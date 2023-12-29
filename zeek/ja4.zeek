@@ -61,7 +61,7 @@ function make_a(c: connection): string {
   proto_string = proto_string[-3:];
   if (proto_string == "tcp") {
     proto = "t";
-  # TODO - does this eeven work? which quic analzyer do i need to use?
+  # TODO - does this even work? which quic analyzer do i need to use?
   # TODO - DTLS is not TCP but its also not QUIC. The standard doesn't handle DTLS?
   } else if (proto_string == "udp") {
     proto = "q";
@@ -71,7 +71,7 @@ function make_a(c: connection): string {
   local sni: string = "i";
   if (c$fp$client_hello?$sni && |c$fp$client_hello$sni| > 0) {
     # This doesn't actually validate that the SNI value is a domain name.
-    #  Doign that would require checking that the string has a value TLD, a valid number of 
+    #  Doing that would require checking that the string has a value TLD, a valid number of
     #  subdomains, only valid characters, and likely other checks too.
     #  Consider the example SNI value of "foo.localhost", it's not a real domain but is also not an IP address
     if (c$fp$client_hello$sni[0] != fmt("%s", c$id$resp_h)) {

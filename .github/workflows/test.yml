@@ -1,4 +1,4 @@
-# Borrowed from https://github.com/jonhoo/rust-ci-conf/blob/6332a3af21a58f811a681a98cd44d0f5da8a1891/.github/workflows/test.yml
+# Inspired by https://github.com/jonhoo/rust-ci-conf/blob/6332a3af21a58f811a681a98cd44d0f5da8a1891/.github/workflows/test.yml
 # See the [screencast] by Jon Gjengset.
 #
 # [screencast]: https://www.youtube.com/watch?v=xUH-4y92jPg
