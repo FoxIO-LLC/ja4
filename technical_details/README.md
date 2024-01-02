@@ -16,4 +16,4 @@
 
 
 ### License
-See [Licensing](https://github.com/FoxIO-LLC/ja4/tree/main#licensing) in the repo root. We are commited to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
+See [Licensing](https://github.com/FoxIO-LLC/ja4/tree/main#licensing) in the repo root. We are committed to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.

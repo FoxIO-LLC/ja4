@@ -207,6 +207,8 @@ struct PacketCounts {
 
 impl PacketCounts {
     fn update(&mut self, pkt: &Packet, sender: Sender) -> Result<()> {
+        const BARE_ACK_FLAG: &str = "0x0010";
+
         // SAFETY: We would not reach this point if the packet didn't have a "tcp" layer;
         // see `Streams::update` and `StreamId2::new`. It's safe to unwrap.
         let tcp = pkt.find_proto("tcp").unwrap();
@@ -223,7 +225,7 @@ impl PacketCounts {
                     self.nr_ssh_server_packets += 1;
                 }
             }
-        } else if ["1", "True"].contains(&tcp.first("tcp.flags.ack")?) {
+        } else if tcp.first("tcp.flags")? == BARE_ACK_FLAG {
             match sender {
                 Sender::Client => self.nr_tcp_client_acks += 1,
                 Sender::Server => self.nr_tcp_server_acks += 1,

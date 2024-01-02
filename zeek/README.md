@@ -13,7 +13,7 @@ JA4L - ```conn.log```
 JA4X - ```x509.log```  
 JA4SSH - ```ssh.log```  
 
-See https://github.com/FoxIO-LLC/ja4 for more detail on JA4+ and other implmentations.
+See https://github.com/FoxIO-LLC/ja4 for more detail on JA4+ and other implementations.
 
 ## Install
 (in progress) If using the [Zeek Package Manager](https://docs.zeek.org/projects/package-manager/en/stable/), run:  

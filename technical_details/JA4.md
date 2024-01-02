@@ -76,7 +76,8 @@ Is sorted to:
 ### Extension hash:
 A 12 character truncated sha256 hash of the list of extensions, sorted by hex value, followed by the list of signature algorithms, in the order that they appear (not sorted).
 
-The extension list is created using the 4 character hex values of the extensions, lower case, comma delimited, sorted (not in the order they appear). Ignore the SNI extension (0000) and the ALPN extension (0010) as we’ve already captured if it’s there in the fingerprint.  
+The extension list is created using the 4 character hex values of the extensions, lower case, comma delimited, sorted (not in the order they appear). Ignore the SNI extension (0000) and the ALPN extension (0010) as we’ve already captured them in the _a_ section of the fingerprint. These values are omitted so that the same application would have the same _b_ section of the fingerprint regardless of if it were going to a domain, IP, or changing ALPNs.
+
 For example:
 ```
 001b,0000,0033,0010,4469,0017,002d,000d,0005,0023,0012,002b,ff01,000b,000a,0015
@@ -128,13 +129,16 @@ e5627efa2ab1 (truncated sha256 hash of the list of extensions sorted, SNI and AL
 JA4 = t13d1516h2_8daaf6152771_e5627efa2ab1  
 ```
 ### Raw Output  
-The program should allow for raw outputs either sorted or unsorted.  
--r (raw fingerprint) -o (original ordering)  
+The program should allow for raw outputs either sorted or original.  
+-r (raw fingerprint) -o (original) 
 
 The raw fingerprint for JA4 would look like this:
 ```
 JA4_r = t13d1516h2_002f,0035,009c,009d,1301,1302,1303,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0015,0017,001b,0023,002b,002d,0033,4469,ff01_0403,0804,0401,0503,0805,0501,0806,0601
 ```
+
+The "o" option includes the original values in the original order, less GREASE values. This means SNI (0000) and ALPN (0010) are included. 
+
 The raw fingerprint with the original ordering (-o) would look like this:
 ```
 JA4_ro = t13d1516h2_1301,1302,1303,c02b,c02f,c02c,c030,cca9,cca8,c013,c014,009c,009d,002f,0035_001b,0000,0033,0010,4469,0017,002d,000d,0005,0023,0012,002b,ff01,000b,000a,0015_0403,0804,0401,0503,0805,0501,0806,0601
