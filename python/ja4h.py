@@ -15,14 +15,16 @@ def http_language(lang):
 
 def to_ja4h(x, debug_stream=-1):
     cookie = 'c' if 'cookies' in x else 'n'
-    referer = 'r' if 'referer' in x['headers'] else 'n'
+    referer = 'r' if 'referer' in x['headers']  or 'Referer' in x['headers'] else 'n'
     method = http_method(x['method'])
     version = 11 if x['hl'] == 'http' else 20
     unsorted_cookie_fields = []
     unsorted_cookie_values = []
 
     x['headers'] = [ h.split(':')[0] for h in x['headers'] ]
-    x['headers'] = [ h for h in x['headers'] if not h.startswith(':') and not h.startswith('cookie') and h != 'referer' and h ]
+    x['headers'] = [ h for h in x['headers'] 
+            if not h.startswith(':') and not (h.startswith('cookie') or h.startswith('Cookie')) 
+            and (h != 'referer' or h!= 'Referer') and h ]
 
     raw_headers = x['headers'][:]
 
