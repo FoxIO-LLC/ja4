@@ -74,7 +74,7 @@ None = 0000
 “_”
 
 12 character truncated sha256 hash of the http headers:  
-The http headers come after the http version code and start on new lines ending at a “:” JA4H captures all HTTP header fields, case-sensitive, except for “Cookie” and “Referer” as those are captured above. JA4H does not capture the values. The fields are then concatenated with a “,” delimiter and sha256 hashed using the first 12 characters of the hash. JA4H is not capturing “Cookie” here because it is already captured in the fingerprint above.
+The http headers come after the http version code and start on new lines ending at a “:” JA4H captures all HTTP header fields, case-sensitive, but does not capture “Cookie” or “Referer” as as we’ve already captured them in the _a_ section of the fingerprint. These values are omitted so that the same application would have the same _b_ section of the fingerprint regardless of if it were a new connection or not. The fields are then concatenated with a “,” delimiter and sha256 hashed using the first 12 characters of the hash. 
 
 So for:   
 ```
@@ -180,14 +180,17 @@ JA4H=ge20cr13enus_974ebe531c03_b66fa821d02c_e97928733c74
 ```
 
 ## Raw Output
-The program should allow for raw outputs either sorted or unsorted.  
--r (raw fingerprint) -o (original ordering)
+The program should allow for raw outputs either sorted or original.  
+-r (raw fingerprint) -o (original)
 
 The raw fingerprint for JA4H would look like this:
 ```
 JA4H_r = ge20cr13enus_Host,Sec-Ch-Ua,Sec-Ch-Ua-Mobile,User-Agent,Sec-Ch-Ua-Platform,Accept,Sec-Fetch-Site,Sec-Fetch-Mode,Sec-Fetch-Dest,Accept-Encoding,Accept-Language_FastAB,_dd_s,countryCode,geoData,sato,stateCode,umto,usprivacy_FastAB=0=6859,1=8174,2=4183,3=3319,4=3917,5=2557,6=4259,7=6070,8=0804,9=6453,10=1942,11=4435,12=4143,13=9445,14=6957,15=8682,16=1885,17=1825,18=3760,19=0929,_dd_s=logs=1&id=b5c2d770-eaba-4847-8202-390c4552ff9a&created=1686159462724&expire=1686160422726,countryCode=US,geoData=purcellville|VA|20132|US|NA|-400|broadband|39.160|-77.700|511,sato=1,stateCode=VA,umto=1,usprivacy=1---
 ```
-The raw fingerprint with the original ordering (-o) would look like this:
+
+The "o" option includes the original values in the original order. This means Cookie and Referer are now included in the _b_ section of the fingerprint if present.
+
+The raw fingerprint with original (-o) would look like this:
 ```
-JA4H_ro = ge20cr13enus_Host,Sec-Ch-Ua,Sec-Ch-Ua-Mobile,User-Agent,Sec-Ch-Ua-Platform,Accept,Sec-Fetch-Site,Sec-Fetch-Mode,Sec-Fetch-Dest,Accept-Encoding,Accept-Language_FastAB,sato,countryCode,stateCode,geoData,usprivacy,umto,_dd_s_FastAB=0=6859,1=8174,2=4183,3=3319,4=3917,5=2557,6=4259,7=6070,8=0804,9=6453,10=1942,11=4435,12=4143,13=9445,14=6957,15=8682,16=1885,17=1825,18=3760,19=0929,sato=1,countryCode=US,stateCode=VA,geoData=purcellville|VA|20132|US|NA|-400|broadband|39.160|-77.700|511,usprivacy=1—,umto=1,_dd_s=logs=1&id=b5c2d770-eaba-4847-8202-390c4552ff9a&created=1686159462724&expire=1686160422726
+JA4H_ro = ge20cr13enus_Host,Cookie,Sec-Ch-Ua,Sec-Ch-Ua-Mobile,User-Agent,Sec-Ch-Ua-Platform,Accept,Sec-Fetch-Site,Sec-Fetch-Mode,Sec-Fetch-Dest,Referer,Accept-Encoding,Accept-Language_FastAB,sato,countryCode,stateCode,geoData,usprivacy,umto,_dd_s_FastAB=0=6859,1=8174,2=4183,3=3319,4=3917,5=2557,6=4259,7=6070,8=0804,9=6453,10=1942,11=4435,12=4143,13=9445,14=6957,15=8682,16=1885,17=1825,18=3760,19=0929,sato=1,countryCode=US,stateCode=VA,geoData=purcellville|VA|20132|US|NA|-400|broadband|39.160|-77.700|511,usprivacy=1—,umto=1,_dd_s=logs=1&id=b5c2d770-eaba-4847-8202-390c4552ff9a&created=1686159462724&expire=1686160422726
 ```
