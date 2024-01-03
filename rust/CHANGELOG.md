@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - JA4: Include SNI (0000) and ALPN (0010) in the "original" outputs (#40).
+- JA4H: Search for "Cookie" and "Referer" fields in a case-insensitive fashion.
 
 ## [0.16.1] - 2023-12-22
 
