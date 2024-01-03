@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- JA4: Include SNI (0000) and ALPN (0010) in the "original" outputs (#40).
+
 ## [0.16.1] - 2023-12-22
 
 ### Fixed

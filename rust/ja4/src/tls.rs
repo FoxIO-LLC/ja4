@@ -293,7 +293,9 @@ impl PartsOfClientFingerprint {
 
         let nr_ciphers = 99.min(ciphers.len());
         let nr_exts = 99.min(exts.len());
-        exts.retain(|&v| v != TLS_EXT_SERVER_NAME && v != TLS_EXT_ALPN);
+        if !original_order {
+            exts.retain(|&v| v != TLS_EXT_SERVER_NAME && v != TLS_EXT_ALPN);
+        }
 
         let first_chunk = format!(
             "{quic}{tls_ver}{sni_marker}{nr_ciphers:02}{nr_exts:02}{alpn_0}{alpn_1}",
@@ -678,7 +680,7 @@ mod tests {
         expect![[r#"
             {
               "tls_server_name": "example.com",
-              "ja4_o": "t13d1516h2_acb858a92679_351877bf2dc0"
+              "ja4_o": "t13d1516h2_acb858a92679_18f69afefd3d"
             }"#]]
         .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
 
@@ -690,8 +692,8 @@ mod tests {
         expect![[r#"
             {
               "tls_server_name": "example.com",
-              "ja4_o": "t13d1516h2_acb858a92679_351877bf2dc0",
-              "ja4_ro": "t13d1516h2_1301,1302,1303,c02b,c02f,c02c,c030,cca9,cca8,c013,c014,009c,009d,002f,0035_001b,0033,4469,0017,002d,000d,0005,0023,0012,002b,ff01,000b,000a,0015_0403,0804,0401,0503,0805,0501,0806,0601"
+              "ja4_o": "t13d1516h2_acb858a92679_18f69afefd3d",
+              "ja4_ro": "t13d1516h2_1301,1302,1303,c02b,c02f,c02c,c030,cca9,cca8,c013,c014,009c,009d,002f,0035_001b,0000,0033,0010,4469,0017,002d,000d,0005,0023,0012,002b,ff01,000b,000a,0015_0403,0804,0401,0503,0805,0501,0806,0601"
             }"#]].assert_eq(&serde_json::to_string_pretty(&out).unwrap());
 
         let stats = ClientStats {
