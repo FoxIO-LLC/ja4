@@ -12,6 +12,7 @@ use std::fmt;
 use itertools::Itertools as _;
 use ja4x::x509_parser::{certificate::X509Certificate, prelude::FromDer as _};
 use serde::Serialize;
+use tracing::{debug, warn};
 
 use crate::{Error, FormatFlags, Packet, PacketNum, Proto, Result};
 
@@ -186,23 +187,13 @@ impl ClientStats {
         let alpn = tls
             .first("tls.handshake.extensions_alpn_str")
             .map_or((None, None), first_last);
-        let sig_hash_algs = tls
-            .values("tls.handshake.sig_hash_alg")
-            .filter_map(|v| {
-                let s = v.strip_prefix("0x");
-                if s.is_none() {
-                    tracing::debug!(sig_hash_alg = v, %pkt.num, "Invalid signature algorithm");
-                }
-                s.map(str::to_owned)
-            })
-            .collect();
         let ciphers = tls
             .values("tls.handshake.ciphersuite")
             .filter(|v| !TLS_GREASE_VALUES_STR.contains(v))
             .filter_map(|v| {
                 let s = v.strip_prefix("0x");
                 if s.is_none() {
-                    tracing::debug!(cipher = v, %pkt.num, "Invalid cipher suite");
+                    debug!(cipher = v, %pkt.num, "Invalid cipher suite");
                 }
                 s.map(str::to_owned)
             })
@@ -215,7 +206,7 @@ impl ClientStats {
             exts,
             sni,
             alpn,
-            sig_hash_algs,
+            sig_hash_algs: sig_hash_algs(pkt, tls),
         })
     }
 
@@ -252,6 +243,46 @@ impl ClientStats {
             ja4_r,
         }
     }
+}
+
+/// Returns hex values of the signature algorithms.
+fn sig_hash_algs(pkt: &Packet, tls: &Proto) -> Vec<String> {
+    assert_eq!(tls.name(), "tls");
+
+    // `signature_algorithms` is not the only TLS extension that contains
+    // `tls.handshake.sig_hash_alg` fields. For example, `delegated_credentials`
+    // contains them too; see https://github.com/FoxIO-LLC/ja4/issues/41
+    //
+    // We are only interested in `signature_algorithms` extension, so we skip forward
+    // to it.
+    let mut iter = tls
+        .iter()
+        .skip_while(|&md| md.name() != "tls.handshake.extension.type" || md.value() != "13");
+    match iter.next() {
+        Some(md) => debug_assert_eq!(md.display(), "Type: signature_algorithms (13)"),
+        None => {
+            debug!(%pkt.num, "signature_algorithms TLS extension not found");
+            return Vec::new();
+        }
+    }
+    match iter.next() {
+        Some(md) => debug_assert_eq!(md.name(), "tls.handshake.extension.len"),
+        None => {
+            warn!(%pkt.num, "Unexpected end of TLS dissection");
+            return Vec::new();
+        }
+    }
+
+    iter.take_while(|&md| md.name().starts_with("tls.handshake.sig_hash_"))
+        .filter(|&md| md.name() == "tls.handshake.sig_hash_alg")
+        .filter_map(|md| {
+            let s = md.value().strip_prefix("0x");
+            if s.is_none() {
+                warn!(%pkt.num, ?md, "signature algorithm value doesn't start with \"0x\"");
+            }
+            s.map(str::to_owned)
+        })
+        .collect()
 }
 
 /// Pieces of data that is used to construct [`Ja4Fingerprint`] and [`Ja4RawFingerprint`].
@@ -394,7 +425,7 @@ impl ServerStats {
 
         let v = tls.first("tls.handshake.ciphersuite")?;
         let Some(cipher) = v.strip_prefix("0x") else {
-            tracing::debug!(cipher = v, %pkt.num, "Invalid cipher suite");
+            debug!(cipher = v, %pkt.num, "Invalid cipher suite");
             return Ok(None);
         };
 
@@ -563,7 +594,7 @@ fn tls_extensions_client(tls: &Proto) -> Vec<u16> {
             Ok(n) if TLS_GREASE_VALUES_INT.contains(&n) => None,
             Ok(n) => Some(n),
             Err(error) => {
-                tracing::debug!(packet = %tls.packet_num, value = md.value(), showname = md.display(), %error, "Invalid TLS extension");
+                debug!(packet = %tls.packet_num, value = md.value(), showname = md.display(), %error, "Invalid TLS extension");
                 None
             }
         }
@@ -579,7 +610,7 @@ fn tls_extensions_server(tls: &Proto) -> Vec<u16> {
 
     tls.fields("tls.handshake.extension.type").filter_map(|md| {
         md.value().parse::<u16>().map_err(|e| {
-            tracing::debug!(packet = %tls.packet_num, value = md.value(), showname = md.display(), error = %e, "Invalid TLS extension");
+            debug!(packet = %tls.packet_num, value = md.value(), showname = md.display(), error = %e, "Invalid TLS extension");
         }).ok()
     })
     .collect()

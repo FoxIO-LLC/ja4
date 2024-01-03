@@ -74,6 +74,11 @@ impl Proto<'_> {
         self.inner.name()
     }
 
+    /// Returns an iterator over all [`rtshark::Metadata`] for this protocol.
+    pub(crate) fn iter(&self) -> impl Iterator<Item = &rtshark::Metadata> {
+        self.inner.iter()
+    }
+
     /// Returns an iterator over the sequence of [`rtshark::Metadata`] with the given [name].
     ///
     /// [name]: rtshark::Metadata::name
