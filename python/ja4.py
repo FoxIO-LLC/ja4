@@ -86,6 +86,7 @@ keymap = {
         'supported_versions': 'handshake_extensions_supported_version',
         'alpn': 'handshake_extensions_alps_alpn_str',
         'alpn_list': 'handshake_extensions_alpn_str',
+        'sig_alg_lengths': 'handshake_sig_hash_alg_len',
         'signature_algorithms': 'handshake_sig_hash_alg',
     },
     'x509af': {
@@ -211,7 +212,7 @@ def to_ja4(x, debug_stream):
     ext_len = '{:02d}'.format(len([ x for x in x['extensions'] if x not in GREASE_TABLE]))
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
-    x['signature_algorithms'] = [ y[2:] for y in x['signature_algorithms'] ]
+    x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
 
     # ignore SNI and ALPN extensions
     x['extensions'] = [ x for x in x['extensions'] if x not in ['0x0000', '0x0010'] ]
