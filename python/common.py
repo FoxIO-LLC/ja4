@@ -139,3 +139,19 @@ def scan_tls(layer):
         for l in layer:
             if 'tls_tls_handshake_type' in l:
                 return l
+
+# Get the right signature algorithms
+def get_signature_algorithms(packet): 
+    if 'sig_alg_lengths' in packet and isinstance(packet['sig_alg_lengths'], list):
+        alg_lengths = [ int(int(x)/2) for x in packet['sig_alg_lengths'] ]
+
+        extensions = packet['extensions']
+        idx = 0
+        try:
+            if extensions.index('13') > extensions.index('35'):
+                idx = 1 
+        except Exception as e:
+            pass
+        packet['signature_algorithms'] = packet['signature_algorithms'][alg_lengths[idx]:]
+    return packet['signature_algorithms']
+        
