@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.2] - 2024-01-04
+
+### Fixed
+
+- JA4: Include SNI (0000) and ALPN (0010) in the "original" outputs (#40).
+- JA4H: Search for "Cookie" and "Referer" fields in a case-insensitive fashion.
+- JA4: Take signature algorithm hex values from `signature_algorithms` extension only (#41).
+
 ## [0.16.1] - 2023-12-22
 
 ### Fixed
@@ -48,7 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Rust sources of `ja4` and `ja4x` CLI tools.
 
-[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.1...HEAD
+[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.2...HEAD
+[0.16.2]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.1...v0.16.2
 [0.16.1]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/FoxIO-LLC/ja4/compare/v0.15.2...v0.16.0
 [0.15.2]: https://github.com/FoxIO-LLC/ja4/compare/v0.15.1...v0.15.2

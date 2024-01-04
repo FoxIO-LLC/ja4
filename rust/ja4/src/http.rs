@@ -78,14 +78,18 @@ impl HttpStats {
                 // SAFETY: `str::split` never returns an empty iterator, so it's safe to
                 // unwrap.
                 let s = s.split(':').next().unwrap().to_owned();
-                if s == "Cookie" {
-                    has_cookie_header = true;
-                    None
-                } else if s == "Referer" {
-                    has_referer_header = true;
-                    None
-                } else {
-                    Some(s)
+                // Field names are case-insensitive.
+                // See https://www.rfc-editor.org/rfc/rfc2616#section-4.2
+                match s.to_lowercase().as_str() {
+                    "cookie" => {
+                        has_cookie_header = true;
+                        None
+                    }
+                    "referer" => {
+                        has_referer_header = true;
+                        None
+                    }
+                    _ => Some(s),
                 }
             })
             .collect();
@@ -122,6 +126,13 @@ impl HttpStats {
         let headers = http2
             .values("http2.header.name")
             .filter_map(|s| {
+                // Just as in HTTP/1.x, header field names are strings of ASCII
+                // characters that are compared in a case-insensitive fashion.  However,
+                // header field names MUST be converted to lowercase prior to their
+                // encoding in HTTP/2.  A request or response containing uppercase
+                // header field names MUST be treated as malformed
+                //
+                // Reference: https://www.rfc-editor.org/rfc/rfc7540.html#section-8.1.2
                 if s == "cookie" {
                     has_cookie_header = true;
                     None

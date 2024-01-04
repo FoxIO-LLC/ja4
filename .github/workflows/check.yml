@@ -59,7 +59,7 @@ jobs:
           # Specify `--manifest-path` as a workaround.
           #
           # See https://github.com/actions-rs/clippy-check/issues/28
-          args: --all-features --workspace --manifest-path rust/Cargo.toml
+          args: --all-features --workspace --manifest-path rust/Cargo.toml -- -D warnings
           token: ${{ secrets.GITHUB_TOKEN }}
 
   doc:
