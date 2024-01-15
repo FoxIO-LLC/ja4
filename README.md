@@ -6,7 +6,7 @@ Please read this blog post for more details: [JA4+ Network Fingerprinting](https
 
 This repo includes JA4+ scripts in Python as well as Rust Binaries. 
 
-JA4+ support is being added to:  
+JA4/JA4+ support is being added to:  
 [GreyNoise](https://www.greynoise.io/)  
 [Hunt](https://hunt.io/)  
 [Driftnet](https://driftnet.io/)  
@@ -20,6 +20,7 @@ JA4+ support is being added to:
 [CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
 [NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
 [NGINX](https://hub.docker.com/r/thatcherthornberry/nginx-ja4)  
+[F5 BIG-IP](https://community.f5.com/t5/technical-articles/fingerprinting-tls-clients-with-ja4-on-f5-big-ip/ta-p/326298)  
 with more to be announced...  
 
 ## Examples
