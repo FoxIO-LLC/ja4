@@ -46,11 +46,7 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
     if entry['count'] == 0 and len(entry['stats']) == 0:
         entry['stats'].append(dict(ja4sh_stats))
 
-    # Only count SSH PSHACK packets
-    if 'ssh' in x['protos']:
-        entry['count'] += 1
-
-
+    entry['count'] += 1
     e = entry['stats'][-1]
     direction = 'client' if entry['src'] == x['src'] else 'server'
 
