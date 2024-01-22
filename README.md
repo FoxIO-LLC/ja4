@@ -21,6 +21,7 @@ JA4/JA4+ support is being added to:
 [NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
 [NGINX](https://hub.docker.com/r/thatcherthornberry/nginx-ja4)  
 [F5 BIG-IP](https://community.f5.com/t5/technical-articles/fingerprinting-tls-clients-with-ja4-on-f5-big-ip/ta-p/326298)  
+[nfdump](https://github.com/phaag/nfdump)  
 with more to be announced...  
 
 ## Examples
