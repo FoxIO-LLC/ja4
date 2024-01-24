@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- ja4x: Provide more context in the error message (#52).
+
 ## [0.16.2] - 2024-01-04
 
 ### Fixed
