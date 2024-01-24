@@ -96,15 +96,18 @@ def sha_encode(values):
 # processes ciphers found in a packet
 # tshark keeps the ciphers either as a list or as a single value
 # based on whether it is ciphersuites or ciphersuite
-def get_hex_sorted(values, sort=True):
+def get_hex_sorted(entry, field, sort=True):
+    values = entry[field]
     if not isinstance(values, list):
         values = [ values ]
 
     # remove GREASE and calculate length
     c = [ x[2:] for x in values if x not in GREASE_TABLE ]
     actual_length = len(c)
+
     # now remove SNI and ALPN values
-    c = [ x for x in c if x not in ['0000', '0010']]
+    if field == 'extensions':
+        c = [ x for x in c if x not in ['0000', '0010']]
 
     c.sort() if sort else None
 
