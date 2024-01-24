@@ -213,9 +213,6 @@ def to_ja4(x, debug_stream):
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
     x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
-
-    # ignore SNI and ALPN extensions
-    x['extensions'] = [ x for x in x['extensions'] if x not in ['0x0000', '0x0010'] ]
     cache_update(x, 'client_extensions', x['extensions'], debug_stream)
 
     # Modified to include original rendering
