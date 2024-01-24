@@ -106,7 +106,7 @@ def get_hex_sorted(entry, field, sort=True):
     actual_length = len(c)
 
     # now remove SNI and ALPN values
-    if field == 'extensions':
+    if field == 'extensions' and sort:
         c = [ x for x in c if x not in ['0000', '0010']]
 
     c.sort() if sort else None
