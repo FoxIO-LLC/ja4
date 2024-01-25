@@ -71,7 +71,6 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
     if (entry['count'] % ssh_sample_count) == 0:
         to_ja4ssh(entry) if entry['count'] != 0 else None
         if (entry['count'] / ssh_sample_count) == len(entry['stats']):
-            print (f'adding new entry at count {entry["count"]}')
             entry['stats'].append(dict(ja4sh_stats))
 
         if debug_stream and int(x['stream']) == debug_stream:
@@ -88,7 +87,6 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
 ##
 def to_ja4ssh(x):
     idx = len(x['stats'])
-    print (f'calling ja4ssh with idx = {idx}')
     e = x['stats'][idx-1]
     if e['client_payloads'] or e['server_payloads']:
         mode_client = max(e['client_payloads'], key=e['client_payloads'].count) if e['client_payloads'] else 0
