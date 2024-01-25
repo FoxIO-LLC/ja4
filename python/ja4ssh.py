@@ -42,11 +42,14 @@ def process_extra_parameters(entry, x, direction):
 ## we return 1 whenever a new stats entry is added based on the sample rate
 ## This way the caller can print this packet out
 def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
-
+    
     if entry['count'] == 0 and len(entry['stats']) == 0:
         entry['stats'].append(dict(ja4sh_stats))
 
-    entry['count'] += 1
+    # Only count SSH PSHACK packets
+    if 'ssh' in x['protos']:
+        entry['count'] += 1
+
     e = entry['stats'][-1]
     direction = 'client' if entry['src'] == x['src'] else 'server'
 
@@ -54,8 +57,8 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
         e[f'{direction}_payloads'].append(x['len'])
         e[f'{direction}_packets'] += 1
 
-    # Update ACK count based on direction if the Flag has an ACK
-    if 'ssh' not in x['protos'] and x['flags_ack']:
+    # Update ACK count based on direction and Bare Acks
+    if 'ssh' not in x['protos'] and x['flags'] == '0x0010':
         e[f'{direction}_acks'] += 1
 
     # Added extra output parameters
@@ -68,7 +71,6 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
     if (entry['count'] % ssh_sample_count) == 0:
         to_ja4ssh(entry) if entry['count'] != 0 else None
         if (entry['count'] / ssh_sample_count) == len(entry['stats']):
-            print (f'adding new entry at count {entry["count"]}')
             entry['stats'].append(dict(ja4sh_stats))
 
         if debug_stream and int(x['stream']) == debug_stream:
@@ -85,7 +87,6 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
 ##
 def to_ja4ssh(x):
     idx = len(x['stats'])
-    print (f'calling ja4ssh with idx = {idx}')
     e = x['stats'][idx-1]
     if e['client_payloads'] or e['server_payloads']:
         mode_client = max(e['client_payloads'], key=e['client_payloads'].count) if e['client_payloads'] else 0
