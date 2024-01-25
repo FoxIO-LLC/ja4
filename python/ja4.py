@@ -507,12 +507,13 @@ def main():
 
             # Added for SSH
             if 'tcp' in x['protos'] and 'ja4ssh' in output_types:
-                cache_update(x, 'count', 0, STREAM)
-                cache_update(x, 'stats', [], STREAM)
-                entry = get_cache(x)[x['stream']]
-                update_ssh_entry(entry, x, ssh_sample_count, STREAM)
-                if 'flags' in x and int(x['flags'], 0) & TCP_FLAGS['FIN'] and int(x['flags'], 0) & TCP_FLAGS['ACK']:
-                    finalize_ja4ssh(x['stream']) 
+                if (int(x['srcport']) == 22) or (int(x['dstport']) == 22):
+                    cache_update(x, 'count', 0, STREAM)
+                    cache_update(x, 'stats', [], STREAM)
+                    entry = get_cache(x)[x['stream']]
+                    update_ssh_entry(entry, x, ssh_sample_count, STREAM)
+                    if 'flags' in x and int(x['flags'], 0) & TCP_FLAGS['FIN'] and int(x['flags'], 0) & TCP_FLAGS['ACK']:
+                        finalize_ja4ssh(x['stream']) 
 
             # Timestamp recording happens on cache here
             # This is for TCP
