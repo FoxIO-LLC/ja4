@@ -56,6 +56,8 @@ impl<'a> Packet<'a> {
         })
     }
 
+    // XXX-TODO(vvv): Propose to change the type of `rtshark::Packet::timestamp_micros`
+    // to `Option<u64>` (*unsigned*).
     pub(crate) fn timestamp_micros(&self) -> Result<i64> {
         self.inner.timestamp_micros().ok_or(Error::MissingTimestamp)
     }

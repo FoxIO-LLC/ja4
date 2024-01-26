@@ -228,9 +228,10 @@ mod state {
             } = st;
 
             let ja4l_c = (t_d.timestamp - t_c.timestamp) / 2;
+            debug_assert!(ja4l_c >= 0); // 0 if the difference == 1
+
             let ja4l_s = (t_b.timestamp - t_a.timestamp) / 2;
-            debug_assert!(ja4l_c > 0);
-            debug_assert!(ja4l_s > 0);
+            debug_assert!(ja4l_s >= 0); // 0 if the difference == 1
 
             Self::Done(Fingerprints {
                 ja4l_c: format!("{ja4l_c}_{}", client_ttl.0),

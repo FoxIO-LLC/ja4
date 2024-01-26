@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- ja4l: Fix a panic that only reproduced in debug mode (#51).
+
 ### Changed
 
 - ja4x: Provide more context in the error message (#52).
