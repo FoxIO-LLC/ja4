@@ -285,43 +285,7 @@ struct StreamAttrs {
 
 impl StreamAttrs {
     fn new(pkt: &Packet) -> Result<Option<Self>> {
-        if pkt.find_proto("icmp").is_some() {
-            // `tshark` may return a hierarchy of `<proto>`, but `rtshark` flattens them
-            // into s vector of `rtshark::Layer`s.
-            //
-            // E.g., `rtshark` hides the distinction between an outer `<proto name="tcp">`
-            //
-            // ```xml
-            //    <proto name="tcp" showname="Transmission Control Protocol, Src Port: 57361, Dst Port: 5000, Seq: 0, Len: 0" size="32" pos="34">
-            //      <field name="tcp.srcport" showname="Source Port: 57361" size="2" pos="34" show="57361" value="e011"/>
-            //      <field name="tcp.dstport" showname="Destination Port: 5000" size="2" pos="36" show="5000" value="1388"/>
-            // ```
-            //
-            // and the one nested inside `<proto name="icmp">`.
-            //
-            // ```xml
-            //    <proto name="icmp" showname="Internet Control Message Protocol" size="60" pos="34">
-            //      <field name="icmp.type" showname="Type: 3 (Destination unreachable)" size="1" pos="34" show="3" value="03"/>
-            //      <field name="icmp.code" showname="Code: 13 (Communication administratively filtered)" size="1" pos="35" show="13" value="0d"/>
-            //      <field name="icmp.checksum" showname="Checksum: 0xbc7d [correct]" size="2" pos="36" show="0xbc7d" value="bc7d"/>
-            //      <field name="icmp.checksum.status" showname="Checksum Status: Good" size="0" pos="36" show="1"/>
-            //      <field name="icmp.unused" showname="Unused: 00000000" size="4" pos="38" show="00:00:00:00" value="00000000"/>
-            //      <proto name="ip" showname="Internet Protocol Version 4, Src: 172.16.225.48, Dst: 10.244.39.47" size="20" pos="42">
-            //        <field name="ip.version" showname="0100 .... = Version: 4" size="1" pos="42" show="4" value="45"/>
-            //        <field name="ip.hdr_len" showname=".... 0101 = Header Length: 20 bytes (5)" size="1" pos="42" show="20" value="45"/>
-            //        [...]
-            //      </proto>
-            //      <proto name="tcp" showname="Transmission Control Protocol, Src Port: 57361, Dst Port: 5000, Seq: 1687692832" size="32" pos="62">
-            //        <field name="tcp.srcport" showname="Source Port: 57361" size="2" pos="62" show="57361" value="e011"/>
-            //        <field name="tcp.dstport" showname="Destination Port: 5000" size="2" pos="64" show="5000" value="1388"/>
-            //        [...]
-            // ```
-            //
-            // HACK: As a workaround, we ignore ICMP packets.
-            return Ok(None);
-        }
-
-        // A packet may contain multiple TCP and/or UDP frames. For example, Generic Routing
+        // A packet may contain multiple TCP and/or UDP layers. For example, Generic Routing
         // Encapsulation (GRE) tunneling protocol allows the encapsulation of packets from
         // one network protocol within the packets of another protocol:
         //
@@ -383,6 +347,7 @@ impl StreamAttrs {
 
         for proto in pkt.iter() {
             match proto.name() {
+                "icmp" | "icmpv6" => return Ok(None), // ignore ICMP packets
                 "ip" => {
                     last_ip = Some(IpAttrs {
                         ip_ver: IpVersion::Ipv4,
