@@ -61,6 +61,14 @@ impl<'a> Packet<'a> {
     pub(crate) fn timestamp_micros(&self) -> Result<i64> {
         self.inner.timestamp_micros().ok_or(Error::MissingTimestamp)
     }
+
+    /// Returns an iterator over the [`Proto`]cols of this packet.
+    pub(crate) fn iter(&self) -> impl Iterator<Item = Proto> {
+        self.inner.iter().map(|layer| Proto {
+            inner: layer,
+            packet_num: self.num,
+        })
+    }
 }
 
 #[derive(Clone)]
