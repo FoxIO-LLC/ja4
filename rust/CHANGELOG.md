@@ -9,10 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- ja4l: Fix a panic that only reproduced in debug mode (#51).
+- JA4L: Fix a panic that only reproduced in debug mode (#51).
+- Fix processing of GRE tunneling traffic (#51).
+- Skip packets with "icmpv6" layer (#51).
 
 ### Changed
 
+- ja4: Improve debug logging.
 - ja4x: Provide more context in the error message (#52).
 
 ## [0.16.2] - 2024-01-04

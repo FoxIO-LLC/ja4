@@ -123,32 +123,40 @@ impl StreamExtras {
             return;
         };
 
+        #[cfg(debug_assertions)]
+        if let Ok(dir) = ssh.find("ssh.direction") {
+            match sender {
+                Sender::Client => assert_eq!(dir.display(), "Direction: client-to-server"),
+                Sender::Server => assert_eq!(dir.display(), "Direction: server-to-client"),
+            }
+        }
+
         match sender {
             Sender::Client => {
                 if let Ok(s) = ssh.first("ssh.kex.hassh") {
-                    debug_assert!(self.hassh.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.hassh.is_none());
                     self.hassh = Some(s.to_owned());
                 }
                 if let Ok(s) = ssh.first("ssh.encryption_algorithms_client_to_server") {
                     // An SSH stream can have at most one client message with this field,
                     // and the client message precedes any server messages.
-                    debug_assert!(self.encryption.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.encryption.is_none());
                     self.encryption = Some(Encryption::ClientToServerAlgorithms(
                         s.split(',').map(|s| s.to_owned()).collect(),
                     ));
                 }
                 if let Ok(s) = ssh.first("ssh.protocol") {
-                    debug_assert!(self.ssh_protocol_client.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.ssh_protocol_client.is_none());
                     self.ssh_protocol_client = Some(s.to_owned());
                 }
             }
             Sender::Server => {
                 if let Ok(s) = ssh.first("ssh.kex.hasshserver") {
-                    debug_assert!(self.hassh_server.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.hassh_server.is_none());
                     self.hassh_server = Some(s.to_owned());
                 }
                 if let Ok(s) = ssh.first("ssh.protocol") {
-                    debug_assert!(self.ssh_protocol_server.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.ssh_protocol_server.is_none());
                     self.ssh_protocol_server = Some(s.to_owned());
                 }
                 let Ok(server_algs) = ssh.first("ssh.encryption_algorithms_server_to_client")

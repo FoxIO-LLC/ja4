@@ -5,14 +5,14 @@
 // JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH) are licenced under the FoxIO License 1.1.
 // For full license text, see the repo root.
 
-use indexmap::IndexMap;
+use indexmap::{map::Entry, IndexMap};
 use serde::Serialize;
 
 use crate::{
     conf::Conf,
     http, ssh,
     time::{self, TcpTimestamps, Timestamps, UdpTimestamps},
-    tls, FormatFlags, Packet, Result,
+    tls, FormatFlags, Packet, Result, Sender,
 };
 
 /// User-facing record containing data obtained from a TCP or UDP stream.
@@ -93,7 +93,7 @@ impl<T: Timestamps> AddressedStream<T> {
         }
     }
 
-    fn update(&mut self, pkt: &Packet, conf: &Conf, store_pkt_num: bool) {
+    fn update(&mut self, pkt: &Packet, conf: &Conf, store_pkt_num: bool, guessed_sender: Sender) {
         if conf.tls.enabled {
             if let Err(error) = self
                 .stream
@@ -104,11 +104,13 @@ impl<T: Timestamps> AddressedStream<T> {
                 tracing::debug!(%pkt.num, %error, "failed to fingerprint TLS");
             }
         }
+
         if conf.http.enabled {
             if let Err(error) = self.stream.http.update(pkt, store_pkt_num) {
                 tracing::debug!(%pkt.num, %error, "failed to fingerprint HTTP");
             }
         }
+
         if conf.time.enabled {
             match self
                 .stream
@@ -121,37 +123,16 @@ impl<T: Timestamps> AddressedStream<T> {
                 Err(error) => tracing::debug!(%pkt.num, %error, "failed to store timestamp"),
             }
         }
-        if conf.ssh.enabled {
-            if let Err(error) = self.process_ssh(pkt, conf.ssh.sample_size) {
+
+        if conf.ssh.enabled && pkt.find_proto("tcp").is_some() {
+            if let Err(error) = self
+                .stream
+                .ssh
+                .update(pkt, guessed_sender, conf.ssh.sample_size)
+            {
                 tracing::debug!(%pkt.num, %error, "failed to handle SSH packet");
             }
         }
-    }
-
-    fn process_ssh(&mut self, pkt: &Packet, sample_size: u32) -> Result<()> {
-        if pkt.find_proto("tcp").is_none() {
-            return Ok(());
-        }
-        let sender_is_client = match self.sockets.ip_ver {
-            IpVersion::Ipv4 => {
-                // SAFETY: We've established in `SocketPair::new` that "ip" layer is
-                // present.
-                let ip = pkt.find_proto("ip").unwrap();
-                self.sockets.src == ip.first("ip.src")?
-            }
-            IpVersion::Ipv6 => {
-                // SAFETY: We've established in `SocketPair::new` that "ipv6" layer is
-                // present.
-                let ipv6 = pkt.find_proto("ipv6").unwrap();
-                self.sockets.src == ipv6.first("ipv6.src")?
-            }
-        };
-        let sender = if sender_is_client {
-            crate::Sender::Client
-        } else {
-            crate::Sender::Server
-        };
-        self.stream.ssh.update(pkt, sender, sample_size)
     }
 }
 
@@ -164,8 +145,6 @@ pub(crate) struct Streams {
 
 impl Streams {
     pub(crate) fn update(&mut self, pkt: &Packet, conf: &Conf, store_pkt_num: bool) -> Result<()> {
-        use indexmap::map::Entry;
-
         tracing::debug!(%pkt.num, "processing packet");
         let Some(attrs) = StreamAttrs::new(pkt)? else {
             return Ok(());
@@ -177,6 +156,19 @@ impl Streams {
             sockets,
         } = attrs;
 
+        let sender_ip = sockets.src.clone();
+
+        // HACK: We assume that the earliest `SocketPair` is the client's.
+        // This is not always true. For example, the first packet (SYN) of a TCP stream
+        // may not be captured. In this case, the earliest packet will be the server's.
+        fn guess_sender(sender_ip: &str, earliest: &SocketPair) -> Sender {
+            if sender_ip == earliest.src {
+                Sender::Client
+            } else {
+                Sender::Server
+            }
+        }
+
         match transport {
             Transport::Tcp => {
                 let stream = match self.tcp.entry(stream_id) {
@@ -186,7 +178,12 @@ impl Streams {
                         x.into_mut()
                     }
                 };
-                stream.update(pkt, conf, store_pkt_num);
+                stream.update(
+                    pkt,
+                    conf,
+                    store_pkt_num,
+                    guess_sender(&sender_ip, &stream.sockets),
+                );
             }
             Transport::Udp => {
                 let stream = match self.udp.entry(stream_id) {
@@ -196,7 +193,12 @@ impl Streams {
                         x.into_mut()
                     }
                 };
-                stream.update(pkt, conf, store_pkt_num);
+                stream.update(
+                    pkt,
+                    conf,
+                    store_pkt_num,
+                    guess_sender(&sender_ip, &stream.sockets),
+                );
             }
         }
         Ok(())
