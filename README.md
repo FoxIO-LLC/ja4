@@ -13,7 +13,7 @@ JA4/JA4+ support is being added to:
 [Darksail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://github.com/OISF/suricata/pull/9634)  
+[Suricata](https://github.com/OISF/suricata/pull/10095)  
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
@@ -28,18 +28,18 @@ with more to be announced...
 
 | Application |JA4+ Fingerprints |
 |----|----|
-| Chrome | JA4=t13d1516h2_8daaf6152771_e5627efa2ab1 (TCP) <br/> JA4=q13d0310h3_55b375c5d22e_cd85d2d88918 (QUIC) <br/> JA4=t13d1516h2_8daaf6152771_02713d6af862 (ECH) |
-| IcedID Malware Dropper | JA4H=ge11cn020000_9ed1ff1f7b03_cd8dafe26982 |
-| IcedID Malware | JA4=t13d201100_2b729b4bf6f3_9e7b989ebec8 <br/> JA4S=t120300_c030_5e2616a54c73 |
-| Sliver Malware | JA4=t13d190900_9dc949149365_97f8aa674fd9 <br/> JA4S=t130200_1301_a56c5b993250 <br/> JA4X=000000000000_4f24da86fad6_bf0f0589fc03 <br/> JA4X=000000000000_7c32fa18c13e_bf0f0589fc03 |
-| Cobalt Strike | JA4H=ge11cn060000_4e59edc1297a_4da5efaf0cbd <br/> JA4X=2166164053c1_2166164053c1_30d204a01551 |
-| SoftEther VPN | JA4=t13d880900_fcb5b95cb75a_b0d3b4ac2a14 (client) <br/> JA4S=t130200_1302_a56c5b993250 <br/> JA4X=d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae |
-| Qakbot | JA4X=2bab15409345_af684594efb4_000000000000 |
-| Pikabot | JA4X=1a59268f55e5_1a59268f55e5_795797892f9c |
-| Darkgate | JA4H=po10nn060000_cdb958d032b0 |
-| LummaC2 | JA4H=po11nn050000_d253db9d024b |
-| Evilginx | JA4=t13d191000_9dc949149365_e7c285222651 |
-| Reverse SSH Shell | JA4SSH=c76s76_c71s59_c0s70 |
+| Chrome | ```JA4=t13d1516h2_8daaf6152771_02713d6af862``` (TCP) <br/> ```JA4=q13d0312h3_55b375c5d22e_06cda9e17597``` (QUIC) <br/> ```JA4=t13d1517h2_8daaf6152771_b0da82dd1658``` (pre-shared key) <br/> ```JA4=t13d1517h2_8daaf6152771_b1ff8ab2d16f``` (no key) |
+| IcedID Malware Dropper | ```JA4H=ge11cn020000_9ed1ff1f7b03_cd8dafe26982``` |
+| IcedID Malware | ```JA4=t13d201100_2b729b4bf6f3_9e7b989ebec8``` <br/> ```JA4S=t120300_c030_5e2616a54c73``` |
+| Sliver Malware | ```JA4=t13d190900_9dc949149365_97f8aa674fd9``` <br/> ```JA4S=t130200_1301_a56c5b993250``` <br/> ```JA4X=000000000000_4f24da86fad6_bf0f0589fc03``` <br/> ```JA4X=000000000000_7c32fa18c13e_bf0f0589fc03``` |
+| Cobalt Strike | ```JA4H=ge11cn060000_4e59edc1297a_4da5efaf0cbd``` <br/> ```JA4X=2166164053c1_2166164053c1_30d204a01551``` |
+| SoftEther VPN | ```JA4=t13d880900_fcb5b95cb75a_b0d3b4ac2a14``` (client) <br/> ```JA4S=t130200_1302_a56c5b993250``` <br/> ```JA4X=d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae``` |
+| Qakbot | ```JA4X=2bab15409345_af684594efb4_000000000000``` |
+| Pikabot | ```JA4X=1a59268f55e5_1a59268f55e5_795797892f9c``` |
+| Darkgate | ```JA4H=po10nn060000_cdb958d032b0``` |
+| LummaC2 | ```JA4H=po11nn050000_d253db9d024b``` |
+| Evilginx | ```JA4=t13d191000_9dc949149365_e7c285222651``` |
+| Reverse SSH Shell | ```JA4SSH=c76s76_c71s59_c0s70``` |
 
 ## Plugins
 
