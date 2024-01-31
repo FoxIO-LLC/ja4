@@ -275,7 +275,7 @@ impl SocketPair {
     }
 
     #[cfg(not(debug_assertions))]
-    fn check(&self, _pkt: &Packet, _transport: &Proto) {}
+    fn check(&self, _other: &Self) {}
 }
 
 #[derive(Debug)]

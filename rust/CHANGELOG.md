@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2024-01-31
+
 ### Fixed
 
-- JA4L: Fix a panic that only reproduced in debug mode (#51).
+- JA4SSH (mode of TCP payload length): Handle collisions, resolve nondeterminism (#51).
+- JA4L: Fix a panic that only reproduced in dev mode (#51).
 - Fix processing of GRE tunneling traffic (#51).
 - Skip packets with "icmpv6" layer (#51).
 
@@ -67,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Rust sources of `ja4` and `ja4x` CLI tools.
 
-[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.2...HEAD
+[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.2...v0.17.0
 [0.16.2]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.1...v0.16.2
 [0.16.1]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/FoxIO-LLC/ja4/compare/v0.15.2...v0.16.0

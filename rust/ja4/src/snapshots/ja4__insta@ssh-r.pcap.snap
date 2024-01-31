@@ -29,7 +29,7 @@ expression: output
   ja4l_c: 14_64
   ja4l_s: 4171_116
   ja4ssh:
-  - c48s44_c7s5_c5s5
+  - c48s21_c7s5_c5s5
   ssh_extras:
     hassh: ec9ea89c70f5fc71cf61061bff5e4740
     hassh_server: 2307c390c7c9aba5b4c9519e72347f34
@@ -52,7 +52,7 @@ expression: output
   - c76s76_c71s59_c0s70
   - c76s76_c75s57_c0s68
   - c76s76_c70s69_c6s55
-  - c36s72_c3s3_c4s1
+  - c36s60_c3s3_c4s1
   ssh_extras:
     hassh: ec9ea89c70f5fc71cf61061bff5e4740
     hassh_server: 2307c390c7c9aba5b4c9519e72347f34

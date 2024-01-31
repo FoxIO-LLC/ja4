@@ -11,7 +11,7 @@ expression: output
   ja4l_c: 36_255
   ja4l_s: 22952_236
   ja4ssh:
-  - c24s424_c4s4_c6s4
+  - c24s23_c4s4_c6s4
   ssh_extras:
     hassh: 5ef6678a6b060094834599ca16581b05
     hassh_server: 6e3242d64766f4154c11858bbd654415
