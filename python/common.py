@@ -156,5 +156,5 @@ def get_signature_algorithms(packet):
         except Exception as e:
             pass
         packet['signature_algorithms'] = packet['signature_algorithms'][alg_lengths[idx]:]
-    return packet['signature_algorithms']
+    return [ x for x in packet['signature_algorithms'] if x not in GREASE_TABLE ]
         

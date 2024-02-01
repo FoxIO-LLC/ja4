@@ -333,7 +333,6 @@ def finalize_ja4ssh(stream=None):
         if entry['protos'].endswith(":ssh"):
             to_ja4ssh(entry)
             printout(entry, 'JA4SSH')
-            print ('finalize conflict')
             del(cache[stream])
 
     if not stream:
