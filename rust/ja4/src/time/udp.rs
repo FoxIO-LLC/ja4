@@ -9,7 +9,7 @@
 
 use crate::{
     time::{Fingerprints, PacketTimestamp, Ttl},
-    Packet, Result,
+    Packet, Result, Sender,
 };
 
 #[derive(Debug)]
@@ -228,9 +228,10 @@ mod state {
             } = st;
 
             let ja4l_c = (t_d.timestamp - t_c.timestamp) / 2;
+            debug_assert!(ja4l_c >= 0); // 0 if the difference == 1
+
             let ja4l_s = (t_b.timestamp - t_a.timestamp) / 2;
-            debug_assert!(ja4l_c > 0);
-            debug_assert!(ja4l_s > 0);
+            debug_assert!(ja4l_s >= 0); // 0 if the difference == 1
 
             Self::Done(Fingerprints {
                 ja4l_c: format!("{ja4l_c}_{}", client_ttl.0),
@@ -254,14 +255,15 @@ enum Timestamp {
 
 impl Timestamp {
     fn from_packet(pkt: &Packet) -> Result<Option<Self>> {
-        use crate::Sender;
-
         let Some(quic) = pkt.find_proto("quic") else {
             return Ok(None);
         };
 
-        // SAFETY: We would not reach this point if the packet didn't have a "udp"
-        // layer; see `Streams::update` and `StreamId2::new`. So it's safe to unwrap.
+        // XXX-FIXME(vvv): Some packets (e.g. GRE) may have several "udp" layers.
+        // We should take the last one, not the first one.
+
+        // SAFETY: We would not reach this point if the packet didn't have a "udp" layer;
+        // see `Streams::update` and `StreamAttrs::new`. It is safe to unwrap.
         let udp = pkt.find_proto("udp").unwrap();
 
         let sender = if udp.first("udp.dstport")? == "443" {

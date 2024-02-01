@@ -718,7 +718,6 @@ mod tests {
         let out = stats.clone().into_out(FormatFlags {
             with_raw: true,
             original_order: true,
-            ..Default::default()
         });
         expect![[r#"
             {

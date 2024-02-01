@@ -168,10 +168,12 @@ fn test_hash12() {
 fn check_tshark_version() -> Result<()> {
     use owo_colors::OwoColorize as _;
 
-    let version_output = duct::cmd!("tshark", "--version")
+    let out = duct::cmd!("tshark", "--version")
         .read()
         .map_err(|e| Error::TsharkNotFound { source: e })?;
-    let ver = parse_tshark_version(&version_output).ok_or(Error::ParseTsharkVersion)?;
+    tracing::debug!(%out, "tshark --version");
+
+    let ver = parse_tshark_version(&out).ok_or(Error::ParseTsharkVersion)?;
     let available = semver::Version::parse(ver)?;
 
     let required = semver::VersionReq::parse(">=4.0.6").expect("BUG");

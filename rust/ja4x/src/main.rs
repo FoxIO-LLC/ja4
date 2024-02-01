@@ -11,7 +11,10 @@ use std::{
 };
 
 use clap::Parser;
-use color_eyre::eyre;
+use color_eyre::{
+    eyre::{self, WrapErr as _},
+    Section as _,
+};
 use fs_err as fs;
 use serde::Serialize;
 use tracing_subscriber::filter::EnvFilter;
@@ -27,7 +30,7 @@ struct Cli {
     /// Include raw (unhashed) fingerprints in the output
     #[arg(short = 'r', long)]
     with_raw: bool,
-    /// X.509 certificate(s)
+    /// X.509 certificate(s) in DER or PEM format
     certs: Vec<PathBuf>,
 }
 
@@ -50,7 +53,9 @@ fn main() -> eyre::Result<()> {
             pem.parse_x509()?.into()
         } else {
             tracing::debug!(?path, format = "DER");
-            let (rem, x509) = X509Certificate::from_der(&buf)?;
+            let (rem, x509) = X509Certificate::from_der(&buf)
+                .wrap_err_with(|| format!("{}: unsupported file format", path.display()))
+                .suggestion("please provide DER- or PEM-encoded certificate")?;
             debug_assert!(rem.is_empty());
             ja4x::X509Rec::from(x509)
         };

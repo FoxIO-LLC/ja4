@@ -123,32 +123,40 @@ impl StreamExtras {
             return;
         };
 
+        #[cfg(debug_assertions)]
+        if let Ok(dir) = ssh.find("ssh.direction") {
+            match sender {
+                Sender::Client => assert_eq!(dir.display(), "Direction: client-to-server"),
+                Sender::Server => assert_eq!(dir.display(), "Direction: server-to-client"),
+            }
+        }
+
         match sender {
             Sender::Client => {
                 if let Ok(s) = ssh.first("ssh.kex.hassh") {
-                    debug_assert!(self.hassh.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.hassh.is_none());
                     self.hassh = Some(s.to_owned());
                 }
                 if let Ok(s) = ssh.first("ssh.encryption_algorithms_client_to_server") {
                     // An SSH stream can have at most one client message with this field,
                     // and the client message precedes any server messages.
-                    debug_assert!(self.encryption.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.encryption.is_none());
                     self.encryption = Some(Encryption::ClientToServerAlgorithms(
                         s.split(',').map(|s| s.to_owned()).collect(),
                     ));
                 }
                 if let Ok(s) = ssh.first("ssh.protocol") {
-                    debug_assert!(self.ssh_protocol_client.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.ssh_protocol_client.is_none());
                     self.ssh_protocol_client = Some(s.to_owned());
                 }
             }
             Sender::Server => {
                 if let Ok(s) = ssh.first("ssh.kex.hasshserver") {
-                    debug_assert!(self.hassh_server.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.hassh_server.is_none());
                     self.hassh_server = Some(s.to_owned());
                 }
                 if let Ok(s) = ssh.first("ssh.protocol") {
-                    debug_assert!(self.ssh_protocol_server.is_none(), "packet={}", pkt.num);
+                    debug_assert!(self.ssh_protocol_server.is_none());
                     self.ssh_protocol_server = Some(s.to_owned());
                 }
                 let Ok(server_algs) = ssh.first("ssh.encryption_algorithms_server_to_client")
@@ -258,11 +266,16 @@ impl From<PacketCounts> for Option<Fingerprint> {
             return None;
         }
 
-        let key_with_max_value =
-            |kv: &HashMap<usize, usize>| kv.iter().max_by_key(|(_k, v)| *v).map(|(k, _v)| *k);
-
-        let mode_client = key_with_max_value(&client_tcp_len_counts).unwrap_or(0);
-        let mode_server = key_with_max_value(&server_tcp_len_counts).unwrap_or(0);
+        // We’re looking for the mode, or the value that appears the most number of times
+        // in the data set.
+        //
+        // E.g., if 36 bytes appear 20 times, and 128 bytes appear 10 times, and 200 bytes
+        // appear 15 times, the mode is 36. If there is a collision, we choose the smaller
+        // byte value.
+        //
+        // Reference: https://github.com/FoxIO-LLC/ja4/blob/16850cc2c8bcb8328c1a43a851a3a9a6eaa56103/technical_details/JA4SSH.md#how-to-measure-the-mode-for-tcp-payload-lengths-across-200-packets-in-the-session
+        let mode_client = min_key_with_max_value(client_tcp_len_counts).unwrap_or(0);
+        let mode_server = min_key_with_max_value(server_tcp_len_counts).unwrap_or(0);
 
         let fp = format!(
             "c{mode_client}s{mode_server}_c{}s{}_c{}s{}",
@@ -270,4 +283,55 @@ impl From<PacketCounts> for Option<Fingerprint> {
         );
         Some(Fingerprint(fp))
     }
+}
+
+fn min_key_with_max_value(kvs: impl IntoIterator<Item = (usize, usize)>) -> Option<usize> {
+    let mut max_v = 0;
+    let mut min_k_with_max_v = None;
+
+    for (k, v) in kvs {
+        #[allow(clippy::comparison_chain)]
+        if v > max_v {
+            min_k_with_max_v = Some(k);
+            max_v = v;
+        } else if v == max_v {
+            match min_k_with_max_v {
+                None => min_k_with_max_v = Some(k),
+                Some(k0) => {
+                    if k < k0 {
+                        min_k_with_max_v = Some(k);
+                    }
+                }
+            }
+        }
+    }
+    min_k_with_max_v
+}
+
+#[test]
+fn test_min_key_with_max_value() {
+    assert_eq!(min_key_with_max_value([]), None);
+
+    let kvs = [(36, 20), (128, 10), (200, 15)];
+    assert_eq!(min_key_with_max_value(kvs), Some(36));
+
+    // Collisions, case 1:
+    let mut kvs = [
+        (21, 1),
+        (16, 1),
+        (64, 1),
+        (144, 1),
+        (24, 1),
+        (48, 1),
+        (792, 1),
+    ];
+    assert_eq!(min_key_with_max_value(kvs), Some(16));
+    kvs.sort();
+    assert_eq!(min_key_with_max_value(kvs), Some(16));
+
+    // Collisions, case 2:
+    let mut kvs = [(23, 1), (152, 1), (48, 1), (640, 1), (464, 1)];
+    assert_eq!(min_key_with_max_value(kvs), Some(23));
+    kvs.sort();
+    assert_eq!(min_key_with_max_value(kvs), Some(23));
 }

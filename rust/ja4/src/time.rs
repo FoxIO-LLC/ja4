@@ -56,6 +56,8 @@ impl PacketTimestamp {
 pub(crate) struct Ttl(u8);
 
 impl Ttl {
+    // XXX-FIXME(vvv): Some packets (e.g. GRE) may have several "ip" layers.
+    // We should take the last one, not the first one.
     pub(crate) fn new(pkt: &Packet) -> Result<Self> {
         let ttl = if let Some(ip) = pkt.find_proto("ip") {
             ip.first("ip.ttl")?.parse::<u8>()?
@@ -63,7 +65,7 @@ impl Ttl {
             // "hlim" stands for "Hop Limit"
             ipv6.first("ipv6.hlim")?.parse::<u8>()?
         } else {
-            // SAFETY: We've established in `SocketPair::new` that either "ip" or "ipv6"
+            // SAFETY: We've established in `StreamAttrs::new` that either "ip" or "ipv6"
             // layer exists.
             panic!("BUG");
         };
