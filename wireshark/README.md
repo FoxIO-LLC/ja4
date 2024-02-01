@@ -8,17 +8,17 @@ Create an issue or contact john@foxio.io with any questions.
 
 ## Install
 #### Windows
-1. Copy [windows/ja4.dll](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/windows/ja4.dll) to your global plugins directory under epan.  
+1. Copy [binaries/windows/4.2.0/ja4.dll](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/windows/4.2.0/ja4.dll) to your global plugins directory under epan.  
 ```C:\Program Files\Wireshark\plugins\4.2\epan\```  
 2. Start Wireshark
 
 #### Mac
-1. For Macs with ARM chips (M1/M2/etc) copy [mac/arm/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/mac/arm/ja4.so), for Macs with Intel chips (x86/x64) copy [mac/intel/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/mac/intel/ja4.so), to your global plugins directory under epan.  
+1. For Macs with ARM chips (M1/M2/etc) copy [binaries/mac/4.2.0/arm/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/mac/4.2.0/arm/ja4.so), for Macs with Intel chips (x86/x64) copy [binaries/mac/4.2.0/intel/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/mac/4.2.0/intel/ja4.so), to your global plugins directory under epan.  
 ```/Applications/Wireshark.app/Contents/PlugIns/wireshark/4-2/epan/```  
 2. Start Wireshark
 
 #### Linux
-1. Copy [linux/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/linux/ja4.so) to your global plugins directory under epan.  
+1. Copy [binaries/linux/4.0.6/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/linux/4.0.6/ja4.so) to your global plugins directory under epan.  
 ```plugins/4.0/epan/```  
 2. Start Wireshark
 
