@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Generate a JA4SSH fingerprint every 200 *SSH* (layer 7) packets.
+
 ## [0.17.0] - 2024-01-31
 
 ### Fixed

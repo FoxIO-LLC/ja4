@@ -28,11 +28,11 @@ pub(crate) struct ConfSsh {
     pub(crate) enabled: bool,
     /// JA4SSH (SSH traffic fingerprinting) runs every `sample_size` packets
     /// per SSH TCP stream.
-    pub(crate) sample_size: u32,
+    pub(crate) sample_size: usize,
 }
 
 impl ConfSsh {
-    const DEFAULT_SAMPLE_SIZE: u32 = 200;
+    const DEFAULT_SAMPLE_SIZE: usize = 200;
 
     fn prepare(mut self) -> Self {
         if self.enabled && self.sample_size == 0 {

@@ -7,7 +7,7 @@
 [ssh]
 # enabled = true
 
-## How many packets to collect per SSH TCP stream before generating a JA4SSH fingerprint
+## New JA4SSH fingerprint is generated every `sample_size` SSH packets
 # sample_size = 200
 
 

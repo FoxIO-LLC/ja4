@@ -172,9 +172,8 @@ expression: output
   ja4l_c: 77_128
   ja4l_s: 12897_50
   ja4ssh:
-  - c36s36_c55s87_c51s5
-  - c36s36_c49s90_c59s2
-  - c36s36_c14s23_c15s0
+  - c36s36_c76s124_c74s5
+  - c36s52_c42s76_c51s2
   ssh_extras:
     hassh: 06046964c022c6407d15a27b12a6a4fb
     hassh_server: 699519fdcc30cbcd093d5cd01e4b1d56
