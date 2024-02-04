@@ -10,8 +10,6 @@
 use std::fmt;
 
 use itertools::Itertools as _;
-#[cfg(test)]
-use pretty_assertions::assert_eq;
 use serde::Serialize;
 
 use crate::{Error, FormatFlags, Packet, PacketNum, Proto, Result};
@@ -58,7 +56,8 @@ struct HttpStats {
     has_referer_header: bool,
     language: Option<String>,
     headers: Vec<String>,
-    cookies: Vec<String>,
+    // Reference: https://datatracker.ietf.org/doc/html/rfc6265#section-4.2.1
+    cookie_pairs: Vec<(String, Option<String>)>,
 }
 
 impl HttpStats {
@@ -94,9 +93,9 @@ impl HttpStats {
             })
             .collect();
 
-        let cookies = match http.first("http.cookie") {
+        let cookie_pairs = match http.first("http.cookie") {
             Err(_) => Vec::new(),
-            Ok(s) => s.split("; ").map(str::to_owned).collect(),
+            Ok(s) => cookie_pairs(s.split("; ")).collect(),
         };
 
         Ok(Some(Self {
@@ -107,7 +106,7 @@ impl HttpStats {
             has_referer_header,
             language,
             headers,
-            cookies,
+            cookie_pairs,
         }))
     }
 
@@ -146,10 +145,7 @@ impl HttpStats {
             .collect();
 
         // Reference: https://datatracker.ietf.org/doc/html/rfc7540#section-8.1.2.5
-        let cookies = http2
-            .values("http2.headers.cookie")
-            .map(str::to_owned)
-            .collect();
+        let cookie_pairs = cookie_pairs(http2.values("http2.headers.cookie")).collect();
 
         Ok(Some(Self {
             packet: store_pkt_num.then_some(http2.packet_num),
@@ -159,7 +155,7 @@ impl HttpStats {
             has_referer_header,
             language,
             headers,
-            cookies,
+            cookie_pairs,
         }))
     }
 
@@ -172,7 +168,7 @@ impl HttpStats {
             has_referer_header,
             language,
             headers,
-            mut cookies,
+            mut cookie_pairs,
         } = self;
         let FormatFlags {
             with_raw,
@@ -187,16 +183,12 @@ impl HttpStats {
         let first_chunk =
             format!("{req_method}{version}{cookie_marker}{referer_marker}{nr_headers:02}{lang}");
 
-        let mut cookie_names = cookie_names(&cookies).collect_vec();
-
         if !original_order {
-            cookie_names.sort_unstable();
-            cookies.sort_unstable();
+            cookie_pairs.sort_unstable();
         }
-
+        let cookie_names = joined_cookie_names(&cookie_pairs);
+        let cookies = joined_cookie_pairs(cookie_pairs);
         let headers = headers.into_iter().join(",");
-        let cookie_names = cookie_names.into_iter().join(",");
-        let cookies = cookies.into_iter().join(",");
 
         let ja4h_r = with_raw.then(|| {
             let s = format!("{first_chunk}_{headers}_{cookie_names}_{cookies}");
@@ -227,37 +219,45 @@ impl HttpStats {
     }
 }
 
-/// Returns an iterator of owned cookie names.
-fn cookie_names<S: AsRef<str>>(cookies: &[S]) -> impl Iterator<Item = String> + '_ {
-    cookies.iter().map(|cookie| {
-        // SAFETY: `split` never returns an empty iterator, so it's safe to unwrap.
-        cookie.as_ref().split('=').next().unwrap().to_owned()
-    })
+fn cookie_pairs<'a, I>(cookies: I) -> impl Iterator<Item = (String, Option<String>)> + 'a
+where
+    I: IntoIterator<Item = &'a str> + 'a,
+{
+    cookies
+        .into_iter()
+        .map(|cookie| match cookie.split_once('=') {
+            None => (cookie.to_owned(), None),
+            Some((name, value)) => (name.to_owned(), Some(value.to_owned())),
+        })
 }
 
-#[test]
-fn test_cookie_names() {
-    let no_cookies: [&str; 0] = [];
-    assert!(cookie_names(&no_cookies).next().is_none());
+fn joined_cookie_names<'a, I>(cookie_pairs: I) -> String
+where
+    I: IntoIterator<Item = &'a (String, Option<String>)>,
+{
+    cookie_pairs
+        .into_iter()
+        .map(|(name, _)| {
+            assert!(!name.is_empty());
+            name.to_owned()
+        })
+        .join(",")
+}
 
-    assert_eq!(
-        cookie_names(&["foo=bar", "baz=qux"]).collect::<Vec<_>>(),
-        ["foo", "baz"]
-    );
-
-    assert_eq!(
-        cookie_names(&["a=5", "c=3=4=5", "b=2", "a=1", "a=4"]).collect::<Vec<_>>(),
-        ["a", "c", "b", "a", "a"]
-    );
-
-    assert_eq!(
-        cookie_names(&[
-            "pardot=tee2foreb3fefpgvk8u1056vt3",
-            "visitor_id413862-hash=1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b",
-            "visitor_id413862=286585660",
-        ]).collect_vec(),
-        ["pardot", "visitor_id413862-hash", "visitor_id413862"]
-    );
+fn joined_cookie_pairs<I>(cookie_pairs: I) -> String
+where
+    I: IntoIterator<Item = (String, Option<String>)>,
+{
+    cookie_pairs
+        .into_iter()
+        .map(|(name, value)| {
+            assert!(!name.is_empty());
+            match value {
+                None => name.to_owned(),
+                Some(value) => format!("{name}={value}"),
+            }
+        })
+        .join(",")
 }
 
 #[derive(Debug, Serialize)]
@@ -455,7 +455,7 @@ fn test_http_version() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use expect_test::expect;
+    use expect_test::{expect, Expect};
 
     #[test]
     fn test_http_stats_into_out() {
@@ -487,10 +487,7 @@ mod tests {
                 .trim_end()
         };
         let language = Some(get_header_value("Accept-Language: ").to_owned());
-        let cookies = get_header_value("Cookie: ")
-            .split("; ")
-            .map(str::to_owned)
-            .collect();
+        let cookie_pairs = cookie_pairs(get_header_value("Cookie: ").split("; ")).collect();
         let headers = pre_headers
             .into_iter()
             .map(|s| s.split(':').next().unwrap().to_owned())
@@ -505,7 +502,7 @@ mod tests {
             has_referer_header: true,
             language,
             headers,
-            cookies,
+            cookie_pairs,
         };
 
         let out = stats.clone().into_out(FormatFlags::default());
@@ -558,5 +555,149 @@ mod tests {
               "ja4h": "ge11cr13enus_88d2d584d47f_0f2659b474bf_161698816dab"
             }"#]]
         .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
+    }
+
+    #[test]
+    fn test_cookie_pairs() {
+        // No cookies
+        assert!(cookie_pairs([]).next().is_none());
+
+        assert_eq!(
+            cookie_pairs(["no-value"]).collect::<Vec<_>>(),
+            [("no-value".to_owned(), None)]
+        );
+
+        assert_eq!(
+            cookie_pairs(["multiple=equal=signs"]).collect::<Vec<_>>(),
+            [("multiple".to_owned(), Some("equal=signs".to_owned()))]
+        );
+
+        assert_eq!(
+            cookie_pairs(["foo=bar", "baz=qux"]).collect::<Vec<_>>(),
+            [
+                ("foo".to_owned(), Some("bar".to_owned())),
+                ("baz".to_owned(), Some("qux".to_owned())),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_cookie_pairs_sorting() {
+        fn check(actual: impl Iterator<Item = (String, Option<String>)>, expect: Expect) {
+            let actual: Vec<_> = actual.collect();
+            expect.assert_debug_eq(&actual);
+        }
+
+        let mut pairs: Vec<_> = {
+            let cookies = [
+                "pardot=tee2foreb3fefpgvk8u1056vt3",
+                "visitor_id413862-hash=1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b",
+                "visitor_id413862=286585660",
+                "a=y=z",
+                "a=x",
+                "no-value",
+            ];
+            cookie_pairs(cookies).collect()
+        };
+
+        // Original order
+        check(
+            pairs.clone().into_iter(),
+            expect![[r#"
+                [
+                    (
+                        "pardot",
+                        Some(
+                            "tee2foreb3fefpgvk8u1056vt3",
+                        ),
+                    ),
+                    (
+                        "visitor_id413862-hash",
+                        Some(
+                            "1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b",
+                        ),
+                    ),
+                    (
+                        "visitor_id413862",
+                        Some(
+                            "286585660",
+                        ),
+                    ),
+                    (
+                        "a",
+                        Some(
+                            "y=z",
+                        ),
+                    ),
+                    (
+                        "a",
+                        Some(
+                            "x",
+                        ),
+                    ),
+                    (
+                        "no-value",
+                        None,
+                    ),
+                ]
+            "#]],
+        );
+
+        // Sorted
+        pairs.sort_unstable();
+        check(
+            pairs.into_iter(),
+            expect![[r#"
+                [
+                    (
+                        "a",
+                        Some(
+                            "x",
+                        ),
+                    ),
+                    (
+                        "a",
+                        Some(
+                            "y=z",
+                        ),
+                    ),
+                    (
+                        "no-value",
+                        None,
+                    ),
+                    (
+                        "pardot",
+                        Some(
+                            "tee2foreb3fefpgvk8u1056vt3",
+                        ),
+                    ),
+                    (
+                        "visitor_id413862",
+                        Some(
+                            "286585660",
+                        ),
+                    ),
+                    (
+                        "visitor_id413862-hash",
+                        Some(
+                            "1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b",
+                        ),
+                    ),
+                ]
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_joined_cookies() {
+        let cookie_pairs = [
+            ("a".to_owned(), Some("1".to_owned())),
+            ("b".to_owned(), None),
+            ("c".to_owned(), Some("3".to_owned())),
+            ("d".to_owned(), Some(String::new())),
+        ];
+
+        assert_eq!(joined_cookie_names(&cookie_pairs), "a,b,c,d");
+        assert_eq!(joined_cookie_pairs(cookie_pairs), "a=1,b,c=3,d=");
     }
 }
