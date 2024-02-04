@@ -187,15 +187,19 @@ impl HttpStats {
         let first_chunk =
             format!("{req_method}{version}{cookie_marker}{referer_marker}{nr_headers:02}{lang}");
 
+        let mut cookie_names = cookie_names(&cookies).collect_vec();
+
         if !original_order {
+            cookie_names.sort_unstable();
             cookies.sort_unstable();
         }
 
         let headers = headers.into_iter().join(",");
-        let (cookie_keys, cookie_items) = cookie_keys_and_items(&cookies);
+        let cookie_names = cookie_names.into_iter().join(",");
+        let cookies = cookies.into_iter().join(",");
 
         let ja4h_r = with_raw.then(|| {
-            let s = format!("{first_chunk}_{headers}_{cookie_keys}_{cookie_items}");
+            let s = format!("{first_chunk}_{headers}_{cookie_names}_{cookies}");
             if original_order {
                 Ja4hRawFingerprint::Unsorted(s)
             } else {
@@ -204,10 +208,10 @@ impl HttpStats {
         });
 
         let headers = crate::hash12(headers);
-        let cookie_keys = crate::hash12(cookie_keys);
-        let cookie_items = crate::hash12(cookie_items);
+        let cookie_names = crate::hash12(cookie_names);
+        let cookies = crate::hash12(cookies);
         let ja4h = {
-            let s = format!("{first_chunk}_{headers}_{cookie_keys}_{cookie_items}");
+            let s = format!("{first_chunk}_{headers}_{cookie_names}_{cookies}");
             if original_order {
                 Ja4hFingerprint::Unsorted(s)
             } else {
@@ -223,47 +227,36 @@ impl HttpStats {
     }
 }
 
-/// Returns a comma-separated list of cookie keys ("key1,key2,key3") and a comma-separated
-/// list of cookies ("key1=value1,key2=value2,key3=value3") .
-fn cookie_keys_and_items<S: AsRef<str>>(cookies: &[S]) -> (String, String) {
-    cookies
-        .iter()
-        .fold((String::new(), String::new()), |(keys, items), cookie| {
-            let cookie = cookie.as_ref();
-            // SAFETY: `split` never returns an empty iterator, so it's safe to unwrap.
-            let key = cookie.split('=').next().unwrap();
-
-            let keys = if keys.is_empty() {
-                key.to_owned()
-            } else {
-                format!("{keys},{key}")
-            };
-
-            let items = if items.is_empty() {
-                cookie.to_owned()
-            } else {
-                format!("{items},{cookie}")
-            };
-
-            (keys, items)
-        })
+/// Returns an iterator of owned cookie names.
+fn cookie_names<S: AsRef<str>>(cookies: &[S]) -> impl Iterator<Item = String> + '_ {
+    cookies.iter().map(|cookie| {
+        // SAFETY: `split` never returns an empty iterator, so it's safe to unwrap.
+        cookie.as_ref().split('=').next().unwrap().to_owned()
+    })
 }
 
 #[test]
-fn test_cookie_keys_and_items() {
+fn test_cookie_names() {
+    let no_cookies: [&str; 0] = [];
+    assert!(cookie_names(&no_cookies).next().is_none());
+
     assert_eq!(
-        cookie_keys_and_items(&["foo=bar", "baz=qux"]),
-        ("foo,baz".to_owned(), "foo=bar,baz=qux".to_owned())
-    );
-    assert_eq!(
-        cookie_keys_and_items(&["a=5", "c=3", "b=2", "a=1", "a=4"]),
-        ("a,c,b,a,a".to_owned(), "a=5,c=3,b=2,a=1,a=4".to_owned())
+        cookie_names(&["foo=bar", "baz=qux"]).collect::<Vec<_>>(),
+        ["foo", "baz"]
     );
 
-    let no_cookies: [&str; 0] = [];
     assert_eq!(
-        cookie_keys_and_items(&no_cookies),
-        (String::new(), String::new())
+        cookie_names(&["a=5", "c=3=4=5", "b=2", "a=1", "a=4"]).collect::<Vec<_>>(),
+        ["a", "c", "b", "a", "a"]
+    );
+
+    assert_eq!(
+        cookie_names(&[
+            "pardot=tee2foreb3fefpgvk8u1056vt3",
+            "visitor_id413862-hash=1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b",
+            "visitor_id413862=286585660",
+        ]).collect_vec(),
+        ["pardot", "visitor_id413862-hash", "visitor_id413862"]
     );
 }
 

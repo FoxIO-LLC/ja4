@@ -16,7 +16,7 @@ use crate::{Packet, Result, Sender};
 #[derive(Debug, Default)]
 pub(crate) struct Stream {
     /// Statistics obtained from up to [`crate::conf::ConfSsh::sample_size`] packets.
-    counts: PacketCounts,
+    stats: Stats,
     /// SSH fingerprints.
     ///
     /// New entry is added every [`crate::conf::ConfSsh::sample_size`] packets.
@@ -25,11 +25,16 @@ pub(crate) struct Stream {
 }
 
 impl Stream {
-    pub(crate) fn update(&mut self, pkt: &Packet, sender: Sender, sample_size: u32) -> Result<()> {
-        self.counts.update(pkt, sender)?;
-        if self.counts.nr_packets == sample_size {
-            let counts = std::mem::take(&mut self.counts);
-            if let Some(fp) = counts.into() {
+    pub(crate) fn update(
+        &mut self,
+        pkt: &Packet,
+        sender: Sender,
+        sample_size: usize,
+    ) -> Result<()> {
+        self.stats.update(pkt, sender)?;
+        if self.stats.nr_ssh_client_packets + self.stats.nr_ssh_server_packets == sample_size {
+            let stats = std::mem::take(&mut self.stats);
+            if let Some(fp) = stats.into() {
                 self.ja4ssh.push(fp);
             }
         }
@@ -39,7 +44,7 @@ impl Stream {
 
     pub(crate) fn finish(self) -> (Vec<Fingerprint>, Option<Extras>) {
         let Stream {
-            counts,
+            stats: counts,
             mut ja4ssh,
             extras,
         } = self;
@@ -190,9 +195,7 @@ impl StreamExtras {
 }
 
 #[derive(Debug, Default)]
-struct PacketCounts {
-    /// How many packets contributed to this `Stats` instance?
-    nr_packets: u32,
+struct Stats {
     /// Key -- client TCP payload length, bytes; value -- number of packets with this length.
     /// Notes:
     ///
@@ -213,7 +216,7 @@ struct PacketCounts {
     nr_tcp_server_acks: usize,
 }
 
-impl PacketCounts {
+impl Stats {
     fn update(&mut self, pkt: &Packet, sender: Sender) -> Result<()> {
         const BARE_ACK_FLAG: &str = "0x0010";
 
@@ -239,8 +242,6 @@ impl PacketCounts {
                 Sender::Server => self.nr_tcp_server_acks += 1,
             }
         }
-
-        self.nr_packets += 1;
         Ok(())
     }
 }
@@ -249,10 +250,9 @@ impl PacketCounts {
 #[derive(Debug, Serialize)]
 pub(crate) struct Fingerprint(String);
 
-impl From<PacketCounts> for Option<Fingerprint> {
-    fn from(counters: PacketCounts) -> Self {
-        let PacketCounts {
-            nr_packets: _,
+impl From<Stats> for Option<Fingerprint> {
+    fn from(counters: Stats) -> Self {
+        let Stats {
             client_tcp_len_counts,
             server_tcp_len_counts,
             nr_ssh_client_packets,
