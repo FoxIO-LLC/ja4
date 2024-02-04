@@ -47,13 +47,6 @@ static int hf_ja4t = -1;
 static int hf_ja4ts = -1;
 
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy);
-static gboolean tap_enable;
-static gboolean client_hello_enable;
-static gboolean cert_enable;
-static gboolean http_enable;
-static gboolean ssh_enable;
-static gboolean ja4lc_enable;
-static gboolean ja4ls_enable;
 
 static dissector_handle_t ja4_handle;
 
@@ -251,9 +244,10 @@ void update_tree_item(int frame_number, tvbuff_t *tvb, proto_tree *tree, proto_t
 	    *ja4_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
 	}
 
-	proto_item *ti = proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, "");
-	proto_item_append_text(ti, "%s", str);
-	proto_item_set_generated(ti);
+	//proto_item *ti = proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, "");
+	//proto_item *ti = proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, str);
+	//proto_item_append_text(ti, "%s", str);
+	//proto_item_set_generated(ti);
 	pkt_info_t *pi = packet_table_lookup(frame_number);
 	if (!pi->complete) {
 		packet_hash_t *recorded_hash = wmem_alloc(wmem_file_scope(), sizeof(packet_hash_t));
@@ -270,15 +264,20 @@ void mark_complete(int frame_number) {
 	pi->complete = true;
 }
 
-static int display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_number) {
-
+// Wireshark columns only work if the hash is added to the tree and displayed
+// using proto_tree_add_string without using proto_item_append_text
+// Tshark OTOH takes both values from the JA4 tree as well as from here to show them
+// when using the -T fields option
+static int display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, int frame_number) {
 	pkt_info_t *pi = packet_table_lookup(frame_number);
 	if ((pi->complete)  && (pi->insert_at)){
-        	proto_item *ti = proto_tree_add_item(locate_tree(tree, pi->insert_at), proto_ja4, tvb, 0, -1, ENC_NA);
-        	proto_tree *sub = proto_item_add_subtree(ti, ett_ja4);
+        	proto_item *ja4_ti = proto_tree_add_item(locate_tree(tree, pi->insert_at), proto_ja4, tvb, 0, -1, ENC_NA);
+        	proto_tree *sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
 		for (int i=0; i< pi->num_of_hashes; i++) {
                		packet_hash_t *hash = (packet_hash_t *) wmem_array_index(pi->pkt_hashes, i);
-			proto_tree_add_string(sub, hash->hf_field, NULL, 0, 0, hash->hf_value);
+			if ((hash->hf_field == hash_val) || (hash_val == 999)) {
+				proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, hash->hf_value);
+			}
 		}
 		return pi->num_of_hashes;
 	}
@@ -733,7 +732,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		return tvb_captured_length(tvb);
 
 
-	int hashes = display_hashes_from_packet_table(tree, tvb, pinfo->num);
+	int hashes = display_hashes_from_packet_table(999, tree, tvb, pinfo->num);
 	if (hashes > 0) 
 		return tvb_captured_length(tvb);
 
@@ -937,7 +936,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			if (strcmp(field->hfinfo->abbrev, "tcp.flags") == 0) {
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 
-				// SYN for this stream
+				// SYN for this stream - signal JA4T
 				if (fvalue_get_uinteger(field->value) == 0x02) {
 					syn = 1;
 					conn->client_ttl = curr_ttl;
@@ -947,7 +946,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 					}
 				}
 
-				// SYN ACK for JA4L-S - server latency
+				// SYN ACK for JA4TS - server latency
 				if (fvalue_get_uinteger(field->value) == 0x012) {
 					syn = 2;
 					conn->server_ttl = curr_ttl;
@@ -1209,7 +1208,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 static tap_packet_status
 tap_all(void *tapdata _U_, packet_info *pinfo, epan_dissect_t *edt, const void *data _U_, tap_flags_t flags _U_)
 {
-	display_hashes_from_packet_table(edt->tree, edt->tvb, pinfo->num);
+
+	display_hashes_from_packet_table(*(int*)tapdata, edt->tree, edt->tvb, pinfo->num);
 	return TAP_PACKET_REDRAW;
 }
 
@@ -1227,13 +1227,22 @@ static void init_globals (void) {
 	set_postdissector_wanted_hfids(ja4_handle, wanted_hfids);
 
 	GString *ret _U_;
-	ret = register_tap_listener("tls", &tap_enable, "tls.handshake.type==2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &client_hello_enable, "tls.handshake.type==1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &cert_enable, "tls.handshake.type==11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("http", &http_enable, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &ja4lc_enable, "tcp.flags==0x018 && tcp.ack==1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &ja4ls_enable, "tcp.flags==0x010 && tcp.ack==1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &ssh_enable, "ssh.direction", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4s, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4s_raw, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4_raw, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4_raw_original, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4x, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tls", &hf_ja4x_raw, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("http", &hf_ja4h, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("http", &hf_ja4h_raw, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("http", &hf_ja4h_raw_original, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("http", &hf_ja4h_raw_original, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tcp", &hf_ja4l, "tcp.flags == 0x018", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tcp", &hf_ja4ls, "tcp.flags == 0x018", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tcp", &hf_ja4ssh, "ssh.direction", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tcp", &hf_ja4t, "tcp.flags == 0x002", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("tcp", &hf_ja4ts, "tcp.flags == 0x012 || tcp.flags == 0x004", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 }
 
 static void cleanup_globals (void) {
