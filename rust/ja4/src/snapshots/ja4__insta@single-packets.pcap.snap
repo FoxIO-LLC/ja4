@@ -65,5 +65,5 @@ expression: output
   src_port: 49738
   dst_port: 80
   http:
-  - ja4h: ge11cr06enus_8c2f9ef95269_d23bf79698dc_c1eaa758c543
+  - ja4h: ge11cr06enus_8c2f9ef95269_d23bf79698dc_69e42fa741fe
 
