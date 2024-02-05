@@ -22,7 +22,7 @@ if [ ! -d wireshark-$VER ]
 fi
 
 
-cp -r ../../ja4 ./plugins/epan/
+cp -r ../../source ./plugins/epan/ja4
 
 if [ ! -d build ]; then
     mkdir build 
