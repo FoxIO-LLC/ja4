@@ -44,7 +44,7 @@ JA4TScan Examples:
 | HP ILO | 5840_2_1460_00_3-6-12-24-48-60-60-60-60-60 |
 | Epson Printer | 28960_2-4-8-1-3_1460_3_1-4-8-16 |
 
-![exampleja4t1](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t1.png)
+![exampleja4t1](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t1.PNG)
 
 __JA4T Fingerprint format:__
 
@@ -81,7 +81,7 @@ Note that the JA4TS is dependant on the JA4T that was sent to it. If, for exampl
 
 JA4TScan is a tool that sends a very specific SYN packet and then listens to all SYN ACK responses. This DOES build out a TCP fingerprint of the server, similar to how JARM works for TLS servers.
 
-![exampleja4t2](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t2.png)
+![exampleja4t2](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t2.PNG)
 
 In the above example, there are 5 TCP retransmissions with different delays between them. To find the delay between them we start with the timestamp of the first SYNACK and subtract it from the next SYNACK, rounding the result to the nearest whole number in seconds. In the above example:
 
@@ -107,7 +107,7 @@ Because it is not known when the last retransmission will come in, a timeout is 
 
 Some systems will send several SYNACK retransmissions and just stop while others will send a RST (reset) after a few retransmissions. For example:
 
-![exampleja4t3](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t3.png)
+![exampleja4t3](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/exampleja4t3.PNG)
 
 In this case, the final TCP packet, a RST packet, should be appended to the last JA4TS denoted with “R” and its delay. In the above example:
 
