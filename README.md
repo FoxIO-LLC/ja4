@@ -47,6 +47,7 @@ with more to be announced...
 
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
+[Arkime](https://arkime.com/settings#ja4plus)  
 
 ## Binaries
 
