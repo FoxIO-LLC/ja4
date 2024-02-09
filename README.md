@@ -40,6 +40,8 @@ with more to be announced...
 | LummaC2 | ```JA4H=po11nn050000_d253db9d024b``` |
 | Evilginx | ```JA4=t13d191000_9dc949149365_e7c285222651``` |
 | Reverse SSH Shell | ```JA4SSH=c76s76_c71s59_c0s70``` |
+| Windows 10 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
+| Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
 
 ## Plugins
 
@@ -95,6 +97,7 @@ Current methods and implementation details:
 [JA4L: Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
 [JA4X: X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
 [JA4SSH: SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
+[JA4T: TCP Client / Server Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
 Additional JA4+ methods are in the works...
 
 ## Licensing
