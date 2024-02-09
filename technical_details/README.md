@@ -2,12 +2,13 @@
 [JA4: TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
 [JA4S: TLS Server/Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
 [JA4H: HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
-[JA4L: Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
+[JA4L: Light Latency Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
 [JA4X: X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
 [JA4SSH: SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
+[JA4T: TCP Client / Server Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)
 
 ### JA4+ General Rules
-1. JA4+ fingerprints are split into an a_b_c format. If one wants to search just the c section of JA4H, that is represented as 'JA4H_c'. Just sections a and b of JA4H would be 'JA4H_ab'. All sections of JA4H is represented as 'JA4H'.
+1. JA4+ fingerprints are split into an a_b_c format. If one wants to show just the c section of JA4H, that is represented as 'JA4H_c'. 
 2. All hex values used to generate fingerprint hashes are in lowercase hex.
 3. All fingerprint outputs are lowercase. In the case of JA4_a, it's a lowercase string, JA4_bc is lowercase hex, and so on.
 4. '_r' denotes a raw, unhashed fingerprint. '_ro' denotes a raw, unhashed fingerprint in its original ordering (not sorted). So a raw ja4 fingerprint is represented as 'ja4_r'.  
