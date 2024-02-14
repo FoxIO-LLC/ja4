@@ -327,15 +327,15 @@ def printout (x, ja_type):
 # the finalize function just cleans up and prints the last JA4SSH hash
 def finalize_ja4ssh(stream=None):
     cache = get_cache({"hl": "tcp"})
-
     if stream:
         entry = cache[stream]
         if entry['protos'].endswith(":ssh"):
             to_ja4ssh(entry)
             printout(entry, 'JA4SSH')
             del(cache[stream])
+            cache[stream] = {}
 
-    if not stream:
+    if stream is None:
         for stream_id, entry in cache.items():
             if entry['protos'].endswith(":ssh"):
                 to_ja4ssh(entry)
@@ -566,7 +566,7 @@ def main():
                     print (e)
                     pass
 
-    finalize_ja4ssh() if 'ja4ssh' in output_types else None
+    #finalize_ja4ssh() if 'ja4ssh' in output_types else None
     finalize_ja4() if ('ja4' in output_types or 'ja4s' in output_types) else None
 
     if fp_out and mode == 'json':
