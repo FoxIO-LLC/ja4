@@ -333,7 +333,6 @@ def finalize_ja4ssh(stream=None):
             to_ja4ssh(entry)
             printout(entry, 'JA4SSH')
             del(cache[stream])
-            cache[stream] = {}
 
     if stream is None:
         for stream_id, entry in cache.items():
