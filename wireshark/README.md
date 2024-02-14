@@ -27,10 +27,12 @@ JA4+ fields are under ja4.*
 JA4: ```ja4.ja4```  
 JA4S: ```ja4.ja4s```  
 JA4H: ```ja4.ja4h```  
-JA4L-C: ```ja4.ja4lc```  
-JA4L-S: ```ja4.ja4ls```  
+JA4L: ```ja4.ja4l```  
+JA4LS: ```ja4.ja4ls```  
 JA4X: ```ja4.ja4x```  
 JA4SSH: ```ja4.ja4ssh```  
+JA4T: ```ja4.ja4t```  
+JA4TS: ```ja4.ja4ts```  
 
 Add JA4+ to your columns for easy identification and sorting. Go to ```Preferences...``` and add as follows:
 
