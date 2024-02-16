@@ -162,6 +162,12 @@ typedef struct {
 	int client_latency;
 	int server_latency;
 
+	//Added for JA4T RST issue
+	int mss_val;
+	int window_scale;
+	int window_size;
+	wmem_strbuf_t *tcp_options;
+
 	// used for Ja4TS
 	nstime_t syn_ack_times[10];
 	nstime_t rst_time;
@@ -330,6 +336,7 @@ conn_info_t *conn_lookup (char proto, int stream) {
 		data->server_pkts = 0;
 		data->tcp_client_acks = 0;
 		data->tcp_server_acks = 0;
+	        data->tcp_options = NULL;
 
 		nstime_set_zero(&data->timestamp_A);
 		nstime_set_zero(&data->timestamp_B);
@@ -618,14 +625,14 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 		wmem_strbuf_append_printf(display, "%c", '_');
 		for (int i=1; i<conn->syn_ack_count; i++) {
 			nstime_delta(&latency, &conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
-			wmem_strbuf_append_printf(display, "%d", (int) latency.secs);
+			wmem_strbuf_append_printf(display, "%d", (int) latency.nsecs / 100000000);
 			if (i < (conn->syn_ack_count - 1)) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
 		if (conn->rst_time.secs != 0) {
 			nstime_delta(&latency, &conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
-			wmem_strbuf_append_printf(display, "-R%d", (int) latency.secs);
+			wmem_strbuf_append_printf(display, "-R%d", (int) latency.nsecs / 100000000);
 		}
 	}
 
@@ -962,7 +969,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 				// Add RST for JA4T
 				if (fvalue_get_uinteger(field->value) == 0x004) {
-					syn = 2;
+					syn = 3;
 					conn->rst_time.secs = packet_time->secs;
 					conn->rst_time.nsecs = packet_time->nsecs;
 				}
@@ -1134,6 +1141,23 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 	}
 	if (syn == 2) {
 		conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
+		conn->window_scale = ja4t_data.window_scale;
+		conn->window_size = ja4t_data.window_size;
+		conn->mss_val = ja4t_data.mss_val;
+		//wmem_strbuf_append_printf(conn->tcp_options, "%s", wmem_strbuf_get_str(ja4t_data.tcp_options));
+		if (conn->tcp_options == NULL) 
+	            conn->tcp_options = wmem_strbuf_new(wmem_file_scope(), wmem_strbuf_get_str(ja4t_data.tcp_options));
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
+		mark_complete(pinfo->num);
+	}
+
+	if (syn == 3) {
+		conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
+		ja4t_data.window_scale = conn->window_scale;
+		ja4t_data.window_size = conn->window_size;
+		ja4t_data.mss_val = conn->mss_val;
+		if (conn->tcp_options != NULL)
+		    wmem_strbuf_append_printf(ja4t_data.tcp_options, "%s", wmem_strbuf_get_str(conn->tcp_options));
 		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
 		mark_complete(pinfo->num);
 	}
