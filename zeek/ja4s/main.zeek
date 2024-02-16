@@ -1,0 +1,148 @@
+# Copyright (c) 2024, FoxIO, LLC.
+# All rights reserved.
+# Licensed under FoxIO License 1.1
+# For full license text and more details, see the repo root https://github.com/FoxIO-LLC/ja4
+# JA4+ by John Althouse
+# Zeek script by Johanna Johnson
+
+module FINGERPRINT::JA4S;
+
+export {
+  # The server fingerprint context and logging format
+  type Info: record {
+    # The connection uid which this fingerprint represents
+    uid: string &log &optional;
+
+    # The server hello fingerprint
+    ja4s: string &log &default="";
+
+    # The server hello fingerprint with the raw array output
+    r: string &log &default="";
+
+    # If this context is ready to be logged
+    done: bool &default=F;
+  };
+
+  # Logging boilerplate
+  redef enum Log::ID += { LOG };
+  global log_fingerprint_ja4s: event(rec: Info);
+  global log_policy: Log::PolicyHook;
+}
+
+redef record FINGERPRINT::Info += {
+  ja4s: FINGERPRINT::JA4S::Info &default=[];
+};
+
+export {
+  type ServerHello: record {
+
+    # The highest TLS version found in the supported versions extension
+    # or the TLS record
+    version: count &optional;
+
+    cipher: count &optional;
+
+    # The extensions present in the ServerHello, GREASE removed
+    extension_codes: vector of count &default=vector();
+
+    alpn: string &default = "00";
+  };
+}
+
+redef record FINGERPRINT::Info += {
+  server_hello: ServerHello &default=[];
+};
+
+
+# Create the log stream and file
+event zeek_init() &priority=5 {
+  Log::create_stream(FINGERPRINT::JA4S::LOG,
+    [$columns=FINGERPRINT::JA4S::Info, $ev=log_fingerprint_ja4s, $path="fingerprint_ja4s", $policy=log_policy]
+  );
+}
+
+event ssl_server_hello(c: connection, version: count, record_version: count, possible_ts: time, 
+  server_random: string, session_id: string, cipher: count, comp_method: count) {
+  if(!c?$fp) { c$fp = []; }
+
+  if (!c$fp?$server_hello) {
+      c$fp$server_hello = [];
+  }
+  
+  c$fp$server_hello$version =  version;
+  c$fp$server_hello$cipher = cipher;
+}
+
+# For each extension, ignoring GREASE, build up an array of code in the order they appear
+event ssl_extension(c: connection, is_client: bool, code: count, val: string) {
+  if(!c?$fp) { c$fp = []; }
+  if (code in FINGERPRINT::TLS_GREASE_TYPES) { return; }  # Will we see grease from the server?
+  if (!is_client) {
+    if (!c$fp?$server_hello) {
+      c$fp$server_hello = [];
+    }
+    c$fp$server_hello$extension_codes += code;
+  }
+}
+
+# Grab the server selected ALPN
+event ssl_extension_application_layer_protocol_negotiation(c: connection, is_client: bool, protocols: string_vec) {
+  if(!c?$fp) { c$fp = []; }
+  if (!is_client && |protocols| > 0) {
+    # NOTE:  Assumes the server only returns one ALPN, there might be a bypass if multiple are returned and the last
+    # or a random one is used
+    c$fp$server_hello$alpn = protocols[0];
+  }
+}
+
+# Make the JA4S_a string
+function make_a(c: connection): string {
+  local proto: string = "0";
+  if (c$conn$proto == tcp) {
+    proto = "t";    
+  # Below are issues shared with JA4
+  # TODO - does this even work? which quic analzyer do i need to use?
+  # TODO - DTLS is not TCP but its also not QUIC. The standard doesn't handle DTLS?
+  } else if (c$conn$proto == udp && "gquic" in c$service) {
+    proto = "q";
+  }
+
+  local version = FINGERPRINT::TLS_VERSION_MAPPER[c$fp$server_hello$version];
+
+
+  local ec_count = "00";
+  if (|c$fp$server_hello$extension_codes| > 99) {
+    ec_count = "99";
+  } else {
+    ec_count = fmt("%02d", |c$fp$server_hello$extension_codes|);
+  }
+
+  local alpn: string = "00";
+  if (c$fp$server_hello?$alpn && |c$fp$server_hello$alpn| > 0) {
+    alpn = c$fp$server_hello$alpn[0] + c$fp$server_hello$alpn[-1];
+  }
+
+  local a: string = "";  
+  a = proto;
+  a += version;
+  a += ec_count;
+  a += alpn;
+
+  return a;
+}
+
+event connection_state_remove(c: connection) {
+  if (!c?$fp || !c$fp?$server_hello || !c$fp$server_hello?$version) { return; }
+
+  local ja4s_a = make_a(c);
+  local ja4s_b = fmt("%04x", c$fp$server_hello$cipher);
+  local ja4s_c = FINGERPRINT::vector_of_count_to_str(c$fp$server_hello$extension_codes);
+  local delim =  FINGERPRINT::delimiter;
+
+  c$fp$ja4s$uid = c$uid;  
+  c$fp$ja4s$r = ja4s_a + delim + ja4s_b + delim + ja4s_c;
+  c$fp$ja4s$ja4s = ja4s_a + delim + ja4s_b + delim + FINGERPRINT::sha256_12(ja4s_c);
+
+  Log::write(FINGERPRINT::JA4S::LOG, c$fp$ja4s);
+
+}

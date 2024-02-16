@@ -1,9 +1,9 @@
-# Copyright (c) 2023, FoxIO, LLC.
+# Copyright (c) 2024, FoxIO, LLC.
 # All rights reserved.
 # JA4 TLS Client Fingerprinting is Open-Source, Licensed under BSD 3-Clause
 # For full license text and more details, see the repo root https://github.com/FoxIO-LLC/ja4
 # JA4 by John Althouse
-# Zeek script by Anthony Kasza and Caleb Yu
+# Zeek script by Anthony Kasza, Caleb Yu, and Johanna Johnson
 
 module FINGERPRINT::JA4;
 
@@ -39,14 +39,6 @@ redef record FINGERPRINT::Info += {
   ja4: FINGERPRINT::JA4::Info &default=[];
 };
 
-redef record SSL::Info += {
-  ja4: string &optional &log;
-  # Uncomment if you wish to log raw and/or unsorted here and at the bottom of script
-  # ja4_r: string &optional &log;
-  # ja4_o: string &optional &log;
-  # ja4_ro: string &optional &log;
-};
-
 # Create the log stream and file
 event zeek_init() &priority=5 {
   Log::create_stream(FINGERPRINT::JA4::LOG,
@@ -57,13 +49,11 @@ event zeek_init() &priority=5 {
 # Make the JA4_a string
 function make_a(c: connection): string {
   local proto: string = "0";
-  local proto_string: string = fmt("%s",c$id$orig_p);
-  proto_string = proto_string[-3:];
-  if (proto_string == "tcp") {
+  if (c$conn$proto == tcp) {
     proto = "t";
-  # TODO - does this even work? which quic analyzer do i need to use?
+  # TODO - does this eeven work? which quic analzyer do i need to use?
   # TODO - DTLS is not TCP but its also not QUIC. The standard doesn't handle DTLS?
-  } else if (proto_string == "udp") {
+  } else if (c$conn$proto == udp && "gquic" in c$service) {
     proto = "q";
   }
 
@@ -71,7 +61,7 @@ function make_a(c: connection): string {
   local sni: string = "i";
   if (c$fp$client_hello?$sni && |c$fp$client_hello$sni| > 0) {
     # This doesn't actually validate that the SNI value is a domain name.
-    #  Doing that would require checking that the string has a value TLD, a valid number of
+    #  Doign that would require checking that the string has a value TLD, a valid number of 
     #  subdomains, only valid characters, and likely other checks too.
     #  Consider the example SNI value of "foo.localhost", it's not a real domain but is also not an IP address
     if (c$fp$client_hello$sni[0] != fmt("%s", c$id$resp_h)) {
@@ -98,7 +88,11 @@ function make_a(c: connection): string {
     ec_count = fmt("%02d", |c$fp$client_hello$extension_codes|);
   }
 
-  local version = FINGERPRINT::TLS_VERSION_MAPPER[c$fp$client_hello$version];
+  # TODO - Investigate zeek bug returning invalid versions (testing\tls-bad-version.pcapng)
+  local version: string = "00";
+  if ( c$fp$client_hello$version in FINGERPRINT::TLS_VERSION_MAPPER ) {
+    version = FINGERPRINT::TLS_VERSION_MAPPER[c$fp$client_hello$version];
+  } 
 
   local a: string = "";  
   a = proto;
@@ -110,47 +104,20 @@ function make_a(c: connection): string {
   return a;
 }
 
-# Format a vector of count type to a string type
-function vector_of_count_to_str(input: vector of count, format_str: string &default="%04x", dlimit: string &default=","): string {
-  local output: string = "";
-  for (idx, val in input) {
-    output += fmt(format_str, val);
-    if (idx < |input|-1) {
-      output += dlimit;
-    }
-  }
-  return output;
-}
-
-# Sort a vector of count by the count values
-function order_them(input: vector of count): vector of count {
-  local ordering: vector of count = order(input);
-  local output: vector of count = vector();
-  for (idx, val in ordering) {
-    output += input[val];
-  }
-  return output;
-}
-
 # Produce the JA4_b hash value
 function b_hash(input: vector of count): string {
-  local sha256_object = sha256_hash_init();
-  sha256_hash_update(sha256_object, vector_of_count_to_str(input));
-  return sha256_hash_finish(sha256_object)[:12];
+  return FINGERPRINT::sha256_12(FINGERPRINT::vector_of_count_to_str(input));
 }
 
 # Produce the JA4_c hash value
-function c_hash(input: string): string {
-  local sha256_object = sha256_hash_init();
-  sha256_hash_update(sha256_object, input);
-  return sha256_hash_finish(sha256_object)[:12];
+function c_hash(input: string): string {  
+  return FINGERPRINT::sha256_12(input);
 }
 
 # Just before the connection's state is flushed from the sensor's memory...
-# Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
-event ssl_client_hello(c: connection, version: count, record_version: count, possible_ts: time,
- client_random: string, session_id: string, ciphers: index_vec, comp_methods: index_vec) {
-  if (!c?$fp || !c$fp?$client_hello) { return; }
+#  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
+event connection_state_remove(c: connection) {
+  if (!c?$fp || !c$fp?$client_hello || !c$fp$client_hello?$version) { return; }
 
   c$fp$ja4$uid = c$uid;
 
@@ -165,28 +132,30 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
     extensions += code;
   }
 
-  local ja4_c: string = vector_of_count_to_str(order_them(extensions));
+  local ja4_c: string = FINGERPRINT::vector_of_count_to_str(
+    FINGERPRINT::order_vector_of_count(extensions));
   ja4_c += FINGERPRINT::delimiter;
-  ja4_c += vector_of_count_to_str(c$fp$client_hello$signature_algos);
-
+  ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
+  
   # ja4, ja4, ja4, ja4, ja4, ja4. say it some more. ja4, ja4, ja4.
   c$fp$ja4$ja4 = ja4_a;
   c$fp$ja4$ja4 += FINGERPRINT::delimiter;
-  c$fp$ja4$ja4 += b_hash(order_them(ja4_b));
+  c$fp$ja4$ja4 += b_hash(FINGERPRINT::order_vector_of_count(ja4_b));
   c$fp$ja4$ja4 += FINGERPRINT::delimiter;
   c$fp$ja4$ja4 += c_hash(ja4_c);
 
   # ja4_r
   c$fp$ja4$r = ja4_a;
   c$fp$ja4$r += FINGERPRINT::delimiter;
-  c$fp$ja4$r += vector_of_count_to_str(order_them(ja4_b));
+  c$fp$ja4$r += FINGERPRINT::vector_of_count_to_str(
+    FINGERPRINT::order_vector_of_count(ja4_b));
   c$fp$ja4$r += FINGERPRINT::delimiter;
   c$fp$ja4$r += ja4_c;
 
-  # original extensions ordering
-  ja4_c = vector_of_count_to_str(extensions);
+  # original extensions ordering, including APPLN and SNI
+  ja4_c = FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$extension_codes);
   ja4_c += FINGERPRINT::delimiter;
-  ja4_c += vector_of_count_to_str(c$fp$client_hello$signature_algos);
+  ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
 
   # ja4_o
   c$fp$ja4$o = ja4_a;
@@ -198,16 +167,11 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
   # ja4_ro
   c$fp$ja4$ro = ja4_a;
   c$fp$ja4$ro += FINGERPRINT::delimiter;
-  c$fp$ja4$ro += vector_of_count_to_str(ja4_b);
+  c$fp$ja4$ro += FINGERPRINT::vector_of_count_to_str(ja4_b);
   c$fp$ja4$ro += FINGERPRINT::delimiter;
   c$fp$ja4$ro += ja4_c;
 
   # fingerprinting is marked as done and it is logged
   c$fp$ja4$done = T;
   Log::write(FINGERPRINT::JA4::LOG, c$fp$ja4);
-  c$ssl$ja4 = c$fp$ja4$ja4;
-  # Uncomment for logging raw and unsorted JA4
-  # c$ssl$ja4_r = c$fp$ja4$r; # JA4_r (raw fingerprint)
-  # c$ssl$ja4_o = c$fp$ja4$o; # JA4_o (Original Ordering, not sorted, fingerprint)
-  # c$ssl$ja4_ro = c$fp$ja4$ro; # JA4_ro (raw fingerprint with original ordering, closest to what was seen on the wire)
 }

@@ -1,34 +1,3 @@
-# Copyright (c) 2023, FoxIO, LLC.
-# All rights reserved.
-# JA4 TLS Client Fingerprinting is Open-Source, Licensed under BSD 3-Clause
-# For full license text and more details, see the repo root https://github.com/FoxIO-LLC/ja4
-# JA4 by John Althouse
-# Zeek script by Anthony Kasza and Caleb Yu
-
-module FINGERPRINT;
-
-export { 
-	type Info: record {}; 
-	option delimiter: string = "_";
-	global TLS_VERSION_MAPPER: table[count] of string = {
-    [256] = "s1",
-    [512] = "s2",
-    [0x0300] = "s3",
-    [0x0301] = "10",
-    [0x0302] = "11",
-    [0x0303] = "12",
-    [0x0304] = "13"
-  };
-
-	global TLS_GREASE_TYPES: set[count] = {
-    0x0a0a, 0x1a1a, 0x2a2a, 0x3a3a,
-    0x4a4a, 0x5a5a, 0x6a6a, 0x7a7a,
-    0x8a8a, 0x9a9a, 0xaaaa, 0xbaba,
-    0xcaca, 0xdada, 0xeaea, 0xfafa
-  };
-}
-redef record connection += { fp: FINGERPRINT::Info &optional; };
-
 module FINGERPRINT::JA4;
 
 export {
@@ -161,3 +130,4 @@ event ssl_extension_server_name(c: connection, is_client: bool, names: string_ve
     c$fp$client_hello$sni = names;
   }
 }
+
