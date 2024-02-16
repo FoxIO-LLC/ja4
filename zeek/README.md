@@ -9,8 +9,8 @@ See https://github.com/FoxIO-LLC/ja4 for more detail on JA4+ and implementations
 ## Install
 We will add to the Zeek package manager once development is complete.
 
-Until then, copy this directory to zeek/share/zeek/site/ja4 and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
+Until then, copy this directory to zeek/share/zeek/site/ja4plus and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
 ```
-@load ja4
+@load ja4plus
 ```
 
