@@ -39,7 +39,7 @@ redef record FINGERPRINT::Info += {
 # Create the log stream and file
 event zeek_init() &priority=5 {
   Log::create_stream(FINGERPRINT::JA4SSH::LOG,
-    [$columns=FINGERPRINT::JA4SSH::Info, $ev=log_fingerprint_ja4ssh, $path="fingerprint_ja4ssh", $policy=log_policy]
+    [$columns=FINGERPRINT::JA4SSH::Info, $ev=log_fingerprint_ja4ssh, $path="ja4ssh", $policy=log_policy]
   );
 }
 

@@ -5,6 +5,7 @@
 # JA4+ by John Althouse
 # Zeek script by Johanna Johnson
 
+@load ../config
 module FINGERPRINT::JA4S;
 
 export {
@@ -53,6 +54,15 @@ redef record FINGERPRINT::Info += {
   server_hello: ServerHello &default=[];
 };
 
+redef record SSL::Info += {
+  ja4s: string &log &default="";
+};
+
+@if(FINGERPRINT::JA4S_raw) 
+  redef record SSL::Info += {
+    ja4s_r: string &log &default="";
+  };
+@endif
 
 # Create the log stream and file
 event zeek_init() &priority=5 {
@@ -97,13 +107,8 @@ event ssl_extension_application_layer_protocol_negotiation(c: connection, is_cli
 
 # Make the JA4S_a string
 function make_a(c: connection): string {
-  local proto: string = "0";
-  if (c$conn$proto == tcp) {
-    proto = "t";    
-  # Below are issues shared with JA4
-  # TODO - does this even work? which quic analzyer do i need to use?
-  # TODO - DTLS is not TCP but its also not QUIC. The standard doesn't handle DTLS?
-  } else if (c$conn$proto == udp && "gquic" in c$service) {
+  local proto: string = "t";
+  if ("QUIC" in c$service) {
     proto = "q";
   }
 
@@ -131,7 +136,7 @@ function make_a(c: connection): string {
   return a;
 }
 
-event connection_state_remove(c: connection) {
+function do_ja4s(c: connection) {
   if (!c?$fp || !c$fp?$server_hello || !c$fp$server_hello?$version) { return; }
 
   local ja4s_a = make_a(c);
@@ -143,6 +148,17 @@ event connection_state_remove(c: connection) {
   c$fp$ja4s$r = ja4s_a + delim + ja4s_b + delim + ja4s_c;
   c$fp$ja4s$ja4s = ja4s_a + delim + ja4s_b + delim + FINGERPRINT::sha256_12(ja4s_c);
 
-  Log::write(FINGERPRINT::JA4S::LOG, c$fp$ja4s);
+  if(c?$ssl) {
+    c$ssl$ja4s = c$fp$ja4s$ja4s;
+    @if(FINGERPRINT::JA4S_raw) 
+      c$ssl$ja4s_r = c$fp$ja4s$r;
+    @endif
+  }
 
+  #Log::write(FINGERPRINT::JA4S::LOG, c$fp$ja4s);
+}
+
+hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
+  local c = lookup_connection(rec$id);
+  do_ja4s(c);
 }

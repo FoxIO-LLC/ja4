@@ -5,6 +5,8 @@
 # JA4+ by John Althouse
 # Zeek script by Johanna Johnson
 
+@load ../config
+
 module FINGERPRINT::JA4H;
 
 export {
@@ -16,7 +18,7 @@ export {
     # The HTTP client fingerprints
     ja4h: string &log &default="";
     ja4h_r: string &log &default="";
-    ja4h_o: string &log &default="";
+    ja4h_ro: string &log &default="";
   };
 
   # Logging boilerplate
@@ -29,6 +31,17 @@ export {
 redef record FINGERPRINT::Info += {
   ja4h: FINGERPRINT::JA4H::Info &default=[];
 };
+
+redef record HTTP::Info += {
+    ja4h: string &log &default="";
+};
+
+@if(FINGERPRINT::JA4H_raw) 
+    redef record HTTP::Info += {
+        ja4h_r: string &log &default="";
+        ja4h_ro: string &log &default="";
+    };
+@endif
 
 export {
   type HttpClient: record {
@@ -191,8 +204,15 @@ event http_message_done(c: connection, is_orig: bool, stat: http_message_stat)
   
   c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + ja4h_c + delim + ja4h_d;
   c$fp$ja4h$ja4h_r = ja4h_a + delim + ja4h_b_r + delim + ja4h_c_r + delim + ja4h_d_r;
-  c$fp$ja4h$ja4h_o = ja4h_a + delim + ja4h_b_o + delim + ja4h_c_o + delim + ja4h_d_o;
+  c$fp$ja4h$ja4h_ro = ja4h_a + delim + ja4h_b_o + delim + ja4h_c_o + delim + ja4h_d_o;
 
-  Log::write(FINGERPRINT::JA4H::LOG, c$fp$ja4h);
+  c$http$ja4h = c$fp$ja4h$ja4h;
+  @if(FINGERPRINT::JA4H_raw)
+    c$http$ja4h_r = c$fp$ja4h$ja4h_r;
+    c$http$ja4h_ro = c$fp$ja4h$ja4h_ro;
+  @endif
+  
+
+  #Log::write(FINGERPRINT::JA4H::LOG, c$fp$ja4h);
 
 }

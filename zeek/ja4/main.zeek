@@ -5,6 +5,8 @@
 # JA4 by John Althouse
 # Zeek script by Anthony Kasza, Caleb Yu, and Johanna Johnson
 
+@load ../config
+
 module FINGERPRINT::JA4;
 
 export {
@@ -39,6 +41,18 @@ redef record FINGERPRINT::Info += {
   ja4: FINGERPRINT::JA4::Info &default=[];
 };
 
+redef record SSL::Info += {
+  ja4: string &log &default="";
+};
+
+@if(FINGERPRINT::JA4_raw) 
+  redef record SSL::Info += {
+    ja4_o: string &log &default="";
+    ja4_r: string &log &default="";
+    ja4_ro: string &log &default="";
+  };
+@endif
+
 # Create the log stream and file
 event zeek_init() &priority=5 {
   Log::create_stream(FINGERPRINT::JA4::LOG,
@@ -49,12 +63,12 @@ event zeek_init() &priority=5 {
 # Make the JA4_a string
 function make_a(c: connection): string {
   local proto: string = "0";
-  if (c$conn$proto == tcp) {
-    proto = "t";
-  # TODO - does this eeven work? which quic analzyer do i need to use?
-  # TODO - DTLS is not TCP but its also not QUIC. The standard doesn't handle DTLS?
-  } else if (c$conn$proto == udp && "gquic" in c$service) {
+  if (c?$conn && c$conn$proto == udp && "QUIC" in c$service) {
     proto = "q";
+  } else {
+    # HACK: If  it's not quic, assume it's TCP since we can't get here without SSL
+    # TODO: Try to note the protocol when it's available in the fp$ja4 object
+    proto = "t";
   }
 
   # I wonder why the standard doesn't differential between an IP and the lack of an SNI extension?
@@ -114,10 +128,9 @@ function c_hash(input: string): string {
   return FINGERPRINT::sha256_12(input);
 }
 
-# Just before the connection's state is flushed from the sensor's memory...
-#  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
-event connection_state_remove(c: connection) {
-  if (!c?$fp || !c$fp?$client_hello || !c$fp$client_hello?$version) { return; }
+function do_ja4(c: connection) {
+  if (!c?$fp || !c$fp?$client_hello || !c$fp$client_hello?$version || c$fp$ja4$done) { return; }
+  
 
   c$fp$ja4$uid = c$uid;
 
@@ -173,5 +186,22 @@ event connection_state_remove(c: connection) {
 
   # fingerprinting is marked as done and it is logged
   c$fp$ja4$done = T;
-  Log::write(FINGERPRINT::JA4::LOG, c$fp$ja4);
+  if(c?$ssl) {
+    c$ssl$ja4 = c$fp$ja4$ja4;
+    @if(FINGERPRINT::JA4_raw) 
+        c$ssl$ja4_o = c$fp$ja4$o;
+        c$ssl$ja4_r = c$fp$ja4$r;
+        c$ssl$ja4_ro = c$fp$ja4$ro;
+    @endif
+  }
+  # uncomment for detailed separate log
+  # Log::write(FINGERPRINT::JA4::LOG, c$fp$ja4);
+}
+
+#  Just before the SSL log is written
+#  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
+
+hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
+  local c = lookup_connection(rec$id);
+  do_ja4(c);
 }

@@ -38,6 +38,11 @@ redef record FINGERPRINT::Info += {
   ja4l: FINGERPRINT::JA4L::Info &default=[];
 };
 
+redef record Conn::Info += {
+    ja4l: string &log &default = "";
+    ja4ls: string &log &default = "";
+};
+
 # Create the log stream and file
 event zeek_init() &priority=5 {
   Log::create_stream(FINGERPRINT::JA4L::LOG,
@@ -81,7 +86,8 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         c$fp$ja4l$uid = c$uid;
         c$fp$ja4l$ts = c$start_time;
         c$fp$ja4l$id = c$id;
-        Log::write(FINGERPRINT::JA4L::LOG, c$fp$ja4l);
+        #Log::write(FINGERPRINT::JA4L::LOG, c$fp$ja4l);
+        
     } else if (threshold != 1) {
         return; 
     } else {
@@ -99,4 +105,9 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
         ConnThreshold::set_packets_threshold(c,threshold + 1,T);
     }
+}
+
+event connection_state_remove(c: connection) {
+        c$conn$ja4l =  c$fp$ja4l$ja4l_c;
+        c$conn$ja4ls = c$fp$ja4l$ja4l_s;
 }
