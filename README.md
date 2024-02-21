@@ -99,7 +99,7 @@ Current methods and implementation details:
 | JA4 | JA4 | [TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
 | JA4Server | JA4S | [TLS Server Response / Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
 | JA4HTTP | JA4H | [HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
-| JA4Latency | JA4L | [Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
+| JA4Latency | JA4L | [Latency Measurment / Light Distance](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
 | JA4X509 | JA4X | [X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
 | JA4SSH | JA4SSH | [SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
 | JA4TCP | JA4T | [TCP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
