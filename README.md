@@ -94,14 +94,19 @@ All JA4+ fingerprints have an a_b_c format, delimiting the different sections th
 For example; GreyNoise is an internet listener that identifies internet scanners and is implementing JA4+ into their product. They have an actor who scans the internet with a constantly changing single TLS cipher. This generates a massive amount of completely different JA3 fingerprints but with JA4, only the b part of the JA4 fingerprint changes, parts a and c remain the same. As such, GreyNoise can track the actor by looking at the JA4_ac fingerprint (joining a+c, dropping b).
 
 Current methods and implementation details:  
-[JA4: TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
-[JA4S: TLS Server/Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
-[JA4H: HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
-[JA4L: Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
-[JA4X: X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
-[JA4SSH: SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
-[JA4T: TCP Client / Server Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
-Additional JA4+ methods are in the works...
+| Full Name | Short Name | Description |
+|---|---|---|
+| JA4 | JA4 | [TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
+| JA4Server | JA4S | [TLS Server Response / Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
+| JA4HTTP | JA4H | [HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
+| JA4Latency | JA4L | [Light Distance Locality](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
+| JA4X509 | JA4X | [X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
+| JA4SSH | JA4SSH | [SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
+| JA4TCP | JA4T | [TCP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
+| JA4TCPServer | JA4TS | [TCP Server Response Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
+| JA4TCPScan | JA4TScan | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
+
+The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
 ## Licensing
 
