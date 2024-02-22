@@ -15,3 +15,9 @@ Until then, copy this directory to zeek/share/zeek/site/ja4plus and add this lin
 @load ja4plus
 ```
 
+## Config
+Individual JA4+ methods can be enabled or disabled in config.zeek.  
+The raw output for JA4+ methods (non-hashed) can also be enabled in config.zeek
+
+## License
+See [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
