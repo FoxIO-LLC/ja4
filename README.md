@@ -4,7 +4,9 @@ JA4+ is a suite of network fingerprinting methods that are easy to use and easy 
 
 Please read this blog post for more details: [JA4+ Network Fingerprinting](https://medium.com/foxio/ja4-network-fingerprinting-9376fe9ca637)
 
-This repo includes JA4+ scripts in Python as well as Rust Binaries. 
+To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
+
+This repo includes JA4+ Python, Rust, Zeek and C, as a Wireshark plugin. 
 
 JA4/JA4+ support is being added to:  
 [GreyNoise](https://www.greynoise.io/)  
@@ -96,17 +98,19 @@ For example; GreyNoise is an internet listener that identifies internet scanners
 Current methods and implementation details:  
 | Full Name | Short Name | Description |
 |---|---|---|
-| JA4 | JA4 | [TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)  
-| JA4Server | JA4S | [TLS Server Response / Session Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.md)  
-| JA4HTTP | JA4H | [HTTP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.md)  
-| JA4Latency | JA4L | [Latency Measurment / Light Distance](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4L.md)  
-| JA4X509 | JA4X | [X509 TLS Certificate Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4X.md)  
-| JA4SSH | JA4SSH | [SSH Traffic Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4SSH.md)  
-| JA4TCP | JA4T | [TCP Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
-| JA4TCPServer | JA4TS | [TCP Server Response Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
-| JA4TCPScan | JA4TScan | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4T.md)  
+| JA4 | JA4 | TLS Client Fingerprinting  
+| JA4Server | JA4S | TLS Server Response / Session Fingerprinting
+| JA4HTTP | JA4H | HTTP Client Fingerprinting
+| JA4Latency | JA4L | Latency Measurment / Light Distance
+| JA4X509 | JA4X | X509 TLS Certificate Fingerprinting
+| JA4SSH | JA4SSH | SSH Traffic Fingerprinting
+| JA4TCP | JA4T | TCP Client Fingerprinting
+| JA4TCPServer | JA4TS | TCP Server Response Fingerprinting
+| JA4TCPScan | JA4TScan | Active TCP Fingerprint Scanner
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
+
+To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
 
 ## Licensing
 
