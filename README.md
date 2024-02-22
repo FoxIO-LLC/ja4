@@ -118,7 +118,8 @@ __JA4: TLS Client Fingerprinting__ is [open-source, BSD 3-Clause](https://github
 
 __JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, (collectively referred to as JA4+)__ are licensed under the [FoxIO License 1.1](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
 
-All JA4+ methods are patent pending.
+All JA4+ methods are patent pending.  
+JA4+ is a trademark of FoxIO
 
 JA4+ can and is being implemented into open source tools, see the [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
 
@@ -156,3 +157,5 @@ Gary Lipsky
 And engineers working at GreyNoise, Hunt, Google, ExtraHop, F5, Driftnet and others.  
 
 Contact John Althouse at john@foxio.io for licensing and questions.
+
+<sub><sup>Copyright (c) 2024, FoxIO</sup></sub>
