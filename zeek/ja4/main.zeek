@@ -3,7 +3,7 @@
 # JA4 TLS Client Fingerprinting is Open-Source, Licensed under BSD 3-Clause
 # For full license text and more details, see the repo root https://github.com/FoxIO-LLC/ja4
 # JA4 by John Althouse
-# Zeek script by Anthony Kasza, Caleb Yu, and Johanna Johnson
+# Zeek script by Anthony Kasza, Caleb Yu, and Jo Johnson
 
 @load ../config
 

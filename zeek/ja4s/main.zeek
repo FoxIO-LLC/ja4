@@ -3,7 +3,7 @@
 # Licensed under FoxIO License 1.1
 # For full license text and more details, see the repo root https://github.com/FoxIO-LLC/ja4
 # JA4+ by John Althouse
-# Zeek script by Johanna Johnson
+# Zeek script by Jo Johnson
 
 @load ../config
 module FINGERPRINT::JA4S;
