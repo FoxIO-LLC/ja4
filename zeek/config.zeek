@@ -19,6 +19,7 @@ export {
   option JA4SSH_enabled: bool = T;
 
   option JA4T_enabled: bool = T;
+  option JA4TS_enabled: bool = T;
 
   option JA4X_enabled:   bool = F;
 }
