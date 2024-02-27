@@ -2,7 +2,7 @@
 
 | Full Name | Short Name | Description |
 |---|---|---|
-| JA4 | JA4 | TLS Client Fingerprinting
+| JA4 | JA4 | [TLS Client Fingerprinting](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.md)
 | JA4Server | JA4S | TLS Server Response / Session Fingerprinting
 | JA4HTTP | JA4H | HTTP Client Fingerprinting
 | JA4Latency | JA4L | Latency Measurment / Light Distance
