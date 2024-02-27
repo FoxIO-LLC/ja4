@@ -58,7 +58,7 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
   }
 
   local no_grease_comp_methods: index_vec = vector();
-  for (idx, val in no_grease_comp_methods) {
+  for (idx, val in comp_methods) {
     if (val !in FINGERPRINT::TLS_GREASE_TYPES) {
       no_grease_comp_methods += val;
     }
