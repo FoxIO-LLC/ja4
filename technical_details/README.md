@@ -14,6 +14,8 @@
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
+Please contact john@foxio.io for in-depth implementation details.
+
 ![JA4](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.png)
 
 ![JA4S](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4S.png)
