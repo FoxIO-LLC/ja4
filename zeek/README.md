@@ -1,16 +1,26 @@
 # JA4+ for Zeek
-UNDER ACTIVE DEVELOPMENT  
-This will be updated on a daily basis until main development is complete.
-
 This will add JA4+ fingerprints to respective protocol zeek logs.  
 JA4SSH will output to it's own log.  
+
+JA4 &rarr; ```ssl.log```  
+JA4S &rarr; ```ssl.log```  
+JA4H &rarr; ```http.log```  
+JA4L &rarr; ```conn.log```  
+JA4LS &rarr; ```conn.log```  
+JA4T &rarr; ```conn.log```  
+JA4TS &rarr; ```conn.log```  
+JA4SSH &rarr; ```ja4ssh.log```  
+JA4X &rarr; ```x509.log``` (still in development)  
 
 See https://github.com/FoxIO-LLC/ja4 for more detail on JA4+ and implementations into other open source tools.
 
 ## Install
-We will add to the Zeek package manager once development is complete.
+Run the following command on your Zeek nodes:
+```
+zkg install zeek/foxio/ja4
+```
 
-Until then, copy this directory to zeek/share/zeek/site/ja4plus and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
+If you don't have the zeek package manager, copy this directory to zeek/share/zeek/site/ja4plus and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
 ```
 @load ja4plus
 ```
