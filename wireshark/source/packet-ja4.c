@@ -212,6 +212,20 @@ wmem_map_t *conn_hash = NULL; // = wmem_map_new(wmem_file_scope(), g_direct_hash
 wmem_map_t *quic_conn_hash = NULL; // Added for JA4L on quic
 wmem_map_t *packet_table = NULL; 
 
+static int timediff(nstime_t *current, nstime_t *prev)
+{
+    nstime_t result;
+    result.secs  = current->secs  - prev->secs;
+    result.nsecs = current->nsecs - prev->nsecs;
+    if (result.nsecs < 0) {
+        --result.secs;
+        result.nsecs += 1000000000L;
+    }
+    float nsecs = ((float)result.nsecs / 1000000000);
+    int diff = result.secs + (((nsecs - floor(nsecs))> 0.5) ? 1 : 0);
+    return diff;
+}
+
 pkt_info_t *packet_table_lookup (int frame_number) {
 	pkt_info_t *data = wmem_map_lookup(packet_table, GINT_TO_POINTER(frame_number));
 	if (data == NULL) {
@@ -629,15 +643,15 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 	if ((conn != NULL) && (conn->syn_ack_count > 1)) {
 		wmem_strbuf_append_printf(display, "%c", '_');
 		for (int i=1; i<conn->syn_ack_count; i++) {
-			nstime_delta(&latency, &conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
-			wmem_strbuf_append_printf(display, "%d", (int) latency.nsecs / 100000000);
+			int diff = timediff(&conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
+			wmem_strbuf_append_printf(display, "%d", diff); //(int) latency.nsecs / 100000000);
 			if (i < (conn->syn_ack_count - 1)) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
 		if (conn->rst_time.secs != 0) {
-			nstime_delta(&latency, &conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
-			wmem_strbuf_append_printf(display, "-R%d", (int) latency.nsecs / 100000000);
+			int diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
+			wmem_strbuf_append_printf(display, "-R%d", diff); //(int) latency.nsecs / 100000000);
 		}
 	}
 
