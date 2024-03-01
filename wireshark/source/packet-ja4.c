@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 #include <epan/ftypes/ftypes-int.h>
 #include <epan/ftypes/ftypes.h>
@@ -620,7 +621,6 @@ char *ja4ssh (conn_info_t *conn) {
 
 // Compute JA4T
 char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
-	nstime_t latency;
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
 	if (wmem_strbuf_get_len(data->tcp_options) > 0)
 		wmem_strbuf_truncate(data->tcp_options, wmem_strbuf_get_len(data->tcp_options)-1);
