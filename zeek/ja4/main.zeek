@@ -202,6 +202,8 @@ function do_ja4(c: connection) {
 #  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
 
 hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
-  local c = lookup_connection(rec$id);
-  do_ja4(c);
+  if(connection_exists(rec$id)){
+    local c = lookup_connection(rec$id);
+    do_ja4(c);
+  }
 }

@@ -159,6 +159,8 @@ function do_ja4s(c: connection) {
 }
 
 hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
-  local c = lookup_connection(rec$id);
-  do_ja4s(c);
+  if(connection_exists(rec$id)){
+    local c = lookup_connection(rec$id);
+    do_ja4s(c);
+  }
 }
