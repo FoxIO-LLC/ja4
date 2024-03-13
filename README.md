@@ -12,7 +12,7 @@ JA4/JA4+ support is being added to:
 [GreyNoise](https://www.greynoise.io/)  
 [Hunt](https://hunt.io/)  
 [Driftnet](https://driftnet.io/)  
-[Darksail](https://darksail.ai)  
+[DarkSail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
 [Suricata](https://github.com/OISF/suricata/pull/10095)  
