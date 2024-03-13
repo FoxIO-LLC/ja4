@@ -26,6 +26,7 @@ JA4/JA4+ support is being added to:
 [nfdump](https://github.com/phaag/nfdump)  
 [ntop's ntopng](https://github.com/ntop/ntopng)  
 [ntop's nDPI](https://github.com/ntop/nDPI)  
+[Team Cymru](https://www.team-cymru.com/)  
 with more to be announced...  
 
 ## Examples
