@@ -107,7 +107,7 @@ Current methods and implementation details:
 | JA4SSH | JA4SSH | SSH Traffic Fingerprinting
 | JA4TCP | JA4T | TCP Client Fingerprinting
 | JA4TCPServer | JA4TS | TCP Server Response Fingerprinting
-| JA4TCPScan | JA4TScan | Active TCP Fingerprint Scanner
+| JA4TCPScan | JA4TScan | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan)
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
