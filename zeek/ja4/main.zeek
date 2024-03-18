@@ -185,7 +185,7 @@ function do_ja4(c: connection) {
   c$fp$ja4$ro += ja4_c;
 
   # fingerprinting is marked as done and it is logged
-  c$fp$ja4$done = T;
+  
   if(c?$ssl) {
     c$ssl$ja4 = c$fp$ja4$ja4;
     @if(FINGERPRINT::JA4_raw) 
@@ -194,14 +194,22 @@ function do_ja4(c: connection) {
         c$ssl$ja4_ro = c$fp$ja4$ro;
     @endif
   }
+  c$fp$ja4$done = T;
   # uncomment for detailed separate log
   # Log::write(FINGERPRINT::JA4::LOG, c$fp$ja4);
+}
+
+event connection_state_remove(c: connection) {
+  # TODO: Make this only for SSL connections
+  do_ja4(c);
 }
 
 #  Just before the SSL log is written
 #  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
 
 hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
-  local c = lookup_connection(rec$id);
-  do_ja4(c);
+  if(connection_exists(rec$id)) {
+    local c = lookup_connection(rec$id);
+    do_ja4(c);
+  }
 }

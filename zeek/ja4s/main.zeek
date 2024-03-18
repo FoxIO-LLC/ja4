@@ -137,7 +137,7 @@ function make_a(c: connection): string {
 }
 
 function do_ja4s(c: connection) {
-  if (!c?$fp || !c$fp?$server_hello || !c$fp$server_hello?$version) { return; }
+  if (!c?$fp || !c$fp?$server_hello || !c$fp$server_hello?$version|| c$fp$ja4s$done) { return; }
 
   local ja4s_a = make_a(c);
   local ja4s_b = fmt("%04x", c$fp$server_hello$cipher);
@@ -154,11 +154,19 @@ function do_ja4s(c: connection) {
       c$ssl$ja4s_r = c$fp$ja4s$r;
     @endif
   }
+  c$fp$ja4s$done = T;
 
   #Log::write(FINGERPRINT::JA4S::LOG, c$fp$ja4s);
 }
 
-hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
-  local c = lookup_connection(rec$id);
+event connection_state_remove(c: connection) {
+  # TODO: Make this only for SSL connections
   do_ja4s(c);
+}
+
+hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
+  if(connection_exists(rec$id)) {
+    local c = lookup_connection(rec$id);
+    do_ja4s(c);
+  }
 }
