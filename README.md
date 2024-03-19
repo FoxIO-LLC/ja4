@@ -15,7 +15,7 @@ JA4/JA4+ support is being added to:
 [DarkSail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://github.com/OISF/suricata/pull/10095)  
+[Suricata](https://github.com/OISF/suricata/pull/10579)  
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
@@ -47,6 +47,9 @@ with more to be announced...
 | Reverse SSH Shell | ```JA4SSH=c76s76_c71s59_c0s70``` |
 | Windows 10 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
 | Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
+
+For more, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
+Feel free to do a pull request with any JA4+ data you find.
 
 ## Plugins
 
