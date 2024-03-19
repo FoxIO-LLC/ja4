@@ -20,12 +20,12 @@ IcedID Dropper,,,,,,ge11cn020000_9ed1ff1f7b03_cd8dafe26982,,,,
 IcedID ,,,,t13d201100_2b729b4bf6f3_9e7b989ebec8,t120300_c030_5e2616a54c73,,,,,
 Cobalt Strike Cat C2,,,,,,,2166164053c1_2166164053c1_30d204a01551,,,
 Cobalt Strike beacon,,,,,,ge11cn060000_4e59edc1297a_4da5efaf0cb,,,,
-SoftEther VPN,,,,t13d880900_fcb5b95cb75a_b0d3b4ac2a14,,,,,,
-SoftEther VPN,,,,,,,d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae,,,
-Qakbot Malware,,,,,,,2bab15409345_af684594efb4_000000000000,,,
-Pikabot Malware,,,,,,,1a59268f55e5_1a59268f55e5_795797892f9c,,,
-Darkgate Malware,,,,,,po10nn060000_cdb958d032b0,,,,
-Lumma Malware,,,,,,po11nn050000_d253db9d024b,,,,
+SoftEther VPN Client,,,,t13d880900_fcb5b95cb75a_b0d3b4ac2a14,,,,,,
+SoftEther VPN Server,,,,,,,d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae,,,
+Qakbot C2,,,,,,,2bab15409345_af684594efb4_000000000000,,,
+Pikabot C2,,,,,,,1a59268f55e5_1a59268f55e5_795797892f9c,,,NOT "Aegir"
+Darkgate Client,,,,,,po10nn060000_cdb958d032b0,,,,
+Lumma Client,,,,,,po11nn050000_d253db9d024b,,,,
 ,,Epson Printer,,,,,,,28960_2-4-8-1-3_1460_3_1-4-8-16,
 Cobalt Strike v4.9.1 beacon,,,Windows 10,t12i190700_d83cc789557e_16bbda4055b2,t120300_c030_52d195ce1d92,,,,,Cobalt Strike v4.9.1 over wininet
 Cobalt Strike v4.9.1 beacon,,,Windows 10,t12i210700_76e208dd3e22_16bbda4055b2,t120300_c030_52d195ce1d92,,,,,Cobalt Strike v4.9.1 over winhttp
