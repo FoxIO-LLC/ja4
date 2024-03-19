@@ -23,7 +23,7 @@ Cobalt Strike beacon,,,,,,ge11cn060000_4e59edc1297a_4da5efaf0cb,,,,
 SoftEther VPN Client,,,,t13d880900_fcb5b95cb75a_b0d3b4ac2a14,,,,,,
 SoftEther VPN Server,,,,,,,d55f458d5a6c_d55f458d5a6c_0fc8c171b6ae,,,
 Qakbot C2,,,,,,,2bab15409345_af684594efb4_000000000000,,,
-Pikabot C2,,,,,,,1a59268f55e5_1a59268f55e5_795797892f9c,,,NOT "Aegir"
+Pikabot C2,,,,,,,1a59268f55e5_1a59268f55e5_795797892f9c,,,NOT Aegir
 Darkgate Client,,,,,,po10nn060000_cdb958d032b0,,,,
 Lumma Client,,,,,,po11nn050000_d253db9d024b,,,,
 ,,Epson Printer,,,,,,,28960_2-4-8-1-3_1460_3_1-4-8-16,
