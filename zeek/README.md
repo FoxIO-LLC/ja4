@@ -25,6 +25,10 @@ If you don't have the zeek package manager, copy this directory to zeek/share/ze
 @load ja4plus
 ```
 
+## Requirements
+Currently only Zeek 6+ is supported. Corelight is on Zeek 5 still but upgrading to Zeek 6 by May.  
+We are working on making this backward compatible with Zeek 5.
+
 ## Config
 Individual JA4+ methods can be enabled or disabled in config.zeek.  
 The raw output for JA4+ methods (non-hashed) can also be enabled in config.zeek
