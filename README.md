@@ -15,7 +15,7 @@ JA4/JA4+ support is being added to:
 [DarkSail](https://darksail.ai)  
 [Arkime](https://arkime.com/)  
 [GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://github.com/OISF/suricata/pull/10579)  
+[Suricata](https://github.com/OISF/suricata/pull/10725)  
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
 [nzyme](https://www.nzyme.org/)  
@@ -27,6 +27,8 @@ JA4/JA4+ support is being added to:
 [ntop's ntopng](https://github.com/ntop/ntopng)  
 [ntop's nDPI](https://github.com/ntop/nDPI)  
 [Team Cymru](https://www.team-cymru.com/)  
+[NetQuest](https://netquestcorp.com/)  
+[Censys](https://censys.com/)  
 with more to be announced...  
 
 ## Examples
@@ -49,7 +51,7 @@ with more to be announced...
 | Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
 
 For more, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
-Feel free to do a pull request with any JA4+ data you find.
+The mapping file is unlicensed and free to use. Feel free to do a pull request with any JA4+ data you find. 
 
 ## Plugins
 
@@ -114,7 +116,7 @@ Current methods and implementation details:
 | JA4SSH | JA4SSH | SSH Traffic Fingerprinting
 | JA4TCP | JA4T | TCP Client Fingerprinting
 | JA4TCPServer | JA4TS | TCP Server Response Fingerprinting
-| JA4TCPScan | JA4TScan | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan)
+| [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan)
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
