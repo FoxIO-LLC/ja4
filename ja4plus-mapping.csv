@@ -44,3 +44,8 @@ Cobalt Strike v4.9.1 beacon,,,Windows 10,t12d210800_76e208dd3e22_16bbda4055b2,t1
 ,,Phillips Hue Bridge,,,,,,,29200_2-1-1-4-1-3_1460_3_1-2-4-8-17,
 ngrok 3.8.0,,,Windows 10,t13i190900_9dc949149365_e7c285222651,,,,,,
 ngrok 3.8.0,,,Windows 10,t13d191000_9dc949149365_e7c285222651,,,,,,
+Chromium Browser,,,,,,ge11nn08enus_050dd5cfb971_000000000000_000000000000,,,,Connection to new site over http 1.1
+Chromium Browser,,,,,,ge11nr07enus_a3e0c85f2f9f_000000000000_000000000000,,,,http 1.1
+Chromium Browser,,,,,,ge11nr08enus_307986a18ea3_000000000000_000000000000,,,,http 1.1
+ngrok 3.8.0,,,,,,ge11nn17enus_d488a5d46f42_000000000000_000000000000,,,,Chrome through ngrok
+ngrok 3.8.0,,,,,,ge11nr15enus_a978addab902_000000000000_000000000000,,,,Chrome through ngrok
