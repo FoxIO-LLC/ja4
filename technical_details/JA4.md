@@ -76,7 +76,7 @@ Is sorted to:
 ### Extension hash:
 A 12 character truncated sha256 hash of the list of extensions, sorted by hex value, followed by the list of signature algorithms, in the order that they appear (not sorted).
 
-The extension list is created using the 4 character hex values of the extensions, lower case, comma delimited, sorted (not in the order they appear). Ignore the SNI extension (0000) and the ALPN extension (0010) as we’ve already captured them in the _a_ section of the fingerprint. These values are omitted so that the same application would have the same _b_ section of the fingerprint regardless of if it were going to a domain, IP, or changing ALPNs.
+The extension list is created using the 4 character hex values of the extensions, lower case, comma delimited, sorted (not in the order they appear). Ignore the SNI extension (0000) and the ALPN extension (0010) as we’ve already captured them in the _a_ section of the fingerprint. These values are omitted so that the same application would have the same _c_ section of the fingerprint regardless of if it were going to a domain, IP, or changing ALPNs.
 
 For example:
 ```
