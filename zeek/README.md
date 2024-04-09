@@ -26,8 +26,8 @@ If you don't have the zeek package manager, copy this directory to zeek/share/ze
 ```
 
 ## Requirements
-Currently only Zeek 6+ is supported. Corelight is on Zeek 5 still but upgrading to Zeek 6 by May.  
-We are working on making this backward compatible with Zeek 5.
+Zeek 5+ is supported.  
+Zeek 6+ is required for QUIC support.  
 
 ## Config
 Individual JA4+ methods can be enabled or disabled in config.zeek.  
