@@ -21,7 +21,8 @@ export {
 function vector_of_count_to_str(input: vector of count, format_str: string &default="%04x", 
     dlimit: string &default=","): string {
     local output = "";
-    for (idx, val in input) {
+    for (idx in input) {
+        local val = input[idx];
         output += fmt(format_str, val);
         if (idx < |input|-1) {
         output += dlimit;
@@ -34,7 +35,8 @@ function vector_of_count_to_str(input: vector of count, format_str: string &defa
 function vector_of_str_to_str(input: vector of string, format_str: string &default="%s", 
     dlimit: string &default=","): string {
     local output = "";
-    for (idx, val in input) {
+    for (idx in input) {
+        local val = input[idx];
         output += fmt(format_str, val);
         if (idx < |input|-1) {
         output += dlimit;
@@ -47,7 +49,8 @@ function vector_of_str_to_str(input: vector of string, format_str: string &defau
 function order_vector_of_count(input: vector of count): vector of count {
     local ordering: vector of count = order(input);
     local outvec: vector of count = vector();
-    for (idx, val in ordering) {
+    for (idx in ordering) {
+        local val = ordering[idx];
         outvec += input[val];
     }
     return outvec;

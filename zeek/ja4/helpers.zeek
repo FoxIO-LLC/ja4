@@ -28,7 +28,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  client_hello: ClientHello &default=[];
+  client_hello: ClientHello &default=ClientHello();
 };
 
 # Format the signature and hashing algorithm codes into a single value
@@ -37,7 +37,7 @@ function make_quadword(byte1: count, byte2: count): count {
     ["0"] = 0, ["1"] = 1, ["2"] = 2, ["3"] = 3,
     ["4"] = 4, ["5"] = 5, ["6"] = 6, ["7"] = 7,
     ["8"] = 8, ["9"] = 9, ["a"] = 10, ["b"] = 11,
-    ["c"] = 12, ["d"] = 13, ["e"] = 14, ["f"] = 15,
+    ["c"] = 12, ["d"] = 13, ["e"] = 14, ["f"] = 15
   ];
   local b1 = to_lower(fmt("%02x", byte1));
   local b2 = to_lower(fmt("%02x", byte2));
@@ -49,18 +49,20 @@ function make_quadword(byte1: count, byte2: count): count {
 # This event is processed at the end of the hello, after all the extension-specific events occur
 event ssl_client_hello(c: connection, version: count, record_version: count, possible_ts: time,
  client_random: string, session_id: string, ciphers: index_vec, comp_methods: index_vec) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   local no_grease_ciphers: index_vec = vector();
-  for (idx, val in ciphers) {
+  for (idx in ciphers) {
+    local val = ciphers[idx];
     if (val !in FINGERPRINT::TLS_GREASE_TYPES) {
       no_grease_ciphers += val;
     }
   }
 
   local no_grease_comp_methods: index_vec = vector();
-  for (idx, val in comp_methods) {
-    if (val !in FINGERPRINT::TLS_GREASE_TYPES) {
-      no_grease_comp_methods += val;
+  for (idx in comp_methods) {
+    local val2 = comp_methods[idx];
+    if (val2 !in FINGERPRINT::TLS_GREASE_TYPES) {
+      no_grease_comp_methods += val2;
     }
   }
 
@@ -73,7 +75,7 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
 
 # For each extension, ignoring GREASE, build up an array of code in the order they appear
 event ssl_extension(c: connection, is_client: bool, code: count, val: string) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (code in FINGERPRINT::TLS_GREASE_TYPES) { return; }
   if (is_client) {
     if (!c$fp?$client_hello) {
@@ -85,7 +87,7 @@ event ssl_extension(c: connection, is_client: bool, code: count, val: string) {
 
 # For each alpn build up an array protocol strings
 event ssl_extension_application_layer_protocol_negotiation(c: connection, is_client: bool, protocols: string_vec) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
     if (!c$fp$client_hello?$alpns) {
       c$fp$client_hello$alpns = vector();
@@ -96,10 +98,11 @@ event ssl_extension_application_layer_protocol_negotiation(c: connection, is_cli
 
 # If the supported versions extension is present, find the largest offered version and store it
 event ssl_extension_supported_versions(c: connection, is_client: bool, versions: index_vec) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
     local largest: count = 0;
-    for (idx, val in versions) {
+    for (idx in versions) {
+      local val = versions[idx];
       if (val in FINGERPRINT::TLS_GREASE_TYPES) {
         next;
       }
@@ -113,9 +116,10 @@ event ssl_extension_supported_versions(c: connection, is_client: bool, versions:
 
 # Build up a list of hash and signature algorithms in the order they appear
 event ssl_extension_signature_algorithm(c: connection, is_client: bool, signature_algorithms: signature_and_hashalgorithm_vec) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
-    for (idx, val in signature_algorithms) {
+    for (idx in signature_algorithms) {
+      local val = signature_algorithms[idx];
       local ha: count = val$HashAlgorithm;
       local sa: count = val$SignatureAlgorithm;
       c$fp$client_hello$signature_algos += make_quadword(ha, sa);
@@ -125,7 +129,7 @@ event ssl_extension_signature_algorithm(c: connection, is_client: bool, signatur
 
 # Store the array of SNIs in the connection context
 event ssl_extension_server_name(c: connection, is_client: bool, names: string_vec) {
-  if(!c?$fp) { c$fp = []; }
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
     c$fp$client_hello$sni = names;
   }
