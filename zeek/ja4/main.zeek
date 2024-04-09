@@ -38,7 +38,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4: FINGERPRINT::JA4::Info &default=[];
+  ja4: FINGERPRINT::JA4::Info &default=Info();
 };
 
 redef record SSL::Info += {
@@ -138,7 +138,8 @@ function do_ja4(c: connection) {
   local ja4_b: vector of count = c$fp$client_hello$cipher_suites;
 
   local extensions: vector of count = vector();
-  for (idx, code in c$fp$client_hello$extension_codes) {
+  for (idx in c$fp$client_hello$extension_codes) {
+    local code = c$fp$client_hello$extension_codes[idx];
     if (code == SSL::SSL_EXTENSION_SERVER_NAME || code == SSL::SSL_EXTENSION_APPLICATION_LAYER_PROTOCOL_NEGOTIATION) {
       next;
     }
