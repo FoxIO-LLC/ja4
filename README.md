@@ -29,6 +29,7 @@ JA4/JA4+ support is being added to:
 [Team Cymru](https://www.team-cymru.com/)  
 [NetQuest](https://netquestcorp.com/)  
 [Censys](https://censys.com/)  
+[Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx)  
 with more to be announced...  
 
 ## Examples
