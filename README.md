@@ -21,7 +21,7 @@ JA4/JA4+ support is being added to:
 [nzyme](https://www.nzyme.org/)  
 [Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
 [Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
-[NGINX](https://hub.docker.com/r/thatcherthornberry/nginx-ja4)  
+[NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module)  
 [F5 BIG-IP](https://community.f5.com/t5/technical-articles/fingerprinting-tls-clients-with-ja4-on-f5-big-ip/ta-p/326298)  
 [nfdump](https://github.com/phaag/nfdump)  
 [ntop's ntopng](https://github.com/ntop/ntopng)  
