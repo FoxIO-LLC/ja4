@@ -105,8 +105,11 @@ function make_a(c: connection): string {
     proto = "q";
   }
 
-  local version = FINGERPRINT::TLS_VERSION_MAPPER[c$fp$server_hello$version];
-
+  # TODO - Investigate zeek bug returning invalid versions (testing\tls-bad-version.pcapng)
+  local version: string = "00";
+  if ( c$fp$server_hello$version in FINGERPRINT::TLS_VERSION_MAPPER ) {
+    version = FINGERPRINT::TLS_VERSION_MAPPER[c$fp$server_hello$version];
+  } 
 
   local ec_count = "00";
   if (|c$fp$server_hello$extension_codes| > 99) {
