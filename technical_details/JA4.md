@@ -5,7 +5,7 @@
 JA4 looks at the TLS Client Hello packet and builds a fingerprint of the client based on attributes within the packet.
 
 ### JA4 Algorithm:
-(QUIC=”q” or TCP=”t”)  
+(QUIC=”q”, DTLS="d", or Normal TLS=”t”)  
 (2 character TLS version)  
 (SNI=”d” or no SNI=”i”)  
 (2 character count of ciphers)  
@@ -22,14 +22,19 @@ t13d1516h2_8daaf6152771_b186095e22b6
 ## Details:
 The program needs to ignore GREASE values anywhere it sees them: (https://datatracker.ietf.org/doc/html/draft-davidben-tls-grease-01#page-5)
 
-### QUIC:
+### QUIC and DTLS:
+“q”, "d" or “t”, denotes whether the hello packet is for QUIC, DTLS, or normal TLS.
+
 https://en.wikipedia.org/wiki/QUIC  
-“q” or “t”, which denotes whether the hello packet is for QUIC or TCP. QUIC is the protocol which the new HTTP/3 standard utilizes, encapsulating TLS 1.3 into UDP packets. As QUIC was developed by Google, if an organization heavily utilizes Google products, QUIC could make up half of their network traffic, so this is important to capture.  
+QUIC is the protocol which the new HTTP/3 standard utilizes, encapsulating TLS 1.3 into UDP packets. As QUIC was developed by Google, if an organization heavily utilizes Google products, QUIC could make up half of their network traffic, so this is important to capture.  
 
-If the protocol is QUIC then the first character of the fingerprint is “q” if not, it’s “t”.  
+https://en.wikipedia.org/wiki/Datagram_Transport_Layer_Security
+DTLS is a version of TLS that can operate over UDP or SCTP.
 
-### TLS Version:
-TLS version is shown in 3 different places. If extension 0x002b exists (supported_versions), then the version is the highest value in the extension. Remember to ignore GREASE values. If the extension doesn’t exist, then the TLS version is the value of the Protocol Version. Handshake version (located at the top of the packet) should be ignored.
+If the protocol is QUIC then the first character of the fingerprint is “q”, if DTLS it is "d", else it is “t”.  
+
+### TLS and DTLS Version:
+The TLS version is shown in 3 different places. If extension 0x002b exists (supported_versions), then the version is the highest value in the extension. Remember to ignore GREASE values. If the extension doesn’t exist, then the TLS version is the value of the Protocol Version. Handshake version (located at the top of the packet) should be ignored.
 
 0x0304 = TLS 1.3 = “13”  
 0x0303 = TLS 1.2 = “12”  
@@ -38,6 +43,9 @@ TLS version is shown in 3 different places. If extension 0x002b exists (supporte
 0x0300 = SSL 3.0 = “s3”  
 0x0200 = SSL 2.0 = “s2”  
 0x0100 = SSL 1.0 = “s1”  
+0xfeff = DTLS 1.0 = "d1"  
+0xfefd = DTLS 1.2 = "d2"  
+0xfefc = DTLS 1.3 = "d3"  
   
 Unknown = “00”
 
