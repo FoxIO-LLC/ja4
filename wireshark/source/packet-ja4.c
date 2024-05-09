@@ -767,7 +767,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 	nstime_t latency;
 	nstime_t latency2;
 
-	nstime_t *packet_time;
+	nstime_t *packet_time = NULL;
 	int seq = 0;
 	int ack = 0;
 	int syn = 0;
@@ -984,7 +984,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x02) {
 					syn = 1;
 					conn->client_ttl = curr_ttl;
-					if (conn->timestamp_A.secs == 0) {
+					if ((packet_time != NULL) && (conn->timestamp_A.secs == 0)) {
 						conn->timestamp_A.secs = packet_time->secs;
 						conn->timestamp_A.nsecs = packet_time->nsecs;
 					}
@@ -994,18 +994,18 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x012) {
 					syn = 2;
 					conn->server_ttl = curr_ttl;
-					if (conn->timestamp_B.secs == 0) {
+					if ((packet_time != NULL) && (conn->timestamp_B.secs == 0)) {
 						conn->timestamp_B.secs = packet_time->secs;
 						conn->timestamp_B.nsecs = packet_time->nsecs;
 					}
-					if (conn->syn_ack_count <= 10) {
+					if ((packet_time != NULL) && (conn->syn_ack_count <= 10)) {
 						conn->syn_ack_times[conn->syn_ack_count].secs = packet_time->secs;
 						conn->syn_ack_times[conn->syn_ack_count++].nsecs = packet_time->nsecs;
 					}
 				}
 
 				// Add RST for JA4T
-				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x004) {
+				if ((packet_time != NULL) && (fvalue_get_uinteger(get_value_ptr(field)) == 0x004)) {
 					syn = 3;
 					conn->rst_time.secs = packet_time->secs;
 					conn->rst_time.nsecs = packet_time->nsecs;
@@ -1021,7 +1021,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 					}
 					srcport = dstport = 0;
 
-					if ((conn->timestamp_C.secs == 0) && (seq == 1) && (ack == 1)) {
+					if ((packet_time != NULL) && (conn->timestamp_C.secs == 0) && (seq == 1) && (ack == 1)) {
 						conn->timestamp_C.secs = packet_time->secs;
 						conn->timestamp_C.nsecs = packet_time->nsecs;
 					}
@@ -1032,20 +1032,20 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				// we identify them with PSH, ACK and the direction
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x018) {
 					if (conn->server_ttl && conn->client_ttl) {
-						if (conn->timestamp_D.nsecs == 0) {
+						if ((packet_time != NULL) && conn->timestamp_D.nsecs == 0) {
 							// Denotes first PSH, ACK
 							conn->timestamp_D.secs = packet_time->secs;
 							conn->timestamp_D.nsecs = packet_time->nsecs;
 						} else {
 
 
-							if ((srcport < 5000) && (conn->timestamp_E.nsecs == 0)) {
+							if ((packet_time != NULL) && (srcport < 5000) && (conn->timestamp_E.nsecs == 0)) {
 								// Denotes second PSH, ACK - JA4L-S goes here
 								conn->timestamp_E.secs = packet_time->secs;
 								conn->timestamp_E.nsecs = packet_time->nsecs;
 							}
 
-							if ((dstport < 5000) && (conn->timestamp_F.nsecs == 0)) {
+							if ((packet_time != NULL) && (dstport < 5000) && (conn->timestamp_F.nsecs == 0)) {
 								// Denotes third PSH, ACK - JA4L-C goes here
 								conn->timestamp_F.secs = packet_time->secs;
 								conn->timestamp_F.nsecs = packet_time->nsecs;
@@ -1089,12 +1089,12 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 				// QUIC Initial packets
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0) {
-					if ((dstport == 443) && (conn->timestamp_A.nsecs == 0)){
+					if ((packet_time != NULL) && (dstport == 443) && (conn->timestamp_A.nsecs == 0)){
 						conn->client_ttl = curr_ttl;
 						conn->timestamp_A.secs = packet_time->secs;
 						conn->timestamp_A.nsecs = packet_time->nsecs;
 					}
-					if ((srcport == 443) && (conn->timestamp_B.nsecs == 0)) {
+					if ((packet_time != NULL) && (srcport == 443) && (conn->timestamp_B.nsecs == 0)) {
 						conn->server_ttl = curr_ttl;
 						conn->timestamp_B.secs = packet_time->secs;
 						conn->timestamp_B.nsecs = packet_time->nsecs;
@@ -1103,12 +1103,12 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 				// QUIC handshake packets, keep updating C until D is found
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 2) {
-					if ((srcport == 443) && (conn->timestamp_D.nsecs == 0)) {
+					if ((packet_time != NULL) && (srcport == 443) && (conn->timestamp_D.nsecs == 0)) {
 						conn->timestamp_C.secs = packet_time->secs;
 						conn->timestamp_C.nsecs = packet_time->nsecs;
 					}
 
-					if ((dstport == 443) && (conn->timestamp_D.nsecs == 0)){
+					if ((packet_time != NULL) && (dstport == 443) && (conn->timestamp_D.nsecs == 0)){
 						conn->timestamp_D.secs = packet_time->secs;
 						conn->timestamp_D.nsecs = packet_time->nsecs;
 
