@@ -193,7 +193,8 @@ typedef struct {
 	wmem_strbuf_t *tcp_options;
 
 	// used for Ja4TS
-	nstime_t syn_ack_times[10];
+#define MAX_SYN_ACK_TIMES 10
+	nstime_t syn_ack_times[MAX_SYN_ACK_TIMES];
 	nstime_t rst_time;
 	int syn_ack_count;
 
@@ -385,7 +386,7 @@ conn_info_t *conn_lookup (char proto, int stream) {
 		nstime_set_zero(&data->rst_time);
 
 		data->syn_ack_count = 0;
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<MAX_SYN_ACK_TIMES; i++) {
 			nstime_set_zero(&data->syn_ack_times[i]);
 		}
 
@@ -667,7 +668,7 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
-		if (conn->rst_time.secs != 0) {
+		if (!nstime_is_zero(&conn->rst_time)) {
 			int diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
 			wmem_strbuf_append_printf(display, "-R%d", diff); //(int) latency.nsecs / 100000000);
 		}
@@ -984,9 +985,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x02) {
 					syn = 1;
 					conn->client_ttl = curr_ttl;
-					if ((packet_time != NULL) && (conn->timestamp_A.secs == 0)) {
-						conn->timestamp_A.secs = packet_time->secs;
-						conn->timestamp_A.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_A))) {
+						nstime_copy(&conn->timestamp_A, packet_time);
 					}
 				}
 
@@ -994,21 +994,18 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x012) {
 					syn = 2;
 					conn->server_ttl = curr_ttl;
-					if ((packet_time != NULL) && (conn->timestamp_B.secs == 0)) {
-						conn->timestamp_B.secs = packet_time->secs;
-						conn->timestamp_B.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_B))) {
+						nstime_copy(&conn->timestamp_B, packet_time);
 					}
-					if ((packet_time != NULL) && (conn->syn_ack_count <= 10)) {
-						conn->syn_ack_times[conn->syn_ack_count].secs = packet_time->secs;
-						conn->syn_ack_times[conn->syn_ack_count++].nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (conn->syn_ack_count < MAX_SYN_ACK_TIMES)) {
+						nstime_copy(&conn->syn_ack_times[conn->syn_ack_count++], packet_time);
 					}
 				}
 
 				// Add RST for JA4T
 				if ((packet_time != NULL) && (fvalue_get_uinteger(get_value_ptr(field)) == 0x004)) {
 					syn = 3;
-					conn->rst_time.secs = packet_time->secs;
-					conn->rst_time.nsecs = packet_time->nsecs;
+					nstime_copy(&conn->rst_time, packet_time);
 				}
 
 				// ACK for JA4L-S - server latency
@@ -1021,9 +1018,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 					}
 					srcport = dstport = 0;
 
-					if ((packet_time != NULL) && (conn->timestamp_C.secs == 0) && (seq == 1) && (ack == 1)) {
-						conn->timestamp_C.secs = packet_time->secs;
-						conn->timestamp_C.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_C)) && (seq == 1) && (ack == 1)) {
+						nstime_copy(&conn->timestamp_C, packet_time);
 					}
 				}
 
@@ -1032,23 +1028,20 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				// we identify them with PSH, ACK and the direction
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x018) {
 					if (conn->server_ttl && conn->client_ttl) {
-						if ((packet_time != NULL) && conn->timestamp_D.nsecs == 0) {
+						if ((packet_time != NULL) && nstime_is_zero(&conn->timestamp_D)) {
 							// Denotes first PSH, ACK
-							conn->timestamp_D.secs = packet_time->secs;
-							conn->timestamp_D.nsecs = packet_time->nsecs;
+							nstime_copy(&conn->timestamp_D, packet_time);
 						} else {
 
 
-							if ((packet_time != NULL) && (srcport < 5000) && (conn->timestamp_E.nsecs == 0)) {
+							if ((packet_time != NULL) && (srcport < 5000) && (nstime_is_zero(&conn->timestamp_E))) {
 								// Denotes second PSH, ACK - JA4L-S goes here
-								conn->timestamp_E.secs = packet_time->secs;
-								conn->timestamp_E.nsecs = packet_time->nsecs;
+								nstime_copy(&conn->timestamp_E, packet_time);
 							}
 
-							if ((packet_time != NULL) && (dstport < 5000) && (conn->timestamp_F.nsecs == 0)) {
+							if ((packet_time != NULL) && (dstport < 5000) && (nstime_is_zero(&conn->timestamp_F))) {
 								// Denotes third PSH, ACK - JA4L-C goes here
-								conn->timestamp_F.secs = packet_time->secs;
-								conn->timestamp_F.nsecs = packet_time->nsecs;
+								nstime_copy(&conn->timestamp_F, packet_time);
 
 	        						//ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
 	        						//ja4_tree = proto_item_add_subtree(ti, ett_ja4);
@@ -1089,28 +1082,24 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 				// QUIC Initial packets
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 0) {
-					if ((packet_time != NULL) && (dstport == 443) && (conn->timestamp_A.nsecs == 0)){
+					if ((packet_time != NULL) && (dstport == 443) && (nstime_is_zero(&conn->timestamp_A))){
 						conn->client_ttl = curr_ttl;
-						conn->timestamp_A.secs = packet_time->secs;
-						conn->timestamp_A.nsecs = packet_time->nsecs;
+						nstime_copy(&conn->timestamp_A, packet_time);
 					}
-					if ((packet_time != NULL) && (srcport == 443) && (conn->timestamp_B.nsecs == 0)) {
+					if ((packet_time != NULL) && (srcport == 443) && (nstime_is_zero(&conn->timestamp_B))) {
 						conn->server_ttl = curr_ttl;
-						conn->timestamp_B.secs = packet_time->secs;
-						conn->timestamp_B.nsecs = packet_time->nsecs;
+						nstime_copy(&conn->timestamp_B, packet_time);
 					}
 				}
 
 				// QUIC handshake packets, keep updating C until D is found
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 2) {
-					if ((packet_time != NULL) && (srcport == 443) && (conn->timestamp_D.nsecs == 0)) {
-						conn->timestamp_C.secs = packet_time->secs;
-						conn->timestamp_C.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (srcport == 443) && (nstime_is_zero(&conn->timestamp_C))) {
+						nstime_copy(&conn->timestamp_C, packet_time);
 					}
 
-					if ((packet_time != NULL) && (dstport == 443) && (conn->timestamp_D.nsecs == 0)){
-						conn->timestamp_D.secs = packet_time->secs;
-						conn->timestamp_D.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (dstport == 443) && (nstime_is_zero(&conn->timestamp_D))){
+						nstime_copy(&conn->timestamp_D, packet_time);
 
 	        				//ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
 	        				//ja4_tree = proto_item_add_subtree(ti, ett_ja4);
