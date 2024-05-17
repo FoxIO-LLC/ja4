@@ -34,7 +34,7 @@ JA4/JA4+ support is being added to:
 [Censys](https://censys.com/)  
 [Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx)  
 [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/)  
-[fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/)  
+[Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/)  
 with more to be announced...  
 
 ## Examples
