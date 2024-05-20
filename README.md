@@ -9,32 +9,34 @@ Please read our blogs for details on how JA4+ works, why it works, and examples 
 
 To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
 
-This repo includes JA4+ Python, Rust, Zeek and C, as a Wireshark plugin. 
+This repo includes JA4+ in Python, Rust, Zeek and C, as a Wireshark plugin. 
 
-JA4/JA4+ support is being added to:  
-[GreyNoise](https://www.greynoise.io/)  
-[Hunt](https://hunt.io/)  
-[Driftnet](https://driftnet.io/)  
-[DarkSail](https://darksail.ai)  
-[Arkime](https://arkime.com/)  
-[GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash)  
-[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
-[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
-[nzyme](https://www.nzyme.org/)  
-[Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
-[Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
-[NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module)  
-[F5 BIG-IP](https://github.com/f5devcentral/f5-ja4)  
-[nfdump](https://github.com/phaag/nfdump)  
-[ntop's ntopng](https://github.com/ntop/ntopng)  
-[ntop's nDPI](https://github.com/ntop/nDPI)  
-[Team Cymru](https://www.team-cymru.com/)  
-[NetQuest](https://netquestcorp.com/)  
-[Censys](https://censys.com/)  
-[Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx)  
-[Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/)  
-[Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/)  
+Tools that support JA4+:  
+| Tool/Vendor | JA4+ Support |
+|-------------|--------------|
+[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark) | JA4+
+[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+
+[Arkime](https://arkime.com/) | JA4+
+[Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4
+[GreyNoise](https://www.greynoise.io/) | JA4+ (you have to ask for it)
+[Hunt](https://hunt.io/) | JA4+
+[Driftnet](https://driftnet.io/) | JA4X
+[DarkSail](https://darksail.ai) | JA4+
+[GoLang](https://github.com/driftnet-io/go-ja4x) | JA4X
+[nzyme](https://www.nzyme.org/) | JA4+ (under development)
+[Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released) | JA4+ (under development)
+[Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner) | JA4+ (under development)
+[NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module) | JA4+ (under development)
+[F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+
+[nfdump](https://github.com/phaag/nfdump) | JA4+
+[ntop's ntopng](https://github.com/ntop/ntopng) | JA4+
+[ntop's nDPI](https://github.com/ntop/nDPI) | JA4
+[Team Cymru](https://www.team-cymru.com/) | JA4+ (you have to ask for it)
+[NetQuest](https://netquestcorp.com/) | JA4+ (under development)
+[Censys](https://censys.com/) | JA4+ (under development)
+[Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H
+[Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
+[Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
 with more to be announced...  
 
 ## Examples
