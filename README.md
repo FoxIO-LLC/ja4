@@ -16,7 +16,7 @@ Tools that support JA4+:
 |-------------|--------------|
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark) | JA4+
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+
-[Arkime](https://arkime.com/) | JA4+
+[Arkime](https://arkime.com/settings#ja4plus) | JA4+
 [Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4
 [GreyNoise](https://www.greynoise.io/) | JA4+ (you have to ask for it)
 [Hunt](https://hunt.io/) | JA4+
