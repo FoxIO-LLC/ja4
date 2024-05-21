@@ -93,7 +93,7 @@ const char *interesting_hfids[HFIDS] = {
 	"tls.handshake.type",
 	"dtls.handshake.type",
 	"tls.handshake.version",
-	"dtls.handshake.version",
+	"dtls.record.version",
 	"tls.handshake.extension.type",
 	"dtls.handshake.extension.type",
 	"tls.handshake.ciphersuite",
@@ -479,11 +479,9 @@ char *ja4 (ja4_info_t *data) {
 
 	wmem_strbuf_t *temp = wmem_strbuf_new(wmem_file_scope(), "");
 	wmem_strbuf_append_printf(temp, "%s", wmem_list_to_str(data->sorted_extensions));
-
 	if (wmem_strbuf_get_len(data->signatures) > 0) {
 		wmem_strbuf_append_printf(temp, "_%s", wmem_strbuf_get_str(data->signatures));
 	}
-
 	gchar *ext_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(temp), -1);
 
 	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%12.12s_%12.12s",
@@ -495,7 +493,7 @@ char *ja4 (ja4_info_t *data) {
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
 		cipher_hash,
-		ext_hash
+		wmem_strbuf_get_len(temp) ? ext_hash : "000000000000"
 	);
 	if (cipher_hash != NULL) g_free(cipher_hash);
 	if (ext_hash != NULL) g_free(ext_hash);
@@ -871,7 +869,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                 	}
 
                 	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.version") == 0) ||
-                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.version") == 0)) {
+                	    (strcmp(field->hfinfo->abbrev, "dtls.record.version") == 0)) {
 				ja4_data.version = fvalue_get_uinteger(get_value_ptr(field));
                 	}
 
