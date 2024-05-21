@@ -82,19 +82,30 @@ const value_string ssl_versions[] = {
     	{ 0x0302,   "11" },
     	{ 0x0303,   "12" },
     	{ 0x0304,   "13" },
+    	{ 0xFEFF,   "d1" },
+    	{ 0xFEFD,   "d2" },
+    	{ 0xFEFC,   "d3" },
     	{ 0x00, 	NULL }
 };
 
-#define HFIDS 40
+#define HFIDS 48
 const char *interesting_hfids[HFIDS] = {
 	"tls.handshake.type",
+	"dtls.handshake.type",
 	"tls.handshake.version",
+	"dtls.handshake.version",
 	"tls.handshake.extension.type",
+	"dtls.handshake.extension.type",
 	"tls.handshake.ciphersuite",
+	"dtls.handshake.ciphersuite",
 	"tls.handshake.extensions.supported_version",
+	"dtls.handshake.extensions.supported_version",
 	"tls.handshake.sig_hash_alg",
+	"dtls.handshake.sig_hash_alg",
 	"tls.handshake.extensions_alpn_str",
+	"dtls.handshake.extensions_alpn_str",
 	"tls.handshake.certificate",
+	"dtls.handshake.certificate",
 	"x509if.oid",
 	"x509af.issuer",
 	"x509af.subject",
@@ -467,11 +478,11 @@ char *ja4 (ja4_info_t *data) {
 	gchar *cipher_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_list_to_str(data->sorted_ciphers), -1);
 
 	wmem_strbuf_t *temp = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(temp,
-		"%s_%s",
-		wmem_list_to_str(data->sorted_extensions),
-		wmem_strbuf_get_str(data->signatures)
-	);
+	wmem_strbuf_append_printf(temp, "%s", wmem_list_to_str(data->sorted_extensions));
+
+	if (wmem_strbuf_get_len(data->signatures) > 0) {
+		wmem_strbuf_append_printf(temp, "_%s", wmem_strbuf_get_str(data->signatures));
+	}
 
 	gchar *ext_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(temp), -1);
 
@@ -493,7 +504,7 @@ char *ja4 (ja4_info_t *data) {
 
 char *ja4_r (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s",
+	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
 		(data->sni ? 'd': 'i'),
@@ -502,15 +513,17 @@ char *ja4_r (ja4_info_t *data) {
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
 		wmem_list_to_str(data->sorted_ciphers),
-		wmem_list_to_str(data->sorted_extensions),
-		wmem_strbuf_get_str(data->signatures)
+		wmem_list_to_str(data->sorted_extensions)
 	);
+	if (wmem_strbuf_get_len(data->signatures) > 0) {
+		wmem_strbuf_append_printf(display, "_%s", wmem_strbuf_get_str(data->signatures));
+	}
 	return (char *) wmem_strbuf_get_str(display);
 }
 
 char *ja4_ro (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s",
+	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
 		(data->sni ? 'd': 'i'),
@@ -519,9 +532,11 @@ char *ja4_ro (ja4_info_t *data) {
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
 		wmem_strbuf_get_str(data->ciphers),
-		wmem_strbuf_get_str(data->extensions),
-		wmem_strbuf_get_str(data->signatures)
+		wmem_strbuf_get_str(data->extensions)
 	);
+	if (wmem_strbuf_get_len(data->signatures) > 0) {
+		wmem_strbuf_append_printf(display, "_%s", wmem_strbuf_get_str(data->signatures));
+	}
 	return (char *) wmem_strbuf_get_str(display);
 }
 
@@ -685,6 +700,9 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
 	ja4_data->sni = false;
 	ja4_data->proto = proto_is_frame_protocol(pinfo->layers,"tcp") ? 't': 'q';
 
+	if (proto_is_frame_protocol(pinfo->layers,"dtls")) 
+	       ja4_data->proto = 'd';
+
 	ja4_data->sorted_ciphers = wmem_list_new(wmem_packet_scope());
 	ja4_data->sorted_extensions = wmem_list_new(wmem_packet_scope());
 	ja4_data->ciphers = wmem_strbuf_new(wmem_packet_scope(), "");
@@ -697,6 +715,9 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
 static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 	guint value;
 	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.extension.type"));
+	if (data->proto == 'd') {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.extension.type"));
+	}
         if (items) {
                 guint i;
                 for (i=0; i< items->len; i++) {
@@ -723,6 +744,10 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 	guint value;
 	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.ciphersuite"));
+	if (data->proto == 'd') {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.ciphersuite"));
+	}
+
 	if (items) {
                 guint i;
                 for (i=0; i< items->len; i++) {
@@ -807,21 +832,51 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 	ja4h_data.sorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
 	ja4h_data.sorted_cookie_values = wmem_strbuf_new(wmem_packet_scope(), "");
 
+	char *proto = "tls";
+	switch(ja4_data.proto) {
+		case 'q': {
+			proto = "quic";
+			break;
+		}
+		case 'd': {
+			proto = "dtls";
+			break;
+		}
+		default: {
+			proto = "tls";
+		}
+	}
+
 	GPtrArray *items = proto_all_finfos(tree);
         if (items != NULL) {
             	guint i;
             	for (i=0; i< items->len; i++) {
                 	field_info *field = (field_info *)g_ptr_array_index(items,i);
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.type") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.type") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.type") == 0)) {
+				// DTLS has server hellos together with certificates. so 
+				// we need to compute ja4s and then go on to compute ja4x
+				if (handshake_type == 2) {
+				    set_ja4_ciphers(tree, &ja4_data);
+				    set_ja4_extensions(tree, &ja4_data);
+				    update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto);
+				    update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto);
+				}
+
+				// Again for DTLS, we break
+				if (handshake_type == 11) break;
+
 				handshake_type = fvalue_get_uinteger(get_value_ptr(field));
                 	}
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.version") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.version") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.version") == 0)) {
 				ja4_data.version = fvalue_get_uinteger(get_value_ptr(field));
                 	}
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extension.type") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.extension.type") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.extension.type") == 0)) {
 				if (fvalue_get_uinteger(get_value_ptr(field)) == 13) {
 					record_signatures = 1;
 				} else {
@@ -829,20 +884,23 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				}
                 	}
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.sig_hash_alg") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.sig_hash_alg") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.sig_hash_alg") == 0)) {
 				if (record_signatures == 1) {
 					wmem_strbuf_append_printf(ja4_data.signatures, "%04x,", fvalue_get_uinteger(get_value_ptr(field)));
 				}
 			}
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extensions.supported_version") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.extensions.supported_version") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.extensions.supported_version") == 0)) {
 				if (!IS_GREASE_TLS(fvalue_get_uinteger(get_value_ptr(field)))) {
 					ja4_data.version = MAX_SSL_VESION(ja4_data.version, fvalue_get_uinteger(get_value_ptr(field)));
 				}
 			}
 
 
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extensions_alpn_str") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.extensions_alpn_str") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.extensions_alpn_str") == 0)) {
 				if (!alpn_visited) {
 					const char *alpn_str = fvalue_get_string(get_value_ptr(field));
 					if (!isascii(alpn_str[0])) {
@@ -855,7 +913,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			}
 
 			//JA4X specifiers
-                	if (strcmp(field->hfinfo->abbrev, "tls.handshake.certificate") == 0) {
+                	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.certificate") == 0) ||
+                	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.certificate") == 0)) {
 				cert_t cert;
 				for (guint n=0; n<3; n++) {
 					cert.oids[n] = wmem_strbuf_new(wmem_packet_scope(), "");
@@ -1201,16 +1260,17 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		if (wmem_strbuf_get_len(ja4_data.signatures) > 3) {
 			wmem_strbuf_truncate(ja4_data.signatures, wmem_strbuf_get_len(ja4_data.signatures)-1);
 		}
-		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4, ja4(&ja4_data), (ja4_data.proto == 't') ? "tls": "quic");
-		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw, ja4_r(&ja4_data), (ja4_data.proto == 't') ? "tls": "quic");
-		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw_original, ja4_ro(&ja4_data), (ja4_data.proto == 't') ? "tls": "quic");
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4, ja4(&ja4_data), proto);
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw, ja4_r(&ja4_data), proto);
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw_original, ja4_ro(&ja4_data), proto);
 		mark_complete(pinfo->num);
 	}
+
 	if (handshake_type == 2) {
 		set_ja4_ciphers(tree, &ja4_data);
 		set_ja4_extensions(tree, &ja4_data);
-		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), "tls");
-		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), "tls");
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto);
+		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto);
 		mark_complete(pinfo->num);
 	}
 
@@ -1226,8 +1286,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                                 wmem_strbuf_get_str(current_cert->oids[1]),
                                 wmem_strbuf_get_str(current_cert->oids[2])
                         );
-			update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x_raw, wmem_strbuf_get_str(current_cert->raw), "tls");
-			update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x, ja4x(current_cert), "tls");
+			update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x_raw, wmem_strbuf_get_str(current_cert->raw), proto);
+			update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x, ja4x(current_cert), proto);
                 }
 		mark_complete(pinfo->num);
         }
@@ -1279,11 +1339,24 @@ static void init_globals (void) {
 	GString *ret _U_;
 	ret = register_tap_listener("tls", &hf_ja4s, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("tls", &hf_ja4s_raw, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
+	ret = register_tap_listener("dtls", &hf_ja4s, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("dtls", &hf_ja4s_raw, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
 	ret = register_tap_listener("tls", &hf_ja4, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("tls", &hf_ja4_raw, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("tls", &hf_ja4_raw_original, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
+	ret = register_tap_listener("dtls", &hf_ja4, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("dtls", &hf_ja4_raw, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
 	ret = register_tap_listener("tls", &hf_ja4x, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("tls", &hf_ja4x_raw, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
+	ret = register_tap_listener("dtls", &hf_ja4x, "dtls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	ret = register_tap_listener("dtls", &hf_ja4x_raw, "dtls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+
 	ret = register_tap_listener("http", &hf_ja4h, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("http", &hf_ja4h_raw, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("http", &hf_ja4h_raw_original, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
