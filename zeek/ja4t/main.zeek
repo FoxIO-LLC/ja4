@@ -21,10 +21,10 @@ export {
   # The fingerprint context 
   type Info: record {
     syn_window_size: count &default=0;
-    syn_opts: TCP_Options &default=[];    
+    syn_opts: TCP_Options &default=TCP_Options();    
 
     synack_window_size: count &default=0;
-    synack_opts: TCP_Options &default=[];
+    synack_opts: TCP_Options &default=TCP_Options();
     synack_delays: vector of count &default=vector();
     synack_done: bool &default=F;
     last_ts: double &default=0;
@@ -35,7 +35,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4t: FINGERPRINT::JA4T::Info &default=[];
+  ja4t: FINGERPRINT::JA4T::Info &default= Info();
 };
 
 redef record Conn::Info += {
@@ -124,7 +124,7 @@ event new_connection(c: connection) {
         return;  
     }
 
-    if(!c?$fp) { c$fp = []; }
+    if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
     
     c$fp$ja4t$syn_window_size = rph$tcp$win;
     c$fp$ja4t$syn_opts = get_tcp_options();

@@ -6,7 +6,9 @@
 # JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH, JA4T) are licenced under the FoxIO License 1.1. For full license text, see the repo root.
 */
 
+#ifndef OOT_BUILD
 #include "config.h"
+#endif
 #include <glib.h>
 #include <string.h>
 #include <errno.h>
@@ -14,7 +16,14 @@
 #include <ctype.h>
 #include <math.h>
 
+#include <ws_version.h>
+
+#define FIELD_VALUE_IS_PTR ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 1))
+
+#if FIELD_VALUE_IS_PTR
 #include <epan/ftypes/ftypes-int.h>
+#endif
+
 #include <epan/ftypes/ftypes.h>
 #include <epan/packet.h>
 #include "epan/packet_info.h"
@@ -28,6 +37,15 @@
 #define IS_GREASE_TLS(x) ((((x) & 0x0f0f) == 0x0a0a) && \
 	(((x) & 0xff) == (((x)>>8) & 0xff)))
 #define SAMPLE_COUNT 200
+
+static inline
+fvalue_t* get_value_ptr(field_info *field) {
+#if FIELD_VALUE_IS_PTR
+    return field->value;
+#else
+    return &field->value;
+#endif
+}
 
 char *bytes_to_string(fvalue_t *fv) {
 	return fvalue_to_string_repr(wmem_packet_scope(), fv, FTREPR_DISPLAY, 0);
@@ -175,7 +193,8 @@ typedef struct {
 	wmem_strbuf_t *tcp_options;
 
 	// used for Ja4TS
-	nstime_t syn_ack_times[10];
+#define MAX_SYN_ACK_TIMES 10
+	nstime_t syn_ack_times[MAX_SYN_ACK_TIMES];
 	nstime_t rst_time;
 	int syn_ack_count;
 
@@ -211,7 +230,7 @@ typedef struct {
 
 wmem_map_t *conn_hash = NULL; // = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
 wmem_map_t *quic_conn_hash = NULL; // Added for JA4L on quic
-wmem_map_t *packet_table = NULL; 
+wmem_map_t *packet_table = NULL;
 
 static int timediff(nstime_t *current, nstime_t *prev)
 {
@@ -256,9 +275,9 @@ proto_tree *locate_tree(proto_tree *tree, const char *s) {
 // Fix #63
 void update_tree_item(int frame_number, tvbuff_t *tvb, proto_tree *tree, proto_tree **ja4_tree, int field, const char *str, const char *insert_at) {
 
-	// We get to the right part of the tree using locate_tree and insert the 
+	// We get to the right part of the tree using locate_tree and insert the
 	// hash there.
-	
+
 	proto_item *ja4_ti;
 
 	if (*ja4_tree == NULL) {
@@ -341,7 +360,7 @@ int get_max_mode(wmem_map_t *hash_table) {
 conn_info_t *conn_lookup (char proto, int stream) {
 
 	wmem_map_t *conn = NULL;
-	if (proto == 'q') {	
+	if (proto == 'q') {
 		conn = quic_conn_hash;
 	} else {
 		conn = conn_hash;
@@ -367,7 +386,7 @@ conn_info_t *conn_lookup (char proto, int stream) {
 		nstime_set_zero(&data->rst_time);
 
 		data->syn_ack_count = 0;
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<MAX_SYN_ACK_TIMES; i++) {
 			nstime_set_zero(&data->syn_ack_times[i]);
 		}
 
@@ -448,19 +467,19 @@ char *ja4 (ja4_info_t *data) {
 	gchar *cipher_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_list_to_str(data->sorted_ciphers), -1);
 
 	wmem_strbuf_t *temp = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(temp, 
-		"%s_%s", 
-		wmem_list_to_str(data->sorted_extensions), 
+	wmem_strbuf_append_printf(temp,
+		"%s_%s",
+		wmem_list_to_str(data->sorted_extensions),
 		wmem_strbuf_get_str(data->signatures)
 	);
 
 	gchar *ext_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(temp), -1);
 
-	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%12.12s_%12.12s", 
+	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%12.12s_%12.12s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
-		(data->sni ? 'd': 'i'), 
-		data->cipher_len, 
+		(data->sni ? 'd': 'i'),
+		data->cipher_len,
 		data->ext_len,
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
@@ -474,11 +493,11 @@ char *ja4 (ja4_info_t *data) {
 
 char *ja4_r (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s", 
+	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
-		(data->sni ? 'd': 'i'), 
-		data->cipher_len, 
+		(data->sni ? 'd': 'i'),
+		data->cipher_len,
 		data->ext_len,
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
@@ -491,11 +510,11 @@ char *ja4_r (ja4_info_t *data) {
 
 char *ja4_ro (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s", 
+	wmem_strbuf_append_printf(display, "%c%s%c%02d%02d%c%c_%s_%s_%s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
-		(data->sni ? 'd': 'i'), 
-		data->cipher_len, 
+		(data->sni ? 'd': 'i'),
+		data->cipher_len,
 		data->ext_len,
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
@@ -508,7 +527,7 @@ char *ja4_ro (ja4_info_t *data) {
 
 char *ja4s_r (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%c%s%02d%c%c_%s_%s", 
+	wmem_strbuf_append_printf(display, "%c%s%02d%c%c_%s_%s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
 		data->ext_len,
@@ -523,7 +542,7 @@ char *ja4s_r (ja4_info_t *data) {
 char *ja4s (ja4_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
 	gchar *_hash = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->extensions),-1);
-	wmem_strbuf_append_printf(display, "%c%s%02d%c%c_%s_%12.12s", 
+	wmem_strbuf_append_printf(display, "%c%s%02d%c%c_%s_%12.12s",
 		data->proto,
 		val_to_str_const(data->version, ssl_versions, "00"),
 		data->ext_len,
@@ -541,7 +560,7 @@ char *ja4x (cert_t *cert) {
 	gchar *hash1 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(cert->oids[0]),-1);
 	gchar *hash2 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(cert->oids[1]),-1);
 	gchar *hash3 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(cert->oids[2]),-1);
-	wmem_strbuf_append_printf(display, "%12.12s_%12.12s_%12.12s", 
+	wmem_strbuf_append_printf(display, "%12.12s_%12.12s_%12.12s",
 		hash1,
 		hash2,
 		hash3
@@ -554,7 +573,7 @@ char *ja4x (cert_t *cert) {
 
 char *ja4h_r (ja4h_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%s_%s_%s", 
+	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%s_%s_%s",
 		wmem_strbuf_get_str(data->method),
 		wmem_strbuf_get_str(data->version),
 		data->cookie ? "c" : "n",
@@ -570,7 +589,7 @@ char *ja4h_r (ja4h_info_t *data) {
 
 char *ja4h_ro (ja4h_info_t *data) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%s_%s_%s", 
+	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%s_%s_%s",
 		wmem_strbuf_get_str(data->method),
 		wmem_strbuf_get_str(data->version),
 		data->cookie ? "c" : "n",
@@ -589,15 +608,15 @@ char *ja4h (ja4h_info_t *data) {
 	gchar *hash1 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->headers),-1);
 	gchar *hash2 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->sorted_cookie_fields),-1);
 	gchar *hash3 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->sorted_cookie_values),-1);
-	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%12.12s_%12.12s_%12.12s", 
+	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%12.12s_%12.12s_%12.12s",
 		wmem_strbuf_get_str(data->method),
 		wmem_strbuf_get_str(data->version),
 		data->cookie ? "c" : "n",
 		data->referer? "r": "n",
 		data->num_headers,
-		wmem_strbuf_get_str(data->lang), 
-		hash1, 
-		data->cookie ? hash2 : "000000000000", 
+		wmem_strbuf_get_str(data->lang),
+		hash1,
+		data->cookie ? hash2 : "000000000000",
 		data->cookie ? hash3 : "000000000000"
 	);
 	if (hash1 != NULL) g_free(hash1);
@@ -608,12 +627,12 @@ char *ja4h (ja4h_info_t *data) {
 
 char *ja4ssh (conn_info_t *conn) {
 	wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-	wmem_strbuf_append_printf(display, "c%ds%d_c%ds%d_c%ds%d", 
+	wmem_strbuf_append_printf(display, "c%ds%d_c%ds%d_c%ds%d",
 		get_max_mode(conn->client_mode),
 		get_max_mode(conn->server_mode),
-		conn->client_pkts, 
-		conn->server_pkts, 
-		conn->tcp_client_acks, 
+		conn->client_pkts,
+		conn->server_pkts,
+		conn->tcp_client_acks,
 		conn->tcp_server_acks);
 	return (char *) wmem_strbuf_get_str(display);
 }
@@ -625,18 +644,18 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 	if (wmem_strbuf_get_len(data->tcp_options) > 0)
 		wmem_strbuf_truncate(data->tcp_options, wmem_strbuf_get_len(data->tcp_options)-1);
 	if (data->window_scale == 0) {
-		wmem_strbuf_append_printf(display, 
-			"%d_%s_%02d_%02d", 
-			data->window_size, 
-			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options), 
-			data->mss_val, 
+		wmem_strbuf_append_printf(display,
+			"%d_%s_%02d_%02d",
+			data->window_size,
+			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options),
+			data->mss_val,
 			data->window_scale);
 	} else {
-		wmem_strbuf_append_printf(display, 
-			"%d_%s_%02d_%d", 
-			data->window_size, 
-			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options), 
-			data->mss_val, 
+		wmem_strbuf_append_printf(display,
+			"%d_%s_%02d_%d",
+			data->window_size,
+			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options),
+			data->mss_val,
 			data->window_scale);
 	}
 
@@ -649,7 +668,7 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
-		if (conn->rst_time.secs != 0) {
+		if (!nstime_is_zero(&conn->rst_time)) {
 			int diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
 			wmem_strbuf_append_printf(display, "-R%d", diff); //(int) latency.nsecs / 100000000);
 		}
@@ -682,7 +701,7 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
                 guint i;
                 for (i=0; i< items->len; i++) {
                         field_info *field = (field_info *)g_ptr_array_index(items,i);
-			value = fvalue_get_uinteger(field->value);
+			value = fvalue_get_uinteger(get_value_ptr(field));
 			if (!IS_GREASE_TLS(value)) {
 				if ((value != 0x0000) && (value != 0x0010)) {
 					// Ignore SNI and ALPN when storing extensions
@@ -708,7 +727,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
                 guint i;
                 for (i=0; i< items->len; i++) {
                         field_info *field = (field_info *)g_ptr_array_index(items,i);
-			value = fvalue_get_uinteger(field->value);
+			value = fvalue_get_uinteger(get_value_ptr(field));
 			if (!IS_GREASE_TLS(value)) {
 				wmem_list_insert_sorted(data->sorted_ciphers, GUINT_TO_POINTER(value), wmem_compare_uint);
 				wmem_strbuf_append_printf(data->ciphers, "%04x,", value);
@@ -749,17 +768,17 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 	nstime_t latency;
 	nstime_t latency2;
 
-	nstime_t *packet_time;
+	nstime_t *packet_time = NULL;
 	int seq = 0;
 	int ack = 0;
 	int syn = 0;
 
-        if (tree == NULL) 
+        if (tree == NULL)
 		return tvb_captured_length(tvb);
 
 
 	int hashes = display_hashes_from_packet_table(999, tree, tvb, pinfo->num);
-	if (hashes > 0) 
+	if (hashes > 0)
 		return tvb_captured_length(tvb);
 
 	ja4_info_t ja4_data;
@@ -795,15 +814,15 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                 	field_info *field = (field_info *)g_ptr_array_index(items,i);
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.type") == 0) {
-				handshake_type = fvalue_get_uinteger(field->value);
+				handshake_type = fvalue_get_uinteger(get_value_ptr(field));
                 	}
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.version") == 0) {
-				ja4_data.version = fvalue_get_uinteger(field->value);
+				ja4_data.version = fvalue_get_uinteger(get_value_ptr(field));
                 	}
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extension.type") == 0) {
-				if (fvalue_get_uinteger(field->value) == 13) {
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 13) {
 					record_signatures = 1;
 				} else {
 					record_signatures = 0;
@@ -812,24 +831,24 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.sig_hash_alg") == 0) {
 				if (record_signatures == 1) {
-					wmem_strbuf_append_printf(ja4_data.signatures, "%04x,", fvalue_get_uinteger(field->value));
+					wmem_strbuf_append_printf(ja4_data.signatures, "%04x,", fvalue_get_uinteger(get_value_ptr(field)));
 				}
 			}
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extensions.supported_version") == 0) {
-				if (!IS_GREASE_TLS(fvalue_get_uinteger(field->value))) {
-					ja4_data.version = MAX_SSL_VESION(ja4_data.version, fvalue_get_uinteger(field->value));
+				if (!IS_GREASE_TLS(fvalue_get_uinteger(get_value_ptr(field)))) {
+					ja4_data.version = MAX_SSL_VESION(ja4_data.version, fvalue_get_uinteger(get_value_ptr(field)));
 				}
 			}
 
 
                 	if (strcmp(field->hfinfo->abbrev, "tls.handshake.extensions_alpn_str") == 0) {
 				if (!alpn_visited) {
-					const char *alpn_str = fvalue_get_string(field->value);
+					const char *alpn_str = fvalue_get_string(get_value_ptr(field));
 					if (!isascii(alpn_str[0])) {
 						wmem_strbuf_append_printf(ja4_data.alpn, "%s", "99");
 					} else {
-						wmem_strbuf_append_printf(ja4_data.alpn, "%s", fvalue_get_string(field->value));
+						wmem_strbuf_append_printf(ja4_data.alpn, "%s", fvalue_get_string(get_value_ptr(field)));
 					}
 					alpn_visited = true;
 				}
@@ -849,32 +868,32 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
                 	if (strcmp(field->hfinfo->abbrev, "x509af.validity_element") == 0) {
 				oid_type = 1;
-			} 
+			}
 
                 	if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%s,", bytes_to_string(field->value));
+				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%s,", bytes_to_string(get_value_ptr(field)));
 			}
                 	if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
-				wmem_strbuf_append_printf(current_cert->oids[2], "%s,", bytes_to_string(field->value));
+				wmem_strbuf_append_printf(current_cert->oids[2], "%s,", bytes_to_string(get_value_ptr(field)));
 			}
 
 			// Added for JA4H - HTTP1.0 and 1.1
 
                         if (strcmp(field->hfinfo->abbrev, "http.request.method") == 0) {
-				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(field->value)[0]));
-				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(field->value)[1]));
+				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(get_value_ptr(field))[0]));
+				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(get_value_ptr(field))[1]));
                                 http_req = field->hfinfo->parent;
 
                         }
 
                 	if (strcmp(field->hfinfo->abbrev, "http.request.version") == 0) {
-				decode_http_version(&ja4h_data.version, fvalue_get_string(field->value));
+				decode_http_version(&ja4h_data.version, fvalue_get_string(get_value_ptr(field)));
 			}
 
                 	if (strcmp(field->hfinfo->abbrev, "http.accept_language") == 0) {
-				decode_http_lang(&ja4h_data.lang, fvalue_get_string(field->value));
+				decode_http_lang(&ja4h_data.lang, fvalue_get_string(get_value_ptr(field)));
 			}
                 	if (strcmp(field->hfinfo->abbrev, "http.cookie") == 0) {
 				ja4h_data.cookie = true;
@@ -884,14 +903,14 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "http.cookie_pair") == 0) {
-				strings = g_strsplit(fvalue_get_string(field->value), "=", -1);
+				strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", -1);
 				if (strings[0] && strings[1]) {
 					http_cookie_t *new_cookie = wmem_new(wmem_packet_scope(), http_cookie_t);
 					new_cookie->field = wmem_strbuf_new(wmem_packet_scope(), strings[0]);
 					new_cookie->value = wmem_strbuf_new(wmem_packet_scope(), strings[1]);
 
 					wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_fields, "%s,", strings[0]);
-					wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_values, "%s,", fvalue_get_string(field->value));
+					wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_values, "%s,", fvalue_get_string(get_value_ptr(field)));
 
 					// sort cookie fields
 					wmem_list_insert_sorted(ja4h_data.sorted_cookies, (void *)new_cookie, sort_by_string);
@@ -901,10 +920,10 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
                         if (field->hfinfo->parent == http_req) {
 				if (strcmp(field->hfinfo->abbrev, "http.request.line") == 0) {
-						strings = g_strsplit(fvalue_get_string(field->value), ":", -1);
+						strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), ":", -1);
 						if ((strings[0] != NULL) && (strings[1] != NULL)) {
-							if( 
-								(strcmp(strings[0], "Cookie") != 0) && 
+							if(
+								(strcmp(strings[0], "Cookie") != 0) &&
 								(strcmp(strings[0], "Referer") != 0)
 							){
 								wmem_strbuf_append_printf(ja4h_data.headers, "%s,", strings[0]);
@@ -917,84 +936,80 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			// JA4L processng
 
 			if (strcmp(field->hfinfo->abbrev, "ip.ttl") == 0) {
-				curr_ttl = fvalue_get_uinteger(field->value);
+				curr_ttl = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "frame.time_epoch") == 0) {
-				packet_time = (nstime_t *) fvalue_get_time(field->value);
+				packet_time = (nstime_t *) fvalue_get_time(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.srcport") == 0) {
-				srcport = fvalue_get_uinteger(field->value);
+				srcport = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if (strcmp(field->hfinfo->abbrev, "udp.srcport") == 0) {
-				srcport = fvalue_get_uinteger(field->value);
+				srcport = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.dstport") == 0) {
-				dstport = fvalue_get_uinteger(field->value);
+				dstport = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if (strcmp(field->hfinfo->abbrev, "udp.dstport") == 0) {
-				dstport = fvalue_get_uinteger(field->value);
+				dstport = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.stream") == 0) {
-				stream = fvalue_get_uinteger(field->value);
+				stream = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if (strcmp(field->hfinfo->abbrev, "udp.stream") == 0) {
-				stream = fvalue_get_uinteger(field->value);
+				stream = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.len") == 0) {
-				tcp_len = fvalue_get_uinteger(field->value);
+				tcp_len = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if (strcmp(field->hfinfo->abbrev, "tcp.seq") == 0) {
-				seq = fvalue_get_uinteger(field->value);
+				seq = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if (strcmp(field->hfinfo->abbrev, "tcp.ack") == 0) {
-				ack = fvalue_get_uinteger(field->value);
+				ack = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.window_size_value") == 0) {
-				ja4t_data.window_size = fvalue_get_uinteger(field->value);
+				ja4t_data.window_size = fvalue_get_uinteger(get_value_ptr(field));
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "tcp.flags") == 0) {
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 
 				// SYN for this stream - signal JA4T
-				if (fvalue_get_uinteger(field->value) == 0x02) {
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x02) {
 					syn = 1;
 					conn->client_ttl = curr_ttl;
-					if (conn->timestamp_A.secs == 0) {
-						conn->timestamp_A.secs = packet_time->secs;
-						conn->timestamp_A.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_A))) {
+						nstime_copy(&conn->timestamp_A, packet_time);
 					}
 				}
 
 				// SYN ACK for JA4TS - server latency
-				if (fvalue_get_uinteger(field->value) == 0x012) {
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x012) {
 					syn = 2;
 					conn->server_ttl = curr_ttl;
-					if (conn->timestamp_B.secs == 0) {
-						conn->timestamp_B.secs = packet_time->secs;
-						conn->timestamp_B.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_B))) {
+						nstime_copy(&conn->timestamp_B, packet_time);
 					}
-					if (conn->syn_ack_count <= 10) {
-						conn->syn_ack_times[conn->syn_ack_count].secs = packet_time->secs;
-						conn->syn_ack_times[conn->syn_ack_count++].nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (conn->syn_ack_count < MAX_SYN_ACK_TIMES)) {
+						nstime_copy(&conn->syn_ack_times[conn->syn_ack_count++], packet_time);
 					}
 				}
 
 				// Add RST for JA4T
-				if (fvalue_get_uinteger(field->value) == 0x004) {
+				if ((packet_time != NULL) && (fvalue_get_uinteger(get_value_ptr(field)) == 0x004)) {
 					syn = 3;
-					conn->rst_time.secs = packet_time->secs;
-					conn->rst_time.nsecs = packet_time->nsecs;
+					nstime_copy(&conn->rst_time, packet_time);
 				}
 
 				// ACK for JA4L-S - server latency
-				if ((fvalue_get_uinteger(field->value) == 0x010) && (tcp_len == 0)) {
+				if ((fvalue_get_uinteger(get_value_ptr(field)) == 0x010) && (tcp_len == 0)) {
 					if (dstport == 22) {
 						conn->tcp_client_acks++;
 					}
@@ -1003,34 +1018,30 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 					}
 					srcport = dstport = 0;
 
-					if ((conn->timestamp_C.secs == 0) && (seq == 1) && (ack == 1)) {
-						conn->timestamp_C.secs = packet_time->secs;
-						conn->timestamp_C.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (nstime_is_zero(&conn->timestamp_C)) && (seq == 1) && (ack == 1)) {
+						nstime_copy(&conn->timestamp_C, packet_time);
 					}
 				}
 
 				// First packet after TCP handshake
 				// JA4L - Timestamps D, E, and F are application packets
 				// we identify them with PSH, ACK and the direction
-				if (fvalue_get_uinteger(field->value) == 0x018) {
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 0x018) {
 					if (conn->server_ttl && conn->client_ttl) {
-						if (conn->timestamp_D.nsecs == 0) {
+						if ((packet_time != NULL) && nstime_is_zero(&conn->timestamp_D)) {
 							// Denotes first PSH, ACK
-							conn->timestamp_D.secs = packet_time->secs;
-							conn->timestamp_D.nsecs = packet_time->nsecs;
+							nstime_copy(&conn->timestamp_D, packet_time);
 						} else {
 
 
-							if ((srcport < 5000) && (conn->timestamp_E.nsecs == 0)) {
+							if ((packet_time != NULL) && (srcport < 5000) && (nstime_is_zero(&conn->timestamp_E))) {
 								// Denotes second PSH, ACK - JA4L-S goes here
-								conn->timestamp_E.secs = packet_time->secs;
-								conn->timestamp_E.nsecs = packet_time->nsecs;
+								nstime_copy(&conn->timestamp_E, packet_time);
 							}
 
-							if ((dstport < 5000) && (conn->timestamp_F.nsecs == 0)) {
+							if ((packet_time != NULL) && (dstport < 5000) && (nstime_is_zero(&conn->timestamp_F))) {
 								// Denotes third PSH, ACK - JA4L-C goes here
-								conn->timestamp_F.secs = packet_time->secs;
-								conn->timestamp_F.nsecs = packet_time->nsecs;
+								nstime_copy(&conn->timestamp_F, packet_time);
 
 	        						//ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
 	        						//ja4_tree = proto_item_add_subtree(ti, ett_ja4);
@@ -1039,17 +1050,17 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 								nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
 								nstime_delta(&latency2, &conn->timestamp_E, &conn->timestamp_D);
-								wmem_strbuf_append_printf(display, "%d_%d_%d", 
-									latency.nsecs/2/1000, 
-									conn->server_ttl, 
+								wmem_strbuf_append_printf(display, "%d_%d_%d",
+									latency.nsecs/2/1000,
+									conn->server_ttl,
 									latency2.nsecs/2/1000);
 								update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
 								nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
 								nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
-								wmem_strbuf_append_printf(display2, "%d_%d_%d", 
-									latency.nsecs/2/1000, 
-									conn->client_ttl, 
+								wmem_strbuf_append_printf(display2, "%d_%d_%d",
+									latency.nsecs/2/1000,
+									conn->client_ttl,
 									latency2.nsecs/2/1000);
 								update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
 								mark_complete(pinfo->num);
@@ -1059,7 +1070,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				}
 
 				// Fix to add JA4SSH when a connection terminates
-				if ((fvalue_get_uinteger(field->value) == 0x011) && ((srcport == 22) || (dstport == 22))) {
+				if ((fvalue_get_uinteger(get_value_ptr(field)) == 0x011) && ((srcport == 22) || (dstport == 22))) {
 					update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "tcp");
 					mark_complete(pinfo->num);
 				}
@@ -1070,29 +1081,25 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 
 				// QUIC Initial packets
-				if (fvalue_get_uinteger(field->value) == 0) {
-					if ((dstport == 443) && (conn->timestamp_A.nsecs == 0)){
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 0) {
+					if ((packet_time != NULL) && (dstport == 443) && (nstime_is_zero(&conn->timestamp_A))){
 						conn->client_ttl = curr_ttl;
-						conn->timestamp_A.secs = packet_time->secs;
-						conn->timestamp_A.nsecs = packet_time->nsecs;
+						nstime_copy(&conn->timestamp_A, packet_time);
 					}
-					if ((srcport == 443) && (conn->timestamp_B.nsecs == 0)) {
+					if ((packet_time != NULL) && (srcport == 443) && (nstime_is_zero(&conn->timestamp_B))) {
 						conn->server_ttl = curr_ttl;
-						conn->timestamp_B.secs = packet_time->secs;
-						conn->timestamp_B.nsecs = packet_time->nsecs;
+						nstime_copy(&conn->timestamp_B, packet_time);
 					}
 				}
-	
+
 				// QUIC handshake packets, keep updating C until D is found
-				if (fvalue_get_uinteger(field->value) == 2) {
-					if ((srcport == 443) && (conn->timestamp_D.nsecs == 0)) {
-						conn->timestamp_C.secs = packet_time->secs;
-						conn->timestamp_C.nsecs = packet_time->nsecs;
+				if (fvalue_get_uinteger(get_value_ptr(field)) == 2) {
+					if ((packet_time != NULL) && (srcport == 443) && (nstime_is_zero(&conn->timestamp_C))) {
+						nstime_copy(&conn->timestamp_C, packet_time);
 					}
 
-					if ((dstport == 443) && (conn->timestamp_D.nsecs == 0)){
-						conn->timestamp_D.secs = packet_time->secs;
-						conn->timestamp_D.nsecs = packet_time->nsecs;
+					if ((packet_time != NULL) && (dstport == 443) && (nstime_is_zero(&conn->timestamp_D))){
+						nstime_copy(&conn->timestamp_D, packet_time);
 
 	        				//ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
 	        				//ja4_tree = proto_item_add_subtree(ti, ett_ja4);
@@ -1100,14 +1107,14 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 						wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
 
 						nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
-						wmem_strbuf_append_printf(display, "%d_%d_q", 
-							latency.nsecs/2/1000, 
+						wmem_strbuf_append_printf(display, "%d_%d_q",
+							latency.nsecs/2/1000,
 							conn->server_ttl);
 						update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
 						nstime_delta(&latency, &conn->timestamp_D, &conn->timestamp_C);
-						wmem_strbuf_append_printf(display2, "%d_%d_q", 
-							latency.nsecs/2/1000, 
+						wmem_strbuf_append_printf(display2, "%d_%d_q",
+							latency.nsecs/2/1000,
 							conn->client_ttl);
 						update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
 						mark_complete(pinfo->num);
@@ -1117,13 +1124,13 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 			// Added for JA4T processing
 			if ((syn > 0) && (strcmp(field->hfinfo->abbrev, "tcp.option_kind") == 0)) {
-				wmem_strbuf_append_printf(ja4t_data.tcp_options, "%d-", fvalue_get_uinteger(field->value));
+				wmem_strbuf_append_printf(ja4t_data.tcp_options, "%d-", fvalue_get_uinteger(get_value_ptr(field)));
 			}
 			if ((syn > 0) && (strcmp(field->hfinfo->abbrev, "tcp.options.mss_val") == 0)) {
-				ja4t_data.mss_val = fvalue_get_uinteger(field->value);
+				ja4t_data.mss_val = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			if ((syn > 0) && (strcmp(field->hfinfo->abbrev, "tcp.options.wscale.shift") == 0)) {
-				ja4t_data.window_scale = fvalue_get_uinteger(field->value);
+				ja4t_data.window_scale = fvalue_get_uinteger(get_value_ptr(field));
 			}
 			// End of JA4T processing
 
@@ -1132,11 +1139,11 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 				conn->pkts++;
 
-				field->value->value.uinteger ? conn->server_pkts++ : conn->client_pkts++;
-				field->value->value.uinteger ? 
-					update_mode(tcp_len, conn->server_mode) : 
+				get_value_ptr(field)->value.uinteger ? conn->server_pkts++ : conn->client_pkts++;
+				get_value_ptr(field)->value.uinteger ?
+					update_mode(tcp_len, conn->server_mode) :
 					update_mode(tcp_len, conn->client_mode);
-				
+
 				if ((conn->pkts % SAMPLE_COUNT) == 0) {
 	        			//ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
 	        			//ja4_tree = proto_item_add_subtree(ti, ett_ja4);
@@ -1149,7 +1156,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 					conn->server_mode = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
 				}
 			}
-			
+
             	}
             	//g_ptr_array_free(items,TRUE);
         }
@@ -1164,7 +1171,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		conn->window_size = ja4t_data.window_size;
 		conn->mss_val = ja4t_data.mss_val;
 		//wmem_strbuf_append_printf(conn->tcp_options, "%s", wmem_strbuf_get_str(ja4t_data.tcp_options));
-		if (conn->tcp_options == NULL) 
+		if (conn->tcp_options == NULL)
 	            conn->tcp_options = wmem_strbuf_new(wmem_file_scope(), wmem_strbuf_get_str(ja4t_data.tcp_options));
 		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
 		mark_complete(pinfo->num);
@@ -1388,7 +1395,7 @@ proto_register_ja4(void)
 	ja4_handle = create_dissector_handle(dissect_ja4, proto_ja4); //register_dissector("ja4", dissect_ja4, proto_ja4);
 
 	proto_register_field_array(proto_ja4, hf, array_length(hf));
-    	proto_register_subtree_array(ett, array_length(ett));	
+    	proto_register_subtree_array(ett, array_length(ett));
 
 	register_init_routine(init_globals);
 	register_cleanup_routine(cleanup_globals);

@@ -2,30 +2,41 @@
 
 JA4+ is a suite of network fingerprinting methods that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
 
-Please read this blog post for more details: [JA4+ Network Fingerprinting](https://medium.com/foxio/ja4-network-fingerprinting-9376fe9ca637)
+Please read our blogs for details on how JA4+ works, why it works, and examples of what can be detected/prevented with it:  
+[JA4+ Network Fingerprinting](https://blog.foxio.io/ja4%2B-network-fingerprinting) (JA4/S/H/L/X/SSH)  
+[JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)
+
 
 To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
 
-This repo includes JA4+ Python, Rust, Zeek and C, as a Wireshark plugin. 
+This repo includes JA4+ in Python, Rust, Zeek and C, as a Wireshark plugin. 
 
-JA4/JA4+ support is being added to:  
-[GreyNoise](https://www.greynoise.io/)  
-[Hunt](https://hunt.io/)  
-[Driftnet](https://driftnet.io/)  
-[Darksail](https://darksail.ai)  
-[Arkime](https://arkime.com/)  
-[GoLang](https://github.com/driftnet-io/go-ja4x) (JA4X)  
-[Suricata](https://github.com/OISF/suricata/pull/10095)  
-[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark)  
-[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek)  
-[nzyme](https://www.nzyme.org/)  
-[Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released)  
-[Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner)  
-[NGINX](https://hub.docker.com/r/thatcherthornberry/nginx-ja4)  
-[F5 BIG-IP](https://community.f5.com/t5/technical-articles/fingerprinting-tls-clients-with-ja4-on-f5-big-ip/ta-p/326298)  
-[nfdump](https://github.com/phaag/nfdump)  
-[ntop's ntopng](https://github.com/ntop/ntopng)  
-[ntop's nDPI](https://github.com/ntop/nDPI)  
+Tools that support JA4+:  
+| Tool/Vendor | JA4+ Support |
+|-------------|--------------|
+[Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark) | JA4+
+[Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+
+[Arkime](https://arkime.com/settings#ja4plus) | JA4+
+[Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4
+[GreyNoise](https://www.greynoise.io/) | JA4+ (you have to ask for it)
+[Hunt](https://hunt.io/) | JA4+
+[Driftnet](https://driftnet.io/) | JA4X
+[DarkSail](https://darksail.ai) | JA4+
+[GoLang](https://github.com/driftnet-io/go-ja4x) | JA4X
+[nzyme](https://www.nzyme.org/) | JA4+ (under development)
+[Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released) | JA4+ (under development)
+[Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner) | JA4+ (under development)
+[NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module) | JA4+ (under development)
+[F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+
+[nfdump](https://github.com/phaag/nfdump) | JA4+
+[ntop's ntopng](https://github.com/ntop/ntopng) | JA4+
+[ntop's nDPI](https://github.com/ntop/nDPI) | JA4
+[Team Cymru](https://www.team-cymru.com/) | JA4+ (you have to ask for it)
+[NetQuest](https://netquestcorp.com/) | JA4+ (under development)
+[Censys](https://censys.com/) | JA4+ (under development)
+[Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H
+[Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
+[Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
 with more to be announced...  
 
 ## Examples
@@ -46,6 +57,9 @@ with more to be announced...
 | Reverse SSH Shell | ```JA4SSH=c76s76_c71s59_c0s70``` |
 | Windows 10 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
 | Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
+
+For more, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
+The mapping file is unlicensed and free to use. Feel free to do a pull request with any JA4+ data you find. 
 
 ## Plugins
 
@@ -87,6 +101,10 @@ ja4 [options] [pcap]
 
 An official JA4+ database of fingerprints, associated applications and recommended detection logic is in the process of being built.
 
+In the meantime, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
+
+Feel free to do a pull request with any JA4+ data you find.
+
 ## JA4+ Details
 
 JA4+ is a set of simple yet powerful network fingerprints for multiple protocols that are both human and machine readable, facilitating improved threat-hunting and security analysis. If you are unfamiliar with network fingerprinting, I encourage you to read my blogs releasing JA3 [here](https://medium.com/salesforce-engineering/tls-fingerprinting-with-ja3-and-ja3s-247362855967), JARM [here](https://medium.com/salesforce-engineering/easily-identify-malicious-servers-on-the-internet-with-jarm-e095edac525a), and this excellent blog by Fastly on the [State of TLS Fingerprinting](https://www.fastly.com/blog/the-state-of-tls-fingerprinting-whats-working-what-isnt-and-whats-next) which outlines the history of the aforementioned along with their problems. JA4+ brings dedicated support, keeping the methods up-to-date as the industry changes. 
@@ -106,7 +124,7 @@ Current methods and implementation details:
 | JA4SSH | JA4SSH | SSH Traffic Fingerprinting
 | JA4TCP | JA4T | TCP Client Fingerprinting
 | JA4TCPServer | JA4TS | TCP Server Response Fingerprinting
-| JA4TCPScan | JA4TScan | Active TCP Fingerprint Scanner
+| [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan)
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
@@ -116,7 +134,7 @@ To understand how to read JA4+ fingerprints, see [Technical Details](https://git
 
 __JA4: TLS Client Fingerprinting__ is [open-source, BSD 3-Clause](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE-JA4), same as JA3. FoxIO does not have patent claims and is not planning to pursue patent coverage for JA4 TLS Client Fingerprinting. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
 
-__JA4S, JA4L, JA4H, JA4X, JA4SSH, and all future additions, (collectively referred to as JA4+)__ are licensed under the [FoxIO License 1.1](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
+__JA4S, JA4L, JA4H, JA4X, JA4SSH, JA4T, JA4TScan and all future additions, (collectively referred to as JA4+)__ are licensed under the [FoxIO License 1.1](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
 
 All JA4+ methods are patent pending.  
 JA4+ is a trademark of FoxIO
@@ -124,6 +142,8 @@ JA4+ is a trademark of FoxIO
 JA4+ can and is being implemented into open source tools, see the [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
 
 This licensing allows us to provide JA4+ to the world in a way that is open and immediately usable, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
+
+[ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv) is not included in the above software licenses and is thereby a license-free file.
 
 ## Q&A
 

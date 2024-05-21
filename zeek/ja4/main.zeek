@@ -38,7 +38,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4: FINGERPRINT::JA4::Info &default=[];
+  ja4: FINGERPRINT::JA4::Info &default=Info();
 };
 
 redef record SSL::Info += {
@@ -138,7 +138,8 @@ function do_ja4(c: connection) {
   local ja4_b: vector of count = c$fp$client_hello$cipher_suites;
 
   local extensions: vector of count = vector();
-  for (idx, code in c$fp$client_hello$extension_codes) {
+  for (idx in c$fp$client_hello$extension_codes) {
+    local code = c$fp$client_hello$extension_codes[idx];
     if (code == SSL::SSL_EXTENSION_SERVER_NAME || code == SSL::SSL_EXTENSION_APPLICATION_LAYER_PROTOCOL_NEGOTIATION) {
       next;
     }
@@ -185,7 +186,7 @@ function do_ja4(c: connection) {
   c$fp$ja4$ro += ja4_c;
 
   # fingerprinting is marked as done and it is logged
-  c$fp$ja4$done = T;
+  
   if(c?$ssl) {
     c$ssl$ja4 = c$fp$ja4$ja4;
     @if(FINGERPRINT::JA4_raw) 
@@ -194,14 +195,22 @@ function do_ja4(c: connection) {
         c$ssl$ja4_ro = c$fp$ja4$ro;
     @endif
   }
+  c$fp$ja4$done = T;
   # uncomment for detailed separate log
   # Log::write(FINGERPRINT::JA4::LOG, c$fp$ja4);
+}
+
+event connection_state_remove(c: connection) {
+  # TODO: Make this only for SSL connections
+  do_ja4(c);
 }
 
 #  Just before the SSL log is written
 #  Conduct operations on ClientHello record in c$fp to create JA4 record as c$fp$ja4
 
 hook SSL::log_policy(rec: SSL::Info, id: Log::ID, filter: Log::Filter) {
-  local c = lookup_connection(rec$id);
-  do_ja4(c);
+  if(connection_exists(rec$id)) {
+    local c = lookup_connection(rec$id);
+    do_ja4(c);
+  }
 }

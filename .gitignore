@@ -1,3 +1,4 @@
 rust/target
+wireshark/build-scripts/build
 .DS_Store
 .vscode/

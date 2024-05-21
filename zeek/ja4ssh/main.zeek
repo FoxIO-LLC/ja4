@@ -33,7 +33,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4ssh: FINGERPRINT::JA4SSH::Info &default=[];
+  ja4ssh: FINGERPRINT::JA4SSH::Info &default=Info();
 };
 
 # Create the log stream and file
@@ -46,7 +46,8 @@ event zeek_init() &priority=5 {
 function get_mode(vec: vector of count): count {
   local freqs: table[count] of count = table();
    
-  for (_,v in vec) {
+  for (idx in vec) {
+    local v = vec[idx];
     if(v in freqs) {
       ++freqs[v];
     } else {
@@ -55,10 +56,11 @@ function get_mode(vec: vector of count): count {
   }
   local max = 0;
   local mode = 0;
-  for (i,v in freqs) {
-    if (v > max) {
-      max = v;
-      mode = i;
+  for (idx in freqs) {
+    local freq = freqs[idx];
+    if (freq > max) {
+      max = freq;
+      mode = idx;
     }
   }
 

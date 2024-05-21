@@ -212,18 +212,27 @@ def to_ja4(x, debug_stream):
     ext_len = '{:02d}'.format(len([ x for x in x['extensions'] if x not in GREASE_TABLE]))
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
-    x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
+    if ('0x000d' in x['extensions']):
+    	x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
+    else:
+    	x['signature_algorithms'] = ''
+
     cache_update(x, 'client_extensions', x['extensions'], debug_stream)
 
     # Modified to include original rendering
     x['sorted_extensions'], _len, _ = get_hex_sorted(x, 'extensions')
     x['original_extensions'], _len, _ = get_hex_sorted(x, 'extensions', sort=False)
-    x['sorted_extensions'] = x['sorted_extensions'] + '_' + ','.join(x['signature_algorithms'])
-    x['original_extensions'] = x['original_extensions'] + '_' + ','.join(x['signature_algorithms'])
+    if (x['signature_algorithms'] == ''):
+	    x['sorted_extensions'] = x['sorted_extensions']
+	    x['original_extensions'] = x['original_extensions']
+    else:
+        x['sorted_extensions'] = x['sorted_extensions'] + '_' + ','.join(x['signature_algorithms'])
+        x['original_extensions'] = x['original_extensions'] + '_' + ','.join(x['signature_algorithms'])
     sorted_extensions = sha_encode(x['sorted_extensions'])
     original_extensions = sha_encode(x['original_extensions'])
     x['sorted_ciphers'], cipher_len, sorted_ciphers = get_hex_sorted(x, 'ciphers')
     x['original_ciphers'], cipher_len, original_ciphers = get_hex_sorted(x, 'ciphers', sort=False)
+
 
     sni = 'd' if 'domain' in x else 'i'
     x['version'] = x['version'][0] if isinstance(x['version'], list) else x['version']
@@ -575,4 +584,3 @@ if __name__ == '__main__':
     main()
 
     
-

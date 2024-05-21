@@ -25,6 +25,10 @@ If you don't have the zeek package manager, copy this directory to zeek/share/ze
 @load ja4plus
 ```
 
+## Requirements
+Zeek 5+ is supported.  
+Zeek 6+ is required for QUIC support.  
+
 ## Config
 Individual JA4+ methods can be enabled or disabled in config.zeek.  
 The raw output for JA4+ methods (non-hashed) can also be enabled in config.zeek

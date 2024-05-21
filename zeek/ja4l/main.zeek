@@ -48,7 +48,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4l: FINGERPRINT::JA4L::Info &default=[];
+  ja4l: FINGERPRINT::JA4L::Info &default=Info();
 };
 
 redef record Conn::Info += {
@@ -70,7 +70,7 @@ function get_current_packet_timestamp(): double {
 
 event new_connection(c: connection) {
     
-    if(!c?$fp) { c$fp = []; }
+    if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
     
     local rp = get_current_packet_header();
     if (rp?$tcp && rp$tcp$flags != TH_SYN) {
@@ -158,7 +158,7 @@ event ssl_server_hello(c: connection, version: count, record_version: count, pos
 
 event QUIC::initial_packet(c: connection, is_orig: bool, version: count, dcid: string, scid: string) {
 
-    if(!c?$fp) { c$fp = []; }
+    if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
 
     local rp = get_current_packet_header();
     if (is_orig) {

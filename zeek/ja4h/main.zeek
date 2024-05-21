@@ -29,7 +29,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  ja4h: FINGERPRINT::JA4H::Info &default=[];
+  ja4h: FINGERPRINT::JA4H::Info &default=Info();
 };
 
 redef record HTTP::Info += {
@@ -61,7 +61,7 @@ export {
 }
 
 redef record FINGERPRINT::Info += {
-  http_client: HttpClient &default=[];
+  http_client: HttpClient &default=HttpClient();
 };
 
 
@@ -75,13 +75,14 @@ event zeek_init() &priority=5 {
 
 event http_header (c: connection, is_orig: bool, original_name: string, name: string, value: string)
 {
-    if (!c?$fp) { c$fp = []; }
+    if (!c?$fp) { c$fp = FINGERPRINT::Info(); }
     if (is_orig) {
         c$fp$http_client$header_names_o += original_name;
         if (name == "COOKIE") {
             c$fp$http_client$cookie = value;
-            for (_, cookie in split_string(value, /;/)) {
-                cookie = strip(cookie);
+            local cookies = split_string(value, /;/);
+            for (idx in cookies) {
+                local cookie = strip(cookies[idx]);
                 c$fp$http_client$cookie_values += cookie;
                 c$fp$http_client$cookie_names += split_string1(cookie, /=/)[0];
             }
@@ -122,7 +123,7 @@ global HTTP_METHOD_MAP: table[string] of string = {
 
 event http_request(c: connection, method: string, original_URI: string, unescaped_URI: string, version: string)
 {
-    if (!c?$fp) { c$fp = []; }
+    if (!c?$fp) { c$fp = FINGERPRINT::Info(); }
 
     # clear the last request if there was one
     c$fp$http_client = [];

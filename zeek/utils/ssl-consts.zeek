@@ -8,7 +8,10 @@ export {
     [0x0301] = "10",
     [0x0302] = "11",
     [0x0303] = "12",
-    [0x0304] = "13"
+    [0x0304] = "13",
+    [SSL::DTLSv10] =  "d1",
+    [SSL::DTLSv12] = "d2",
+    [0xFEFC] = "d3"          # Zeek 5 didn't  have a constant for 1.3 yet
   };
 
   global TLS_GREASE_TYPES: set[count] = {

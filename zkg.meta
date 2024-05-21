@@ -2,5 +2,6 @@
 description = Official Zeek package for JA4+ network fingerprinting.
 tags = ja4, fingerprint, fingerprinting, ja4s, ja4h, ja4x, ja4ssh, ja4l, ja4t, ja4+, ja4plus, ja3
 script_dir = zeek
-version = 1.0
+version = 1.1
 credits = John Althouse
+depends = zeek >=5.0.0
