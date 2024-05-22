@@ -64,7 +64,7 @@ pub struct Cli {
 }
 
 impl Cli {
-    /// Write JSON with JA4 fingerprints to the standard output.
+    /// Write JSON with JA4 fingerprints to the I/O stream.
     pub fn run<W: Write>(self, writer: &mut W) -> Result<()> {
         let conf = Conf::load()?;
         let Cli {

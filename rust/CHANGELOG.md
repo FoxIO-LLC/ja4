@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.2] - 2024-05-22
+
+### Fixed
+
+- `cargo update` the dependencies. This fixes compilation error of `time` on nightly.
+
 ## [0.18.1] - 2024-02-04
 
 ### Fixed
