@@ -562,7 +562,7 @@ char *ja4s (ja4_info_t *data) {
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
 		(wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn)-1] : '0',
 		wmem_strbuf_get_str(data->ciphers),
-		_hash
+		wmem_strbuf_get_len(data->extensions) ? _hash : "000000000000"
 	);
 	if (_hash != NULL) g_free(_hash);
 	return (char *) wmem_strbuf_get_str(display);
