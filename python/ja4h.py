@@ -10,7 +10,7 @@ def http_method(method):
     return method.lower()[:2]
 
 def http_language(lang):
-    lang = lang.replace('-','').lower().split(',')[0]
+    lang = lang.replace('-','').replace(';',',').lower().split(',')[0]
     return f"{lang}{'0'*(4-len(lang))}"
 
 def to_ja4h(x, debug_stream=-1):
@@ -33,10 +33,10 @@ def to_ja4h(x, debug_stream=-1):
 
     if 'cookies' in x:
         if isinstance(x['cookies'], list):
-            x['cookie_fields'] = [ y.split('=')[0] for y in x['cookies'] ]
+            x['cookie_fields'] = [ y.split('=')[0].lstrip().rstrip() for y in x['cookies'] ]
             x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'] ]
         else:
-            x['cookie_fields'] = [ y.split('=')[0] for y in x['cookies'].split(';') ]
+            x['cookie_fields'] = [ y.split('=')[0].lstrip().rstrip() for y in x['cookies'].split(';') ]
             x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'].split(';') ]
 
         unsorted_cookie_fields = x['cookie_fields'][:]
