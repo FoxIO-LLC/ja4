@@ -411,19 +411,17 @@ conn_info_t *conn_lookup (char proto, int stream) {
 }
 
 void decode_http_lang(wmem_strbuf_t **out, const char *val) {
-	gchar **strings;
-	strings = g_strsplit(val, ",", 2);
-	if (strings[0] != NULL) {
-		for (int i=0; i < (int) strlen(strings[0]); i++) {
-			if (strings[0][i] != '-') {
-				wmem_strbuf_append_c(*out, g_ascii_tolower(strings[0][i]));
-			}
+	char lang[5] = "0000"; 
+	int len = 0;
+	for (int i=0; i<5; i++) {
+		if ((val[i] == ',') || (val[i] == ';') || (len == 4)) {
+			break;
 		}
-
-		if (wmem_strbuf_get_len(*out) <= 3) {
-			wmem_strbuf_append_printf(*out, "%s", "00");
+		if ((!isspace(val[i])) && (val[i] != '-')) {
+			lang[len++] = g_ascii_tolower(val[i]);
 		}
 	}
+	wmem_strbuf_append_printf(*out, "%s", lang);
 }
 
 void decode_http_version(wmem_strbuf_t **out, const char *val) {
@@ -460,7 +458,6 @@ void create_sorted_cookies (wmem_strbuf_t **fields, wmem_strbuf_t **values, wmem
  	wmem_list_frame_t *curr_entry = wmem_list_head(l);
 	http_cookie_t *curr_cookie = NULL;
 	while(curr_entry && wmem_list_frame_next(curr_entry)) {
-
 		curr_cookie = wmem_list_frame_data(curr_entry);
         	wmem_strbuf_append_printf(*fields, "%s,", wmem_strbuf_get_str(curr_cookie->field));
         	wmem_strbuf_append_printf(*values, "%s=%s,", wmem_strbuf_get_str(curr_cookie->field), wmem_strbuf_get_str(curr_cookie->value));
@@ -960,12 +957,11 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			}
 
 			if (strcmp(field->hfinfo->abbrev, "http.cookie_pair") == 0) {
-				strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", -1);
+				strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", 2);
 				if (strings[0] && strings[1]) {
 					http_cookie_t *new_cookie = wmem_new(wmem_packet_scope(), http_cookie_t);
 					new_cookie->field = wmem_strbuf_new(wmem_packet_scope(), strings[0]);
 					new_cookie->value = wmem_strbuf_new(wmem_packet_scope(), strings[1]);
-
 					wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_fields, "%s,", strings[0]);
 					wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_values, "%s,", fvalue_get_string(get_value_ptr(field)));
 
@@ -981,7 +977,9 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 						if ((strings[0] != NULL) && (strings[1] != NULL)) {
 							if(
 								(strcmp(strings[0], "Cookie") != 0) &&
-								(strcmp(strings[0], "Referer") != 0)
+								(strcmp(strings[0], "cookie") != 0) &&
+								(strcmp(strings[0], "Referer") != 0) &&
+								(strcmp(strings[0], "referer") != 0)
 							){
 								wmem_strbuf_append_printf(ja4h_data.headers, "%s,", strings[0]);
 								ja4h_data.num_headers ++;
