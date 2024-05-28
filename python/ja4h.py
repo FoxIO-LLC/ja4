@@ -15,7 +15,9 @@ def http_language(lang):
 
 def to_ja4h(x, debug_stream=-1):
     cookie = 'c' if 'cookies' in x else 'n'
-    referer = 'r' if 'referer' in [ y.lower() for y in x['headers'] ] else 'n'
+    header_fields = [y.lower().split(':')[0] for y in  x['headers'] ]
+    referer = 'r' if 'referer' in str(header_fields) else 'n'
+
     method = http_method(x['method'])
     version = 11 if x['hl'] == 'http' else 20
     unsorted_cookie_fields = []
