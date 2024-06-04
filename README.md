@@ -4,7 +4,8 @@ JA4+ is a suite of network fingerprinting methods that are easy to use and easy 
 
 Please read our blogs for details on how JA4+ works, why it works, and examples of what can be detected/prevented with it:  
 [JA4+ Network Fingerprinting](https://blog.foxio.io/ja4%2B-network-fingerprinting) (JA4/S/H/L/X/SSH)  
-[JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)
+[JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)  
+[Investigating Surfshark and NordVPN with JA4T](https://blog.foxio.io/investigating-surfshark-and-nordvpn-with-ja4t) (JA4T)
 
 
 To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
@@ -58,8 +59,8 @@ with more to be announced...
 | Windows 10 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
 | Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
 
-For more, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
-The mapping file is unlicensed and free to use. Feel free to do a pull request with any JA4+ data you find. 
+For more examples, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
+For a complete database, see [ja4db.com](https://ja4db.com/)  
 
 ## Plugins
 
@@ -99,11 +100,10 @@ ja4 [options] [pcap]
 
 ## Database
 
-An official JA4+ database of fingerprints, associated applications and recommended detection logic is in the process of being built.
+The official JA4+ database of fingerprints, associated applications and recommended detection logic is here: [ja4db.com](https://ja4db.com/)  
+This database is under very active development. Expect orders of magnitude more fingerprint combinations and data over the next few months (Aug 2024).
 
-In the meantime, see [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv)  
-
-Feel free to do a pull request with any JA4+ data you find.
+A sample [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv) is also available for quick reference.
 
 ## JA4+ Details
 
@@ -119,7 +119,8 @@ Current methods and implementation details:
 | JA4 | JA4 | TLS Client Fingerprinting  
 | JA4Server | JA4S | TLS Server Response / Session Fingerprinting
 | JA4HTTP | JA4H | HTTP Client Fingerprinting
-| JA4Latency | JA4L | Latency Measurment / Light Distance
+| JA4Latency | JA4L | Client to Server Latency Measurment / Light Distance
+| JA4LatencyServer | JA4LS | Server to Client Latency Measurement / Light Distance
 | JA4X509 | JA4X | X509 TLS Certificate Fingerprinting
 | JA4SSH | JA4SSH | SSH Traffic Fingerprinting
 | JA4TCP | JA4T | TCP Client Fingerprinting
@@ -134,16 +135,14 @@ To understand how to read JA4+ fingerprints, see [Technical Details](https://git
 
 __JA4: TLS Client Fingerprinting__ is [open-source, BSD 3-Clause](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE-JA4), same as JA3. FoxIO does not have patent claims and is not planning to pursue patent coverage for JA4 TLS Client Fingerprinting. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
 
-__JA4S, JA4L, JA4H, JA4X, JA4SSH, JA4T, JA4TScan and all future additions, (collectively referred to as JA4+)__ are licensed under the [FoxIO License 1.1](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
+__JA4S, JA4L, JA4LS, JA4H, JA4X, JA4SSH, JA4T, JA4TS, JA4TScan and all future additions, (collectively referred to as JA4+)__ are licensed under the [FoxIO License 1.1](https://github.com/FoxIO-LLC/ja4/blob/main/LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
 
 All JA4+ methods are patent pending.  
 JA4+ is a trademark of FoxIO
 
 JA4+ can and is being implemented into open source tools, see the [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
 
-This licensing allows us to provide JA4+ to the world in a way that is open and immediately usable, but also provides us with a way to fund continued support, research into new methods, and the development of the upcoming JA4 Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
-
-[ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv) is not included in the above software licenses and is thereby a license-free file.
+This licensing allows us to provide JA4+ to the world in a way that is open and immediately usable, but also provides us with a way to fund continued support, research into new methods, and the development of the JA4+ Database. We want everyone to have the ability to utilize JA4+ and are happy to work with vendors and open source projects to help make that happen.
 
 ## Q&A
 
