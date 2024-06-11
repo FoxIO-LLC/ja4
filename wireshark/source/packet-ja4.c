@@ -9,14 +9,9 @@
 #ifndef OOT_BUILD
 #include "config.h"
 #endif
-#include <glib.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
+#include <wireshark.h>
 
-#include <ws_version.h>
+#include <math.h>
 
 #define FIELD_VALUE_IS_PTR ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 1))
 
@@ -26,7 +21,7 @@
 
 #include <epan/ftypes/ftypes.h>
 #include <epan/packet.h>
-#include "epan/packet_info.h"
+#include <epan/packet_info.h>
 #include <epan/epan_dissect.h>
 #include <epan/oids.h>
 #include <epan/tap.h>
@@ -243,7 +238,7 @@ wmem_map_t *conn_hash = NULL; // = wmem_map_new(wmem_file_scope(), g_direct_hash
 wmem_map_t *quic_conn_hash = NULL; // Added for JA4L on quic
 wmem_map_t *packet_table = NULL;
 
-static int timediff(nstime_t *current, nstime_t *prev)
+static long timediff(nstime_t *current, nstime_t *prev)
 {
     nstime_t result;
     result.secs  = current->secs  - prev->secs;
@@ -253,7 +248,7 @@ static int timediff(nstime_t *current, nstime_t *prev)
         result.nsecs += 1000000000L;
     }
     float nsecs = ((float)result.nsecs / 1000000000);
-    int diff = result.secs + (((nsecs - floor(nsecs))> 0.5) ? 1 : 0);
+    long diff = result.secs + (((nsecs - floor(nsecs))> 0.5) ? 1 : 0);
     return diff;
 }
 
@@ -417,7 +412,7 @@ void decode_http_lang(wmem_strbuf_t **out, const char *val) {
 		if ((val[i] == ',') || (val[i] == ';') || (len == 4)) {
 			break;
 		}
-		if ((!isspace(val[i])) && (val[i] != '-')) {
+		if ((!g_ascii_isspace(val[i])) && (val[i] != '-')) {
 			lang[len++] = g_ascii_tolower(val[i]);
 		}
 	}
@@ -672,15 +667,15 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 	if ((conn != NULL) && (conn->syn_ack_count > 1)) {
 		wmem_strbuf_append_printf(display, "%c", '_');
 		for (int i=1; i<conn->syn_ack_count; i++) {
-			int diff = timediff(&conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
-			wmem_strbuf_append_printf(display, "%d", diff); //(int) latency.nsecs / 100000000);
+			long diff = timediff(&conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
+			wmem_strbuf_append_printf(display, "%" PRId64, diff); //(int) latency.nsecs / 100000000);
 			if (i < (conn->syn_ack_count - 1)) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
 		if (!nstime_is_zero(&conn->rst_time)) {
-			int diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
-			wmem_strbuf_append_printf(display, "-R%d", diff); //(int) latency.nsecs / 100000000);
+			long diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
+			wmem_strbuf_append_printf(display, "-R%" PRId64, diff); //(int) latency.nsecs / 100000000);
 		}
 	}
 
@@ -898,10 +893,10 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                 	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.extensions_alpn_str") == 0)) {
 				if (!alpn_visited) {
 					const char *alpn_str = fvalue_get_string(get_value_ptr(field));
-					if (!isascii(alpn_str[0])) {
+					if (!g_ascii_isalnum(alpn_str[0])) {
 						wmem_strbuf_append_printf(ja4_data.alpn, "%s", "99");
 					} else {
-						wmem_strbuf_append_printf(ja4_data.alpn, "%s", fvalue_get_string(get_value_ptr(field)));
+						wmem_strbuf_append_printf(ja4_data.alpn, "%s", alpn_str);
 					}
 					alpn_visited = true;
 				}
@@ -1194,8 +1189,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 				conn->pkts++;
 
-				get_value_ptr(field)->value.uinteger ? conn->server_pkts++ : conn->client_pkts++;
-				get_value_ptr(field)->value.uinteger ?
+				fvalue_get_uinteger(get_value_ptr(field)) ? conn->server_pkts++ : conn->client_pkts++;
+				fvalue_get_uinteger(get_value_ptr(field)) ?
 					update_mode(tcp_len, conn->server_mode) :
 					update_mode(tcp_len, conn->client_mode);
 
@@ -1461,7 +1456,7 @@ proto_register_ja4(void)
 
 
 	proto_ja4 = proto_register_protocol("JA4 Fingerprint", "JA4", "ja4");
-	ja4_handle = create_dissector_handle(dissect_ja4, proto_ja4); //register_dissector("ja4", dissect_ja4, proto_ja4);
+	ja4_handle = register_dissector("ja4", dissect_ja4, proto_ja4);
 
 	proto_register_field_array(proto_ja4, hf, array_length(hf));
     	proto_register_subtree_array(ett, array_length(ett));
