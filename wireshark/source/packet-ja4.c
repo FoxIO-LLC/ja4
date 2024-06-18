@@ -457,6 +457,8 @@ char *wmem_list_to_str (wmem_list_t *l) {
 
 void create_sorted_cookies (wmem_strbuf_t **fields, wmem_strbuf_t **values, wmem_list_t *l) {
  	wmem_list_frame_t *curr_entry = wmem_list_head(l);
+	if (curr_entry == NULL)
+		return;
 	http_cookie_t *curr_cookie = NULL;
 	while(curr_entry && wmem_list_frame_next(curr_entry)) {
 		curr_cookie = wmem_list_frame_data(curr_entry);
