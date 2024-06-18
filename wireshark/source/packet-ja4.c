@@ -260,11 +260,12 @@ static int timediff(nstime_t *current, nstime_t *prev)
 pkt_info_t *packet_table_lookup (int frame_number) {
 	pkt_info_t *data = wmem_map_lookup(packet_table, GINT_TO_POINTER(frame_number));
 	if (data == NULL) {
-		data = wmem_alloc(wmem_file_scope(), sizeof(pkt_info_t));
+		data = wmem_new0(wmem_file_scope(), pkt_info_t);
 		data->pkt_hashes = wmem_array_new(wmem_file_scope(), 100);
 		data->frame_number = frame_number;
 		data->num_of_hashes = 0;
 		data->complete = false;
+		data->insert_at = NULL;
 		wmem_map_insert(packet_table, GINT_TO_POINTER(frame_number), data);
 	}
 	return data;
@@ -306,7 +307,7 @@ void update_tree_item(int frame_number, tvbuff_t *tvb, proto_tree *tree, proto_t
 	//proto_item_set_generated(ti);
 	pkt_info_t *pi = packet_table_lookup(frame_number);
 	if (!pi->complete) {
-		packet_hash_t *recorded_hash = wmem_alloc(wmem_file_scope(), sizeof(packet_hash_t));
+		packet_hash_t *recorded_hash = wmem_new0(wmem_file_scope(), packet_hash_t);
 		recorded_hash->hf_field = field;
 		recorded_hash->hf_value = (char *) str;
 		wmem_array_append(pi->pkt_hashes, recorded_hash, 1);
@@ -379,7 +380,7 @@ conn_info_t *conn_lookup (char proto, int stream) {
 
 	conn_info_t *data = wmem_map_lookup(conn, GINT_TO_POINTER(stream));
 	if (data == NULL) {
-		data = wmem_alloc(wmem_file_scope(), sizeof(conn_info_t));
+		data = wmem_new0(wmem_file_scope(), conn_info_t);
 		data->stream = stream;
 		data->pkts = 0;
 		data->client_pkts = 0;
