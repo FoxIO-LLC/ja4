@@ -669,14 +669,14 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 		wmem_strbuf_append_printf(display, "%c", '_');
 		for (int i=1; i<conn->syn_ack_count; i++) {
 			long diff = timediff(&conn->syn_ack_times[i], &conn->syn_ack_times[i-1]);
-			wmem_strbuf_append_printf(display, "%" PRId64, diff); //(int) latency.nsecs / 100000000);
+			wmem_strbuf_append_printf(display, "%" PRId64, (long long) diff); 
 			if (i < (conn->syn_ack_count - 1)) {
 				wmem_strbuf_append_printf(display, "%c", '-');
 			}
 		}
 		if (!nstime_is_zero(&conn->rst_time)) {
 			long diff = timediff(&conn->rst_time, &conn->syn_ack_times[conn->syn_ack_count-1]);
-			wmem_strbuf_append_printf(display, "-R%" PRId64, diff); //(int) latency.nsecs / 100000000);
+			wmem_strbuf_append_printf(display, "-R%" PRId64, (long long) diff); 
 		}
 	}
 
