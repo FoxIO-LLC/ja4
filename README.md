@@ -38,6 +38,7 @@ Tools that support JA4+:
 [Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H
 [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
 [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
+[MISP](https://www.misp-project.org/) | JA4+
 with more to be announced...  
 
 ## Examples
