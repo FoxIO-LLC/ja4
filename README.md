@@ -39,6 +39,7 @@ Tools that support JA4+:
 [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
 [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
 [MISP](https://www.misp-project.org/) | JA4+
+[OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+
 with more to be announced...  
 
 ## Examples
