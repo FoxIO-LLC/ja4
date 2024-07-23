@@ -24,7 +24,7 @@ Create an issue or contact john@foxio.io with any questions.
 
 ## Config
 JA4+ fields are under ja4.*  
-JA4: ```ja4.ja4```  
+JA4: ```tls.handshake.ja4```  
 JA4S: ```ja4.ja4s```  
 JA4H: ```ja4.ja4h```  
 JA4L: ```ja4.ja4l```  
