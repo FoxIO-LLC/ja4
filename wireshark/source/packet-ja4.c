@@ -1239,6 +1239,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		mark_complete(pinfo->num);
 	}
 
+	// Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in our plugin.
 	/*if ((handshake_type == 1) || (handshake_type == 2) || (handshake_type == 11) || (http_req != -100)) {
 		if (ja4_tree == NULL) {
 	        	ti = proto_tree_add_item(locate_tree(tree, "tls"), proto_ja4, tvb, 0, -1, ENC_NA);
@@ -1246,7 +1247,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		}
 	}*/
 
-	if (handshake_type == 1) {
+	/*if (handshake_type == 1) {
 		set_ja4_ciphers(tree, &ja4_data);
 		set_ja4_extensions(tree, &ja4_data);
 		if (wmem_strbuf_get_len(ja4_data.signatures) > 3) {
@@ -1256,7 +1257,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw, ja4_r(&ja4_data), proto);
 		update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw_original, ja4_ro(&ja4_data), proto);
 		mark_complete(pinfo->num);
-	}
+	}*/
 
 	if (handshake_type == 2) {
 		set_ja4_ciphers(tree, &ja4_data);
@@ -1335,13 +1336,13 @@ static void init_globals (void) {
 	ret = register_tap_listener("dtls", &hf_ja4s, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("dtls", &hf_ja4s_raw, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 
-	ret = register_tap_listener("tls", &hf_ja4, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &hf_ja4_raw, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &hf_ja4_raw_original, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("tls", &hf_ja4, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("tls", &hf_ja4_raw, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("tls", &hf_ja4_raw_original, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 
-	ret = register_tap_listener("dtls", &hf_ja4, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("dtls", &hf_ja4_raw, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("dtls", &hf_ja4, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("dtls", &hf_ja4_raw, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	//ret = register_tap_listener("dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 
 	ret = register_tap_listener("tls", &hf_ja4x, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
 	ret = register_tap_listener("tls", &hf_ja4x_raw, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
@@ -1374,11 +1375,12 @@ void
 proto_register_ja4(void)
 {
 	static hf_register_info hf[] = {
-		{ &hf_ja4_raw,
+		// Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in our plugin.
+		/*{ &hf_ja4_raw,
 			{ "JA4 Raw", "ja4.ja4_r",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
 			  NULL, HFILL }
-		},
+		},*/
 		{ &hf_ja4_raw_original,
 			{ "JA4 Raw (Original)", "ja4.ja4_ro",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
@@ -1394,11 +1396,12 @@ proto_register_ja4(void)
 			  FT_STRING, BASE_NONE, NULL, 0x0,
 			  NULL, HFILL }
 		},
-		{ &hf_ja4,
+		// Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in our plugin.
+		/*{ &hf_ja4,
 			{ "JA4", "ja4.ja4",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
 			  NULL, HFILL }
-		},
+		},*/
 		{ &hf_ja4x_raw,
 			{ "JA4X Raw", "ja4.ja4x_r",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
