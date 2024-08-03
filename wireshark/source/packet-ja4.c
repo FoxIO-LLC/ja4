@@ -12,6 +12,8 @@
 #include <wireshark.h>
 
 #include <math.h>
+#include <glib.h>
+#include <wsutil/to_str.h>
 
 #define FIELD_VALUE_IS_PTR ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 1))
 
@@ -48,11 +50,11 @@ char *bytes_to_string(fvalue_t *fv) {
 
 static int proto_ja4;
 static gint ett_ja4 = -1;
-static int hf_ja4_raw = -1;
-static int hf_ja4_raw_original = -1;
+//static int hf_ja4_raw = -1;
+//static int hf_ja4_raw_original = -1;
 static int hf_ja4s_raw = -1;
 static int hf_ja4s = -1;
-static int hf_ja4 = -1;
+//static int hf_ja4 = -1;
 static int hf_ja4x_raw = -1;
 static int hf_ja4x = -1;
 static int hf_ja4h = -1;
@@ -567,9 +569,9 @@ char *ja4x (cert_t *cert) {
 	gchar *hash2 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(cert->oids[1]),-1);
 	gchar *hash3 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(cert->oids[2]),-1);
 	wmem_strbuf_append_printf(display, "%12.12s_%12.12s_%12.12s",
-		hash1,
-		hash2,
-		hash3
+		wmem_strbuf_get_len(cert->oids[0]) ? hash1 : "000000000000",
+		wmem_strbuf_get_len(cert->oids[1]) ? hash2 : "000000000000",
+		wmem_strbuf_get_len(cert->oids[2]) ? hash3 : "000000000000"
 	);
 	if (hash1 != NULL) g_free(hash1);
 	if (hash2 != NULL) g_free(hash2);
@@ -922,11 +924,25 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
                 	if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%s,", bytes_to_string(get_value_ptr(field)));
+
+				//BUG-FIX: Ja4x should use Hex codes instead of ascii
+				const guint8 *bytes = fvalue_get_bytes_data(field->value);
+				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
+				for (int i=0; i<size; i++) {
+				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[i]);
+				}
+				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
+
                 	if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
-				wmem_strbuf_append_printf(current_cert->oids[2], "%s,", bytes_to_string(get_value_ptr(field)));
+				//BUG-FIX: Ja4x should use Hex codes instead of ascii
+				const guint8 *bytes = fvalue_get_bytes_data(field->value);
+				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
+				for (int i=0; i<size; i++) {
+				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[i]);
+				}
+				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
 
 			// Added for JA4H - HTTP1.0 and 1.1
@@ -1380,12 +1396,12 @@ proto_register_ja4(void)
 			{ "JA4 Raw", "ja4.ja4_r",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
 			  NULL, HFILL }
-		},*/
+		},
 		{ &hf_ja4_raw_original,
 			{ "JA4 Raw (Original)", "ja4.ja4_ro",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
 			  NULL, HFILL }
-		},
+		},*/
 		{ &hf_ja4s_raw,
 			{ "JA4S Raw", "ja4.ja4s_r",
 			  FT_STRING, BASE_NONE, NULL, 0x0,
