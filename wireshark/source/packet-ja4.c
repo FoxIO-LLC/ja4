@@ -928,8 +928,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
-				for (int i=0; i<size; i++) {
-				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[i]);
+				for (int j=0; j< (int)size; j++) {
+				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
 				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
@@ -939,8 +939,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
-				for (int i=0; i<size; i++) {
-				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[i]);
+				for (int j=0; j< (int)size; j++) {
+				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
 				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
