@@ -7,6 +7,21 @@ Please read our blogs for details on how JA4+ works, why it works, and examples 
 [JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)  
 [Investigating Surfshark and NordVPN with JA4T](https://blog.foxio.io/investigating-surfshark-and-nordvpn-with-ja4t) (JA4T)
 
+Current methods and implementation details:  
+| Full Name | Short Name | Description |
+|---|---|---|
+| JA4 | JA4 | TLS Client Fingerprinting  
+| JA4Server | JA4S | TLS Server Response / Session Fingerprinting
+| JA4HTTP | JA4H | HTTP Client Fingerprinting
+| JA4Latency | JA4L | Client to Server Latency Measurment / Light Distance
+| JA4LatencyServer | JA4LS | Server to Client Latency Measurement / Light Distance
+| JA4X509 | JA4X | X509 TLS Certificate Fingerprinting
+| JA4SSH | JA4SSH | SSH Traffic Fingerprinting
+| JA4TCP | JA4T | TCP Client Fingerprinting
+| JA4TCPServer | JA4TS | TCP Server Response Fingerprinting
+| [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan)
+
+The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
 To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
 
@@ -39,7 +54,8 @@ Tools that support JA4+:
 [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
 [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
 [MISP](https://www.misp-project.org/) | JA4+
-[OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+
+[OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+  
+[Vercel](https://vercel.com/docs/security/tls-fingerprints) | JA4  
 with more to be announced...  
 
 ## Examples
