@@ -68,7 +68,7 @@ In the above example, the first ALPN value is h2 so the first and last character
 
 In Wireshark this field is located under tls.handshake.extensions_alpn_str
 
-If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint.
+If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint. If the ALPN value is only a single character, the last character is "0". Non-ascii characters (characters with codes >127) should be represented as "9".
 
 ### Cipher hash:
 A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE.  
