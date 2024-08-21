@@ -148,9 +148,11 @@ function do_ja4(c: connection) {
 
   local ja4_c: string = FINGERPRINT::vector_of_count_to_str(
     FINGERPRINT::order_vector_of_count(extensions));
-  ja4_c += FINGERPRINT::delimiter;
-  ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
-  
+  if (|c$fp$client_hello$signature_algos| > 0) {
+    ja4_c += FINGERPRINT::delimiter;
+    ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
+  }
+
   # ja4, ja4, ja4, ja4, ja4, ja4. say it some more. ja4, ja4, ja4.
   c$fp$ja4$ja4 = ja4_a;
   c$fp$ja4$ja4 += FINGERPRINT::delimiter;
@@ -168,8 +170,10 @@ function do_ja4(c: connection) {
 
   # original extensions ordering, including APPLN and SNI
   ja4_c = FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$extension_codes);
-  ja4_c += FINGERPRINT::delimiter;
-  ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
+  if (|c$fp$client_hello$signature_algos| > 0) {
+    ja4_c += FINGERPRINT::delimiter;
+    ja4_c += FINGERPRINT::vector_of_count_to_str(c$fp$client_hello$signature_algos);
+  }
 
   # ja4_o
   c$fp$ja4$o = ja4_a;
