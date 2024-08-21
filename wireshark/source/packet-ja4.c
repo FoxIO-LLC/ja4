@@ -707,9 +707,12 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
 
 static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 	guint value;
-	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.extension.type"));
+	GPtrArray *items;
 	if (data->proto == 'd') {
 		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.extension.type"));
+	}
+	else {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.extension.type"));
 	}
         if (items) {
                 guint i;
@@ -728,6 +731,7 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 				data->ext_len ++;
 			}
 		}
+		g_ptr_array_free(items,TRUE);
 	}
 	if (wmem_strbuf_get_len(data->extensions) > 3) {
 		wmem_strbuf_truncate(data->extensions, wmem_strbuf_get_len(data->extensions)-1);
@@ -736,9 +740,12 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 
 static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 	guint value;
-	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.ciphersuite"));
+	GPtrArray *items;
 	if (data->proto == 'd') {
 		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.ciphersuite"));
+	}
+	else {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.ciphersuite"));
 	}
 
 	if (items) {
@@ -752,6 +759,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 				data->cipher_len ++;
 			}
 		}
+		g_ptr_array_free(items,TRUE);
 	}
 	if (wmem_strbuf_get_len(data->ciphers) > 3) {
 		wmem_strbuf_truncate(data->ciphers, wmem_strbuf_get_len(data->ciphers)-1);
@@ -1225,7 +1233,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			}
 
             	}
-            	//g_ptr_array_free(items,TRUE);
+		g_ptr_array_free(items,TRUE);
         }
 
 	if (syn == 1) {
