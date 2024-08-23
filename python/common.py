@@ -13,8 +13,7 @@ quic_cache = {}
 http_cache = {}
 ssh_cache = {}
 
-TLS_MAPPER = {'256': "s1",
-              '512': "s2",
+TLS_MAPPER = {'0x0002': "s2",
               '0x0300': "s3",
               '0x0301': "10",
               '0x0302': "11",
