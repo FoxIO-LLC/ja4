@@ -62,13 +62,13 @@ Same as counting ciphers. Ignore GREASE. Include SNI and ALPN.
 The first and last characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
 List of possible ALPN Values (scroll down): https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
 
-
-
 In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. IF the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
 
 In Wireshark this field is located under tls.handshake.extensions_alpn_str
 
-If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint. If the ALPN value is only a single character, the last character is "0". Non-ascii characters (characters with codes >127) should be represented as "9".
+If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint. If the ALPN value is only a single character, then the last character is "0".
+
+If the first character of the ALPN is non-alphanumeric, then the first character of its hex representation should be used instead. If the last character of the ALPN is non-alphanumeric, then the last character of its hex representation should be used instead. So if the ALPN is [ 0xab, 0xcd, 0xef ], then we print "af" in the fingerprint.
 
 ### Cipher hash:
 A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE.  
