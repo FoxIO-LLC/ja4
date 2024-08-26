@@ -2,8 +2,7 @@ module FINGERPRINT;
 
 export {
   global TLS_VERSION_MAPPER: table[count] of string = {
-    [256] = "s1",
-    [512] = "s2",
+    [0x0002] = "s2",
     [0x0300] = "s3",
     [0x0301] = "10",
     [0x0302] = "11",

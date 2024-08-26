@@ -76,8 +76,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 static dissector_handle_t ja4_handle;
 
 const value_string ssl_versions[] = {
-    	{ 0x0100,   "s1" },
-    	{ 0x0200,   "s2" },
+    	{ 0x0002,   "s2" },
     	{ 0x0300,   "s3" },
     	{ 0x0301,   "10" },
     	{ 0x0302,   "11" },

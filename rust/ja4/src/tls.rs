@@ -506,8 +506,6 @@ enum TlsVersion {
     Ssl3_0,
     /// SSL 2.0
     Ssl2_0,
-    /// SSL 1.0
-    Ssl1_0,
     Unknown(String),
 }
 
@@ -519,8 +517,7 @@ impl From<&str> for TlsVersion {
             "0x0302" => TlsVersion::Tls1_1,
             "0x0301" => TlsVersion::Tls1_0,
             "0x0300" => TlsVersion::Ssl3_0,
-            "0x0200" => TlsVersion::Ssl2_0,
-            "0x0100" => TlsVersion::Ssl1_0,
+            "0x0002" => TlsVersion::Ssl2_0,
             _ => TlsVersion::Unknown(s.to_owned()),
         }
     }
@@ -535,7 +532,6 @@ impl fmt::Display for TlsVersion {
             TlsVersion::Tls1_0 => "10",
             TlsVersion::Ssl3_0 => "s3",
             TlsVersion::Ssl2_0 => "s2",
-            TlsVersion::Ssl1_0 => "s1",
             TlsVersion::Unknown(_) => "00",
         };
         write!(f, "{s}")
