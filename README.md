@@ -56,6 +56,7 @@ Tools that support JA4+:
 [MISP](https://www.misp-project.org/) | JA4+
 [OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+  
 [Vercel](https://vercel.com/docs/security/tls-fingerprints) | JA4  
+[Seika](https://seika.io/) | JA4  
 with more to be announced...  
 
 ## Examples

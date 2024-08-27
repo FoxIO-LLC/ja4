@@ -21,6 +21,10 @@
 #include <epan/ftypes/ftypes-int.h>
 #endif
 
+#ifndef array_length
+#define array_length(x)      (sizeof (x) / sizeof (x)[0])
+#endif
+
 #include <epan/ftypes/ftypes.h>
 #include <epan/packet.h>
 #include <epan/packet_info.h>
@@ -72,8 +76,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 static dissector_handle_t ja4_handle;
 
 const value_string ssl_versions[] = {
-    	{ 0x0100,   "s1" },
-    	{ 0x0200,   "s2" },
+    	{ 0x0002,   "s2" },
     	{ 0x0300,   "s3" },
     	{ 0x0301,   "10" },
     	{ 0x0302,   "11" },
@@ -707,9 +710,12 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
 
 static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 	guint value;
-	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.extension.type"));
+	GPtrArray *items;
 	if (data->proto == 'd') {
 		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.extension.type"));
+	}
+	else {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.extension.type"));
 	}
         if (items) {
                 guint i;
@@ -728,6 +734,7 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 				data->ext_len ++;
 			}
 		}
+		g_ptr_array_free(items,TRUE);
 	}
 	if (wmem_strbuf_get_len(data->extensions) > 3) {
 		wmem_strbuf_truncate(data->extensions, wmem_strbuf_get_len(data->extensions)-1);
@@ -736,9 +743,12 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
 
 static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 	guint value;
-	GPtrArray *items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.ciphersuite"));
+	GPtrArray *items;
 	if (data->proto == 'd') {
 		items = proto_find_finfo(tree, proto_registrar_get_id_byname("dtls.handshake.ciphersuite"));
+	}
+	else {
+		items = proto_find_finfo(tree, proto_registrar_get_id_byname("tls.handshake.ciphersuite"));
 	}
 
 	if (items) {
@@ -752,6 +762,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 				data->cipher_len ++;
 			}
 		}
+		g_ptr_array_free(items,TRUE);
 	}
 	if (wmem_strbuf_get_len(data->ciphers) > 3) {
 		wmem_strbuf_truncate(data->ciphers, wmem_strbuf_get_len(data->ciphers)-1);
@@ -925,24 +936,32 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                 	if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
 
+				//Append a comma to previous OIDs, if any
+				if (wmem_strbuf_get_len(current_cert->oids[oid_type])) {
+				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
+				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
 				for (int j=0; j< (int)size; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
 
                 	if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
+				oid_type = 2;
+
+				//Append a comma to previous OIDs, if any
+				if (wmem_strbuf_get_len(current_cert->oids[oid_type])) {
+				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
+				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
 				for (int j=0; j< (int)size; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
 
 			// Added for JA4H - HTTP1.0 and 1.1
@@ -1225,7 +1244,7 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 			}
 
             	}
-            	//g_ptr_array_free(items,TRUE);
+		g_ptr_array_free(items,TRUE);
         }
 
 	if (syn == 1) {
@@ -1286,9 +1305,6 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
         if (handshake_type == 11) {
                 for (guint i=0; i<cert_num+1; i++) {
                         cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, i);
-                        wmem_strbuf_truncate(current_cert->oids[0], wmem_strbuf_get_len(current_cert->oids[0])-1);
-                        wmem_strbuf_truncate(current_cert->oids[1], wmem_strbuf_get_len(current_cert->oids[1])-1);
-                        wmem_strbuf_truncate(current_cert->oids[2], wmem_strbuf_get_len(current_cert->oids[2])-1);
                         wmem_strbuf_append_printf(current_cert->raw,
                                 "%s_%s_%s",
                                 wmem_strbuf_get_str(current_cert->oids[0]),
@@ -1332,6 +1348,48 @@ tap_all(void *tapdata _U_, packet_info *pinfo, epan_dissect_t *edt, const void *
 	return TAP_PACKET_REDRAW;
 }
 
+typedef struct ja4_tap_s {
+	const char *tap;
+	int *hfid; // tapdata
+	const char *filter;
+} ja4_tap_t;
+
+static ja4_tap_t const ja4_taps[] = {
+	{ "tls",    &hf_ja4s, "tls.handshake.type == 2" },
+	{ "tls",    &hf_ja4s_raw, "tls.handshake.type == 2" },
+
+	{ "dtls",   &hf_ja4s, "dtls.handshake.type == 2" },
+	{ "dtls",   &hf_ja4s_raw, "dtls.handshake.type == 2" },
+
+	//{ "tls",  &hf_ja4, "tls.handshake.type == 1" },
+	//{ "tls",  &hf_ja4_raw, "tls.handshake.type == 1" },
+	//{ "tls",  &hf_ja4_raw_original, "tls.handshake.type == 1" },
+
+	//{ "dtls", &hf_ja4, "dtls.handshake.type == 1" },
+	//{ "dtls", &hf_ja4_raw, "dtls.handshake.type == 1" },
+	//{ "dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1" },
+
+	{ "tls",    &hf_ja4x, "tls.handshake.type == 11" },
+	{ "tls",    &hf_ja4x_raw, "tls.handshake.type == 11" },
+
+	{ "dtls",   &hf_ja4x, "dtls.handshake.type == 11" },
+	{ "dtls",   &hf_ja4x_raw, "dtls.handshake.type == 11" },
+
+	{ "http",   &hf_ja4h, NULL },
+	{ "http",   &hf_ja4h_raw, NULL },
+	{ "http",   &hf_ja4h_raw_original, NULL },
+	{ "http",   &hf_ja4h_raw_original, NULL },
+	{ "tcp",    &hf_ja4l, "tcp.flags == 0x018" },
+	{ "tcp",    &hf_ja4ls, "tcp.flags == 0x018" },
+	{ "tcp",    &hf_ja4ssh, "ssh.direction" },
+	{ "tcp",    &hf_ja4t, "tcp.flags == 0x002" },
+	{ "tcp",    &hf_ja4ts, "tcp.flags == 0x012 || tcp.flags == 0x004" },
+
+	{ NULL, NULL, NULL } // keep this at the end
+};
+
+static GPtrArray *active_taps = NULL;
+
 static void init_globals (void) {
 	conn_hash = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
 	quic_conn_hash = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
@@ -1345,40 +1403,39 @@ static void init_globals (void) {
 
 	set_postdissector_wanted_hfids(ja4_handle, wanted_hfids);
 
-	GString *ret _U_;
-	ret = register_tap_listener("tls", &hf_ja4s, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &hf_ja4s_raw, "tls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+	if (proto_is_protocol_enabled(find_protocol_by_id(proto_ja4))) {
+		GString *ret;
+		size_t i;
 
-	ret = register_tap_listener("dtls", &hf_ja4s, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("dtls", &hf_ja4s_raw, "dtls.handshake.type == 2", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-
-	//ret = register_tap_listener("tls", &hf_ja4, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	//ret = register_tap_listener("tls", &hf_ja4_raw, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	//ret = register_tap_listener("tls", &hf_ja4_raw_original, "tls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-
-	//ret = register_tap_listener("dtls", &hf_ja4, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	//ret = register_tap_listener("dtls", &hf_ja4_raw, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	//ret = register_tap_listener("dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-
-	ret = register_tap_listener("tls", &hf_ja4x, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tls", &hf_ja4x_raw, "tls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-
-	ret = register_tap_listener("dtls", &hf_ja4x, "dtls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("dtls", &hf_ja4x_raw, "dtls.handshake.type == 11", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-
-	ret = register_tap_listener("http", &hf_ja4h, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("http", &hf_ja4h_raw, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("http", &hf_ja4h_raw_original, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("http", &hf_ja4h_raw_original, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &hf_ja4l, "tcp.flags == 0x018", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &hf_ja4ls, "tcp.flags == 0x018", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &hf_ja4ssh, "ssh.direction", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &hf_ja4t, "tcp.flags == 0x002", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
-	ret = register_tap_listener("tcp", &hf_ja4ts, "tcp.flags == 0x012 || tcp.flags == 0x004", TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+		active_taps = g_ptr_array_sized_new(array_length(ja4_taps));
+		for (i = 0; ja4_taps[i].hfid != NULL; i++) {
+			ret = register_tap_listener(ja4_taps[i].tap, ja4_taps[i].hfid, ja4_taps[i].filter, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+			if (ret == NULL) {
+				g_ptr_array_add(active_taps, ja4_taps[i].hfid);
+			}
+			else {
+				ws_warning("JA4 failed to register tap on \"%s\" with filter \"%s\": %s", ja4_taps[i].filter, ja4_taps[i].tap, ret->str);
+				g_string_free(ret, TRUE);
+			}
+		}
+	}
 }
 
 static void cleanup_globals (void) {
-	//set_postdissector_wanted_hfids(ja4_handle, NULL);
+	set_postdissector_wanted_hfids(ja4_handle, NULL);
+
+	if (active_taps != NULL) {
+		/* Note that multiple taps are registered with the same tapdata
+		 * (which is simply the hfid). As long as we remove it the same
+		 * number of times it was added then we should be ok.
+		 */
+		for (size_t i = 0; i < active_taps->len; i++) {
+			int *hfid = g_ptr_array_index(active_taps, i);
+			remove_tap_listener(hfid);
+		}
+		g_ptr_array_free(active_taps, TRUE);
+		active_taps = NULL;
+	}
 }
 
 void proto_reg_handoff_ja4(void)
