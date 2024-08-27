@@ -40,7 +40,7 @@ Add JA4+ to your columns for easy identification and sorting. Go to ```Preferenc
 
 Alternatively, they can be added to the preferences by modifiying the user's "preferences" file. To do so, find the section labeled  "User Interface: Columns" and add the following items:
 ```
-  "JA4T", "%Cus:ja4.ja4t:0:R",
+	"JA4T", "%Cus:ja4.ja4t:0:R",
 	"JA4TS", "%Cus:ja4.ja4ts:0:R",
 	"JA4", "%Cus:tls.handshake.ja4:0:R",
 	"JA4S", "%Cus:ja4.ja4s:0:R",
