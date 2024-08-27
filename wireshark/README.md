@@ -57,7 +57,7 @@ The preference file is located in the following locations:
 #### Mac
 ~/.config/wireshark/preferences
 #### Linux
-/home/<username>/.wireshark/preferences
+~/.config/wireshark/preferences
 
 ## Licensing
 See [Licensing](https://github.com/FoxIO-LLC/ja4/tree/main#licensing) under repo root.
