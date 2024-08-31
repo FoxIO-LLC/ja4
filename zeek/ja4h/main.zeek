@@ -202,8 +202,11 @@ event http_message_done(c: connection, is_orig: bool, stat: http_message_stat)
   local delim =  FINGERPRINT::delimiter;
 
   c$fp$ja4h$uid = c$uid;  
-  
-  c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + ja4h_c + delim + ja4h_d;
+  if (c$fp$http_client$cookie == "") {
+       c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + "000000000000" + delim + "000000000000"; 
+  } else { 
+       c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + ja4h_c + delim + ja4h_d;
+  }
   c$fp$ja4h$ja4h_r = ja4h_a + delim + ja4h_b_r + delim + ja4h_c_r + delim + ja4h_d_r;
   c$fp$ja4h$ja4h_ro = ja4h_a + delim + ja4h_b_o + delim + ja4h_c_o + delim + ja4h_d_o;
 
