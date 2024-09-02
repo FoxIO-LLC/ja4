@@ -185,35 +185,45 @@ function get_ja4h_d(c: connection): string {
 
 event http_message_done(c: connection, is_orig: bool, stat: http_message_stat)
 {
-   #print(c$fp$http_client);
+    #print(c$fp$http_client);
 
-  if (!is_orig || !c?$fp || !c$fp?$http_client ) { return; }
+    if (!is_orig || !c?$fp || !c$fp?$http_client ) { return; }
 
-  local ja4h_a = get_ja4h_a(c);
-  local ja4h_b_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names_o);
-  local ja4h_b_r = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names);
-  local ja4h_b = FINGERPRINT::sha256_12(ja4h_b_r);
-  local ja4h_c_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_names);
-  local ja4h_c_r = get_ja4h_c(c);  
-  local ja4h_c = FINGERPRINT::sha256_12(ja4h_c_r);
-  local ja4h_d_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_values);
-  local ja4h_d_r = get_ja4h_d(c);
-  local ja4h_d = FINGERPRINT::sha256_12(ja4h_d_r);
-  local delim =  FINGERPRINT::delimiter;
+    local ja4h_a = get_ja4h_a(c);
+    local ja4h_b_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names_o);
+    local ja4h_b_r = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names);
+    local ja4h_b = FINGERPRINT::sha256_12(ja4h_b_r);
+    local ja4h_c_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_names);
+    local ja4h_c_r = get_ja4h_c(c);  
+    local ja4h_c: string;
+    if (ja4h_c_r == "") {
+        ja4h_c = "000000000000";
+    } else {
+        ja4h_c = FINGERPRINT::sha256_12(ja4h_c_r);
+    }
+    local ja4h_d_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_values);
+    local ja4h_d_r = get_ja4h_d(c);
+    local ja4h_d: string;
+    if (ja4h_d_r == "") {
+        ja4h_d = "000000000000";
+    } else {
+        ja4h_d = FINGERPRINT::sha256_12(ja4h_d_r);
+    }
+    local delim =  FINGERPRINT::delimiter;
 
-  c$fp$ja4h$uid = c$uid;  
-  
-  c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + ja4h_c + delim + ja4h_d;
-  c$fp$ja4h$ja4h_r = ja4h_a + delim + ja4h_b_r + delim + ja4h_c_r + delim + ja4h_d_r;
-  c$fp$ja4h$ja4h_ro = ja4h_a + delim + ja4h_b_o + delim + ja4h_c_o + delim + ja4h_d_o;
+    c$fp$ja4h$uid = c$uid;  
 
-  c$http$ja4h = c$fp$ja4h$ja4h;
-  @if(FINGERPRINT::JA4H_raw)
+    c$fp$ja4h$ja4h = ja4h_a + delim + ja4h_b + delim + ja4h_c + delim + ja4h_d;
+    c$fp$ja4h$ja4h_r = ja4h_a + delim + ja4h_b_r + delim + ja4h_c_r + delim + ja4h_d_r;
+    c$fp$ja4h$ja4h_ro = ja4h_a + delim + ja4h_b_o + delim + ja4h_c_o + delim + ja4h_d_o;
+
+    c$http$ja4h = c$fp$ja4h$ja4h;
+    @if(FINGERPRINT::JA4H_raw)
     c$http$ja4h_r = c$fp$ja4h$ja4h_r;
     c$http$ja4h_ro = c$fp$ja4h$ja4h_ro;
-  @endif
-  
+    @endif
 
-  #Log::write(FINGERPRINT::JA4H::LOG, c$fp$ja4h);
+
+    #Log::write(FINGERPRINT::JA4H::LOG, c$fp$ja4h);
 
 }
