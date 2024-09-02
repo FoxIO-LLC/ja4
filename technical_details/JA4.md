@@ -58,16 +58,16 @@ If the SNI extension (0x0000) exists, then the destination of the connection is 
 Same as counting ciphers. Ignore GREASE. Include SNI and ALPN.
 
 ### ALPN Extension Value:
-The first and last characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
+The first and last alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
 List of possible ALPN Values (scroll down): https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
-
-
 
 In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. IF the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
 
 In Wireshark this field is located under tls.handshake.extensions_alpn_str
 
-If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint.
+If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint.  
+
+If the ALPN value is non-alphanumeric (`0x30-0x39`, `0x41-0x5A`, `0x61-0x7A`), we take the first high-nibble and the last low-nibble. For example, if the ALPN value were `0xAB 0xCD` the ALPN value in the JA4 string would be "ad". If the ALPN value were just `0xAB` then the JA4 value would be "ab". This is a very edge case as non-alphanumeric characters at the beginning or end of an ALPN string would violate RFC8447 section 17. The purpose of this logic is to prevent malformed JA4 fingerprints.
 
 ### Cipher hash:
 A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE.  

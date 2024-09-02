@@ -936,24 +936,32 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
                 	if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
 
+				//Append a comma to previous OIDs, if any
+				if (wmem_strbuf_get_len(current_cert->oids[oid_type])) {
+				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
+				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
 				for (int j=0; j< (int)size; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
 
                 	if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) && (handshake_type == 11)) {
 				cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, cert_num);
+				oid_type = 2;
+
+				//Append a comma to previous OIDs, if any
+				if (wmem_strbuf_get_len(current_cert->oids[oid_type])) {
+				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
+				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
 				const guint8 *bytes = fvalue_get_bytes_data(field->value);
 				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
 				for (int j=0; j< (int)size; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
-				wmem_strbuf_append_printf(current_cert->oids[oid_type], "%x", 0);
 			}
 
 			// Added for JA4H - HTTP1.0 and 1.1
@@ -1297,9 +1305,6 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
         if (handshake_type == 11) {
                 for (guint i=0; i<cert_num+1; i++) {
                         cert_t *current_cert = (cert_t *) wmem_array_index(certificate_list, i);
-                        wmem_strbuf_truncate(current_cert->oids[0], wmem_strbuf_get_len(current_cert->oids[0])-1);
-                        wmem_strbuf_truncate(current_cert->oids[1], wmem_strbuf_get_len(current_cert->oids[1])-1);
-                        wmem_strbuf_truncate(current_cert->oids[2], wmem_strbuf_get_len(current_cert->oids[2])-1);
                         wmem_strbuf_append_printf(current_cert->raw,
                                 "%s_%s_%s",
                                 wmem_strbuf_get_str(current_cert->oids[0]),
