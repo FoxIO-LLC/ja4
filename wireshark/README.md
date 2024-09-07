@@ -38,5 +38,26 @@ Add JA4+ to your columns for easy identification and sorting. Go to ```Preferenc
 
 ![Config](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/column-config.png)
 
+Alternatively, they can be added to the preferences by modifiying the user's "preferences" file using a text editor. In the text editor, find the section labeled  "User Interface: Columns" and add the following items:
+```
+	"JA4T", "%Cus:ja4.ja4t:0:R",
+	"JA4TS", "%Cus:ja4.ja4ts:0:R",
+	"JA4", "%Cus:tls.handshake.ja4:0:R",
+	"JA4S", "%Cus:ja4.ja4s:0:R",
+	"JA4H", "%Cus:ja4.ja4h:0:R",
+	"JA4L", "%Cus:ja4.ja4l:0:R",
+	"JA4LS", "%Cus:ja4.ja4ls:0:R",
+	"JA4X", "%Cus:ja4.ja4x:0:R",
+	"JA4SSH", "%Cus:ja4.ja4ssh:0:R"
+```
+
+The preference file is located in the following locations:
+#### Windows
+%APPDATA%\Wireshark\preferences
+#### Mac
+~/.config/wireshark/preferences
+#### Linux
+~/.config/wireshark/preferences
+
 ## Licensing
 See [Licensing](https://github.com/FoxIO-LLC/ja4/tree/main#licensing) under repo root.
