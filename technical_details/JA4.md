@@ -61,13 +61,18 @@ Same as counting ciphers. Ignore GREASE. Include SNI and ALPN.
 The first and last alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
 List of possible ALPN Values (scroll down): https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
 
-In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. IF the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
+In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. If the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
 
 In Wireshark this field is located under tls.handshake.extensions_alpn_str
 
-If there are no ALPN values or no ALPN extension then we print “00” as the value in the fingerprint.  
+If there is no ALPN extension, no ALPN values, or the first ALPN value is empty, then we print "00" as the value in the fingerprint. If the first ALPN value is only a single character, then that character is treated as both the first and last character.
 
-If the ALPN value is non-alphanumeric (`0x30-0x39`, `0x41-0x5A`, `0x61-0x7A`), we take the first high-nibble and the last low-nibble. For example, if the ALPN value were `0xAB 0xCD` the ALPN value in the JA4 string would be "ad". If the ALPN value were just `0xAB` then the JA4 value would be "ab". This is a very edge case as non-alphanumeric characters at the beginning or end of an ALPN string would violate RFC8447 section 17. The purpose of this logic is to prevent malformed JA4 fingerprints.
+If the first or last byte of the first ALPN is non-alphanumeric (meaning not `0x30-0x39`, `0x41-0x5A`, or `0x61-0x7A`), then we print the first and last characters of the hex representation of the first ALPN instead. For example:
+* `0xAB` would be printed as "ab"
+* `0xAB 0xCD` would be printed as "ad"
+* `0x30 0xAB` would be printed as "3b"
+* `0x30 0x31 0xAB 0xCD` would be printed as "3d"
+* `0x30 0xAB 0xCD 0x31` would be printed as "01"
 
 ### Cipher hash:
 A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE.  
