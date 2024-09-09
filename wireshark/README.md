@@ -13,7 +13,7 @@ Create an issue or contact john@foxio.io with any questions.
 2. Start Wireshark
 
 #### Mac
-1. For Macs with ARM chips (M1/M2/etc) copy [binaries/macos/4.4.0/arm/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/macos/4.4.0/arm/ja4.so), for Macs with Intel chips (x86/x64) copy [binaries/macos/4.4.0/intel/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/macos/4.4.0/intel/ja4.so), to your global plugins directory under epan.  
+1. For Macs with ARM chips (M1/M2/etc) copy [binaries/macos/4.4.0/arm/ja4.so.macos](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/macos/4.4.0/arm/ja4.so.macos), for Macs with Intel chips (x86/x64) copy [binaries/macos/4.2.0/intel/ja4.so](https://github.com/FoxIO-LLC/ja4/blob/main/wireshark/binaries/macos/4.2.0/intel/ja4.so), to your global plugins directory under epan.  
 ```/Applications/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/```  
 2. Start Wireshark
 
