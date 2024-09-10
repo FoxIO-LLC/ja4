@@ -95,7 +95,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Rust sources of `ja4` and `ja4x` CLI tools.
 
-[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.1...HEAD
+[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.3...HEAD
+[0.18.3]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.2...v0.18.3
+[0.18.2]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/FoxIO-LLC/ja4/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/FoxIO-LLC/ja4/compare/v0.16.2...v0.17.0
