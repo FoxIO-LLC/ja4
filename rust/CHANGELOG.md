@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.3] - 2024-09-10
+
+### Fixed
+
+- Fix parsing of `tshark --version` output.
+
 ## [0.18.2] - 2024-05-22
 
 ### Fixed

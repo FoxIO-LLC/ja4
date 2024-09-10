@@ -195,8 +195,9 @@ fn parse_tshark_version(tshark_version_output: &str) -> Option<&str> {
     // "TShark (Wireshark) 4.0.8 (v4.0.8-0-g81696bb74857).\n"
     let start = tshark_version_output.find(") ").map(|i| i + 2)?;
     let version_start = &tshark_version_output[start..];
-    let end = version_start.find(' ')?;
-    Some(&version_start[..end])
+    let end = version_start.find(char::is_whitespace)?;
+    let ver = &version_start[..end];
+    Some(ver.strip_suffix('.').unwrap_or(ver))
 }
 
 #[test]
@@ -209,6 +210,12 @@ fn test_parse_tshark_version() {
         parse_tshark_version("TShark (Wireshark) 3.6.2 (Git v3.6.2 packaged as 3.6.2-2)"),
         Some("3.6.2")
     );
+    assert_eq!(
+        parse_tshark_version("TShark (Wireshark) 4.4.0.\n\nCopyright 1998-2024"),
+        Some("4.4.0")
+    );
+    // Abrupt end of the string.
+    assert!(parse_tshark_version("TShark (Wireshark) 4.4.0.").is_none());
     assert!(parse_tshark_version("What the TShark?!").is_none());
 }
 
