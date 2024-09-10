@@ -174,6 +174,9 @@ fn check_tshark_version() -> Result<()> {
     tracing::debug!(%out, "tshark --version");
 
     let ver = parse_tshark_version(&out).ok_or(Error::ParseTsharkVersion)?;
+    if let Err(e) = semver::Version::parse(ver) {
+        dbg!("XXX", &out, ver, e);
+    }
     let available = semver::Version::parse(ver)?;
 
     let required = semver::VersionReq::parse(">=4.0.6").expect("BUG");
