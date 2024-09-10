@@ -1354,23 +1354,32 @@ typedef struct ja4_tap_s {
 	const char *filter;
 } ja4_tap_t;
 
+/* Wireshark ≤4.2 calls the TLS tap "tls",
+ * after that it's "tls_follow"
+ */
+#if ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 2))
+# define TLS_TAP "tls_follow"
+#else
+# define TLS_TAP "tls"
+#endif
+
 static ja4_tap_t const ja4_taps[] = {
-	{ "tls",    &hf_ja4s, "tls.handshake.type == 2" },
-	{ "tls",    &hf_ja4s_raw, "tls.handshake.type == 2" },
+	{ TLS_TAP,  &hf_ja4s, "tls.handshake.type == 2" },
+	{ TLS_TAP,  &hf_ja4s_raw, "tls.handshake.type == 2" },
 
 	{ "dtls",   &hf_ja4s, "dtls.handshake.type == 2" },
 	{ "dtls",   &hf_ja4s_raw, "dtls.handshake.type == 2" },
 
-	//{ "tls",  &hf_ja4, "tls.handshake.type == 1" },
-	//{ "tls",  &hf_ja4_raw, "tls.handshake.type == 1" },
-	//{ "tls",  &hf_ja4_raw_original, "tls.handshake.type == 1" },
+	//{ TLS_TAP,  &hf_ja4, "tls.handshake.type == 1" },
+	//{ TLS_TAP,  &hf_ja4_raw, "tls.handshake.type == 1" },
+	//{ TLS_TAP,  &hf_ja4_raw_original, "tls.handshake.type == 1" },
 
 	//{ "dtls", &hf_ja4, "dtls.handshake.type == 1" },
 	//{ "dtls", &hf_ja4_raw, "dtls.handshake.type == 1" },
 	//{ "dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1" },
 
-	{ "tls",    &hf_ja4x, "tls.handshake.type == 11" },
-	{ "tls",    &hf_ja4x_raw, "tls.handshake.type == 11" },
+	{ TLS_TAP,  &hf_ja4x, "tls.handshake.type == 11" },
+	{ TLS_TAP,  &hf_ja4x_raw, "tls.handshake.type == 11" },
 
 	{ "dtls",   &hf_ja4x, "dtls.handshake.type == 11" },
 	{ "dtls",   &hf_ja4x_raw, "dtls.handshake.type == 11" },
