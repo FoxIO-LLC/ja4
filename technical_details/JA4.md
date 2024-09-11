@@ -85,6 +85,9 @@ Is sorted to:
 002f,0035,009c,009d,1301,1302,1303,c013,c014,c02b,c02c,c02f,c030,cca8,cca9 = 8daaf6152771
 ```
 
+If there are no ciphers, then the value of JA4_b is set to `000000000000` 
+We do this rather than running a sha256 hash of nothing as this makes it clear to the user when a field has no values.
+
 ### Extension hash:
 A 12 character truncated sha256 hash of the list of extensions, sorted by hex value, followed by the list of signature algorithms, in the order that they appear (not sorted).
 
@@ -123,6 +126,9 @@ For example:
 ```
 0005,000a,000b,000d,0012,0015,0017,001b,0023,002b,002d,0033,4469,ff01 = 6d807ffa2a79
 ```
+
+If there are no extensions, then the value of JA4_c is set to `000000000000` 
+We do this rather than running a sha256 hash of nothing as this makes it clear to the user when a field has no values.
 
 ### Example
 
