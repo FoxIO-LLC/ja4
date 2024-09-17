@@ -11,10 +11,14 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: test1
-      run: cat s
     - name: build
-      run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
+      #run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
+    - name: release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      run:  gh release upload ./build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so
+
 
   wireshark-macos:
     runs-on: macOS-latest
