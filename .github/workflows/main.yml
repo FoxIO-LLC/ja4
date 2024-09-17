@@ -1,0 +1,24 @@
+name: CICD
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  wireshark-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build
+      run:  cd wireshark/build-scripts && sudo ./linux_build.sh 4.4.0
+
+  wireshark-macos:
+    runs-on: macOS-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build
+      run:  cd wireshark/build-scripts && sudo ./macos_build.sh 4.4.0
+
+    
