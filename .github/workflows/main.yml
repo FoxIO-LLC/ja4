@@ -13,11 +13,13 @@ jobs:
       uses: actions/checkout@v4
     #- name: build
       #run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
+    - name: set env
+      run: echo "NOW=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
     - name: release
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run:  gh release upload ./build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so
+      run:  gh release upload ${{ env.NOW }} ./build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so
 
 
   wireshark-macos:
