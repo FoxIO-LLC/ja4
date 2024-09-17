@@ -18,9 +18,7 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: create non-root user
-      run: sudo adduser build && usermod -aG sudo 
     - name: build
-      run:  cd wireshark/build-scripts && su build && ./macos_build.sh 4.4.0
+      run:  cd wireshark/build-scripts && ./macos_build.sh 4.4.0
 
     
