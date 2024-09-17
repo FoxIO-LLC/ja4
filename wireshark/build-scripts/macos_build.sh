@@ -33,7 +33,7 @@ if [ ! -d build ]; then
     mkdir build 
 fi
 
-cd build && cmake -DCUSTOM_PLUGIN_SRC_DIR=plugins/epan/ja4 ../
+cd build && cmake -DCUSTOM_PLUGIN_SRC_DIR=plugins/epan/ja4 -DBUILD_wireshark=off ../
 echo 'building using make...'
 make -j8
 
