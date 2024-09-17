@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+    - name: test1
+      run: cat s
     - name: build
       run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
 
