@@ -19,7 +19,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run:  gh release upload ${{ env.NOW }} README.md
+      run:  gh release create ${{ env.NOW }} README.md
       #./build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so
 
 
