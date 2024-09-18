@@ -31,7 +31,7 @@ jobs:
         run: choco config set cacheLocation "C:\choco"
 
       - name: checkout wireshark
-        run: cd wireshark/build-scripts/ && C:\Program/ Files\Git\bin\Git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
+        run: cd wireshark/build-scripts/ && C:\Program Files\Git\bin\Git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
 
       - name: Choco install
         run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
