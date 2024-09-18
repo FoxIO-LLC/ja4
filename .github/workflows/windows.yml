@@ -2,7 +2,7 @@ name: windows-build
 on:
   push:
     branches: [main]
-    paths: [wireshark/*, wireshark/source/*, wireshark/build-scripts/*]
+    paths: [wireshark/*, wireshark/source/*, wireshark/build-scripts/*, .github/workflows/*]
   workflow_dispatch:
 
 jobs:
