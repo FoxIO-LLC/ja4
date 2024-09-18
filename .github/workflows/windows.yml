@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Create cache directory
-        rum: mkdir "C:\choco"
+        run: mkdir "C:\choco"
       - name: cache
         uses: actions/cache@v4
         with:
