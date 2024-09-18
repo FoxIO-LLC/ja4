@@ -39,7 +39,7 @@ jobs:
         run: choco install -y git --force
 
       - name: use existing git
-        run: dir C:\ProgramData\chocolatey\lib\git\bin
+        run: dir C:\ProgramData\chocolatey\lib\git
 
           #- name: Set Chocolatey cache location
           #run: choco config set cacheLocation "C:\choco"
