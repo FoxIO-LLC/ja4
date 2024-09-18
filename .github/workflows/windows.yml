@@ -18,45 +18,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      #- name: Create cache directory
-      #  run: mkdir "C:\choco"
-
-      # - name: cache
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: C:\choco
-      #    key:  C:\choco
+      - name: Create cache directory
+        run: mkdir "C:\choco"
 
       - name: cache
-        id: cache-chocolatey
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
-          path: C:\ProgramData\chocolatey\lib
-          key:  "ABCD"
-      
-      - name: do we have git already?
-        if: steps.cache-chocolatey.outputs.cache-hit != 'true'
-        run: choco install -y git --force
+          path: C:\choco
+          key:  C:\choco
 
-      - name: use existing git
-        run: dir C:\ProgramData\chocolatey\lib\git
+      - name: Set Chocolatey cache location
+        run: choco config set cacheLocation "C:\choco"
 
-          #- name: Set Chocolatey cache location
-          #run: choco config set cacheLocation "C:\choco"
+      - name: checkout wireshark
+        run: cd wireshark/build-scripts/ && C:\Program/ Files\Git\bin\Git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
 
-          #- name: install xsltproc 
-          #run: choco install -y xsltproc 
-
-          #- name: checkout wireshark
-          #run: cd wireshark/build-scripts/ && C:\choco-cache\git\bin\git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
-          #- name: Choco install
-          #run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
-          #- name: Install strawberryperl
-          #uses: shogo82148/actions-setup-perl@v1
-          #with:
-          #perl-version: '5.30'
-          # distribution: strawberry
-          #- name: Add msbuild to PATH
+      - name: Choco install
+        run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
+      - name: Install strawberryperl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.30'
+          distribution: strawberry
+            #- name: Add msbuild to PATH
           #uses: microsoft/setup-msbuild@v2
           #with:
           #vs-version: 16.8
