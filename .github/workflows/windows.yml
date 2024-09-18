@@ -34,8 +34,10 @@ jobs:
 
       - name: Set Chocolatey cache location
         run: choco config set cacheLocation "C:\choco"
+
       - name: install xsltproc 
-        run: choco install -y xsltproc --install-arguments="'/DIR=C:\choco\xsltproc'" 
+        run: choco install -y xsltproc 
+
       - name: checkout wireshark
         run: cd wireshark/build-scripts/ && C:\choco-cache\git\bin\git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
       - name: Choco install
