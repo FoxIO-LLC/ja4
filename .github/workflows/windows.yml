@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: C:\ProgramData\chocolatey\lib
-          key:  C:\ProgramData\chocolatey\lib
+          key:  "ABCD"
 
       - name: Set Chocolatey cache location
         run: choco config set cacheLocation "C:\choco"
