@@ -26,7 +26,7 @@ if [ ! -d wireshark-$VER ]
     cd wireshark-$VER
 fi
 
-
+rm -rf ./plugins/epan/ja4
 cp -r ../../source ./plugins/epan/ja4
 
 if [ ! -d build ]; then
