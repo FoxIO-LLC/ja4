@@ -64,7 +64,8 @@ jobs:
           WIRESHARK_BASE_DIR: C:/wireshark-libs
           QT5_BASE_DIR: C:/Qt/5.12.3/msvc2017_64
           working-directory: wireshark/build-scripts/wireshark/build
+
       - name: Build
-        run: cd wireshark/build-scripts/wireshark/build && cmake --build . --config RelWithDebInfo
+        run: cmake --build . --config RelWithDebInfo
         working-directory: wireshark/build-scripts/wireshark/build
 
