@@ -9,12 +9,12 @@ jobs:
   wireshark-linux:
     runs-on: ubuntu-latest
     steps:
+    - name: set env
+      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
     - name: checkout
       uses: actions/checkout@v4
     - name: build
       run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
-    - name: set env
-      run: echo "NOW=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
     - name: release
       env:
         GH_TOKEN: ${{ github.token }}
@@ -25,6 +25,8 @@ jobs:
   wireshark-macos:
     runs-on: macOS-latest
     steps:
+    - name: set env
+      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
     - name: checkout
       uses: actions/checkout@v4
     - name: build
@@ -33,6 +35,6 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run:  gh release create ${{ env.NOW }} ./wireshark/build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so#Mac-plugin
+      run:  gh release upload ${{ env.NOW }} ./wireshark/build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so#Mac-plugin
 
     
