@@ -26,6 +26,8 @@ jobs:
           key:  C:\choco-cache
       - name: Set Chocolatey cache location
         run: choco config set cacheLocation "C:\choco-cache"
+      - name: checkout wireshark sources
+        run: choco install -y git --force --install-arguments="'/DIR=C:\choco-cache\git'" && C:\choco-cache\git\bin\git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
       - name: Choco install
         run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
       - name: Install strawberryperl
