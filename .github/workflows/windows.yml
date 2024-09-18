@@ -33,7 +33,7 @@ jobs:
       - name: checkout wireshark
         uses: actions/checkout@v4
         with:
-          name: wireshark/wireshark
+          repository: wireshark/wireshark
           refs: release-4.4
           path: wireshark/build-scripts/
 
