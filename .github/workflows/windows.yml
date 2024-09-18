@@ -20,7 +20,7 @@ jobs:
       - name: create cache dir
         run: mkdir "C:\choco-cache"
       - name: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "C:\choco-cache"
           key:  "C:\choco-cache"
