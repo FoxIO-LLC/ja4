@@ -12,20 +12,23 @@ jobs:
     env:
       PLATFORM: x64
       WIRESHARK_BASE_DIR: C:\Development
-      CMAKE_PREFIX_PATH: D:\a\wireshark\Qt\6.2.3\msvc2019_64
+      CMAKE_PREFIX_PATH: D:\a\ja4\Qt\6.2.3\msvc2019_64
       WIRESHARK_VERSION_EXTRA: -GithubActionBuild
     steps:
-      - name: Checkout
+      - name: checkout this repo
         uses: actions/checkout@v4
+
+      - name: create wireshark directory
+        run: mkdir wireshark/build-scripts/wireshark
 
       - name: checkout wireshark
         uses: actions/checkout@v4
         with:
           repository: wireshark/wireshark
           ref: release-4.4
-          path: wireshark/build-scripts/
+          path: wireshark/build-scripts/wireshark
 
-      - name: Choco install
+      - name: Choco install dependencies
         run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
       - name: Install strawberryperl
         uses: shogo82148/actions-setup-perl@v1
@@ -45,11 +48,11 @@ jobs:
         with:
           vs-version: 16.8
 
-      - name: Mkdir
-        run: mkdir wireshark/build-scripts/wireshark/build
+      - name: Mkdir build directory and copy sources
+        run: mkdir wireshark/build-scripts/wireshark/build 
 
       - name: Cmake
-        run: cd wireshark/build-scripts/wireshark/build && cmake -DCMAKE_SYSTEM_VERSION="10.0.20348.0" -A x64 ..
+        run: cd wireshark/build-scripts/wireshark/build && cmake -DCUSTOM_PLUGIN_SRC_DIR=plugins/epan/ja4 -DCMAKE_SYSTEM_VERSION="10.0.20348.0" -A x64 ..
         env:
           PLATFORM: x64
           WIRESHARK_BASE_DIR: C:/wireshark-libs
