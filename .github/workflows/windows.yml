@@ -27,4 +27,4 @@ jobs:
       - name: Set Chocolatey cache location
         run: choco config set cacheLocation "C:\choco-cache"
       - name: Choco install
-        run: choco install -y --force asciidoctorj
+        run: choco install -y --force asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
