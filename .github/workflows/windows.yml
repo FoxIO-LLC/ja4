@@ -28,6 +28,9 @@ jobs:
           ref: release-4.4
           path: wireshark/build-scripts/wireshark
 
+      - name: add ja4 plugin
+        run: copy -r wireshark/source wireshark/build-scripts/wireshark/plugins/epan/ja4
+
       - name: Choco install dependencies
         run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
       - name: Install strawberryperl
