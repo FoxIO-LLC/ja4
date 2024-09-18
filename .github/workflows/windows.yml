@@ -15,8 +15,9 @@ jobs:
       CMAKE_PREFIX_PATH: D:\a\wireshark\Qt\6.2.3\msvc2019_64
       WIRESHARK_VERSION_EXTRA: -GithubActionBuild
     steps:
-      #- name: Checkout
-      #  uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       #- name: Create cache directory
       #  run: mkdir "C:\choco"
 
