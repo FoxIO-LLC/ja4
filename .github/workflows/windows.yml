@@ -19,16 +19,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Create cache directory
         run: mkdir "C:\choco"
+
       - name: cache
         uses: actions/cache@v4
         with:
           path: C:\choco
           key:  C:\choco
+
       - name: cache
         uses: actions/cache@v4
         with:
-          path: C:\ProgramData\chocolatey\lib\xsltproc
-          key:  C:\ProgramData\chocolatey\lib\xsltproc
+          path: C:\ProgramData\chocolatey\lib
+          key:  C:\ProgramData\chocolatey\lib
+
       - name: Set Chocolatey cache location
         run: choco config set cacheLocation "C:\choco"
       - name: install xsltproc 
