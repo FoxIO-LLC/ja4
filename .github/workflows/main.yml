@@ -35,6 +35,6 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run:  gh release upload ${{ env.NOW }} ./wireshark/build-scripts/run/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so#Mac-plugin
+      run:  gh release upload ${{ env.NOW }} ./wireshark/build-scripts/wireshark-4.4.0/build/run/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so#Mac-plugin
 
     
