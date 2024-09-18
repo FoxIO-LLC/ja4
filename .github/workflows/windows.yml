@@ -36,7 +36,7 @@ jobs:
       
       - name: do we have git already?
         if: steps.cache-chocolatey.outputs.cache-hit != 'true'
-        run: dir C:\ProgramData\chocolatey\lib
+        run: choco install -y git --force
 
       - name: use existing git
         run: dir C:\ProgramData\chocolatey\lib
