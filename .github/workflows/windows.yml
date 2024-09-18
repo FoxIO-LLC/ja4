@@ -29,7 +29,7 @@ jobs:
           path: wireshark/build-scripts/wireshark
 
       - name: add ja4 plugin
-        run: copy wireshark/build-scripts/CMakeLists.txt wireshark/build-scripts/wireshark/ && copy -r wireshark/source wireshark/build-scripts/wireshark/plugins/epan/ja4
+        run: copy -r wireshark/source wireshark/build-scripts/wireshark/plugins/epan/ja4
 
       - name: Choco install dependencies
         run: choco install -y asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
@@ -51,6 +51,9 @@ jobs:
         with:
           vs-version: 16.8
 
+      - name: Set MSVC command prompt
+        uses: ilammy/msvc-dev-cmd@v1
+      
       - name: Mkdir build directory and copy sources
         run: mkdir wireshark/build-scripts/wireshark/build 
 
