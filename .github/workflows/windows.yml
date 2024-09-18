@@ -17,17 +17,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: create cache dir
-        run: mkdir "C:\choco-cache"
+      - name: Set Chocolatey cache location
+        run: choco config set cacheLocation "C:\choco-cache"
       - name: cache
         uses: actions/cache@v4
         with:
-          path: C:\choco-cache
-          key:  C:\choco-cache
-      - name: Set Chocolatey cache location
-        run: choco config set cacheLocation "C:\choco-cache"
-      - name: install git 
-        run: choco install -y git --force --install-arguments="'/DIR=C:\choco-cache\git'" 
+          path: C:\choco
+          key:  C:\choco
+      - name: install xsltproc 
+        run: choco install -y git --force --install-arguments="'/DIR=C:\choco\xsltproc'" 
+
       - name: checkout wireshark
         run: cd wireshark/build-scripts/ && C:\choco-cache\git\bin\git.exe clone -o upstream --branch wireshark-4.4.0 https://gitlab.com/wireshark/wireshark.git --depth=500
       - name: Choco install
