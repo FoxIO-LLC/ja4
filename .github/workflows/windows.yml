@@ -40,7 +40,7 @@ jobs:
         run: mkdir build
       - name: Cmake
         run: cmake -DCMAKE_SYSTEM_VERSION="10.0.20348.0" -A x64 ..
-          env:
+        env:
           PLATFORM: x64
           WIRESHARK_BASE_DIR: C:/wireshark-libs
           QT5_BASE_DIR: C:/Qt/5.12.3/msvc2017_64
