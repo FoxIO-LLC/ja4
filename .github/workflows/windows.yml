@@ -1,0 +1,26 @@
+name: windows-build
+on:
+  push:
+    branches: [main]
+    paths: [wireshark/*, wireshark/source/*, wireshark/build-scripts/*]
+  workflow_dispatch:
+
+jobs:
+  wireshark-windows:
+    name: build
+    runs-on: windows-2022
+    env:
+      PLATFORM: x64
+      WIRESHARK_BASE_DIR: C:\Development
+      CMAKE_PREFIX_PATH: D:\a\wireshark\Qt\6.2.3\msvc2019_64
+      WIRESHARK_VERSION_EXTRA: -GithubActionBuild
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Choco install
+        run: choco install -y --force --no-progress asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
+      - name: Install strawberryperl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.30'
+          distribution: strawberry
