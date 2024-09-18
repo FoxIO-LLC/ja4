@@ -2,7 +2,7 @@ name: CICD
 on:
   push:
     branches: [main]
-    paths: [wireshark/*]
+    paths: [wireshark/*, wireshark/source/*, wireshark/build-scripts/*]
   workflow_dispatch:
 
 jobs:
