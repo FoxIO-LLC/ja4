@@ -42,6 +42,6 @@ if [ ! -d ../../../../ja4-plugin ]; then
 fi
 
 cp `find . -name ja4.so` ../../../../ja4-plugin/
-echo "Your JA4 Plugin is ready at `find . -name ja4.so`
+echo "Your JA4 Plugin is ready at" `find . -name ja4.so`
 
 
