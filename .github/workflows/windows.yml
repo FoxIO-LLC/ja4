@@ -17,10 +17,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Choco install
-        run: choco install -y --force --no-progress asciidoctorj xsltproc docbook-bundle nsis winflexbison3 cmake
-      - name: Install strawberryperl
-        uses: shogo82148/actions-setup-perl@v1
+      - name: cache
+        uses: actions/cache@v3
         with:
-          perl-version: '5.30'
-          distribution: strawberry
+          path: /tmp
+          key:  C:/Downloads
+      - name: Set Chocolatey cache location
+        run: choco config set --name="'cacheLocation'" --value="'C:/Downloads'"
+      - name: Choco install
+        run: choco install -y asciidoctorj
