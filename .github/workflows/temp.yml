@@ -21,12 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: touch two
-      run: echo "two" > two.txt
+      run: echo "two" > one.txt
     - name: upload-two
       uses: actions/upload-artifact@v4
       with:
           name: upload-two
-          path: two.txt
+          path: one.txt
 
   upload-all:
     runs-on: ubuntu-latest
@@ -36,12 +36,17 @@ jobs:
       uses: actions/download-artifact@v4
       with:
           name: upload-one
+    - name: release1
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      run: gh release create "test" one.txt#Linux 
     - name: Download a second artifact
       uses: actions/download-artifact@v4
       with:
           name: upload-two
-    - name: release
+    - name: release2
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run: gh release create "test" one.txt two.txt 
+      run: gh release upload "test" one.txt#Mac 
