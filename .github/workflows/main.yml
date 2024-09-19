@@ -1,4 +1,4 @@
-name: CICD
+name: ja4-wireshark-release
 on:
   push:
     branches: [main]
@@ -9,34 +9,33 @@ jobs:
   wireshark-linux:
     runs-on: ubuntu-latest
     steps:
-    - name: set env
-      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
     - name: checkout
       uses: actions/checkout@v4
     - name: build
       run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
-    - name: release
-      env:
-        GH_TOKEN: ${{ github.token }}
-        GH_REPO: ${{ github.repository }}
-      run:  gh release create ${{ env.NOW }} ./wireshark/build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so#Linux-plugin
-
-
+    - name: rename artifact
+      run: cp ./wireshark/build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so linux-ja4.so
+    - name: upload-linux-ja4
+      uses: actions/upload-artifact@v4
+      with:
+          name: linux-ja4
+          path: linux-ja4.so
+    
   wireshark-macos:
     runs-on: macOS-latest
     steps:
-    - name: set env
-      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
     - name: checkout
       uses: actions/checkout@v4
     - name: build
       run:  cd wireshark/build-scripts && ./macos_build.sh 4.4.0
-    - name: release
-      env:
-        GH_TOKEN: ${{ github.token }}
-        GH_REPO: ${{ github.repository }}
-      run:  gh release upload ${{ env.NOW }} ./wireshark/build-scripts/wireshark-4.4.0/build/run/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so#Mac-plugin
-
+    - name: rename artifact
+      run: cp ./wireshark/build-scripts/wireshark-4.4.0/build/run/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so macos-ja4.so
+    - name: upload-linux-macos
+      uses: actions/upload-artifact@v4
+      with:
+          name: macos-ja4
+          path: macos-ja4.so
+          
   wireshark-windows:
     runs-on: windows-2022
     env:
@@ -45,8 +44,6 @@ jobs:
       CMAKE_PREFIX_PATH: D:\a\ja4\Qt\6.2.3\msvc2019_64
       WIRESHARK_VERSION_EXTRA: -GithubActionBuild
     steps:
-    - name: set env
-      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
     - name: checkout
       uses: actions/checkout@v4
     - name: create wireshark directory
@@ -90,10 +87,23 @@ jobs:
     - name: Build
       run: cmake --build . --config RelWithDebInfo
       working-directory: wireshark/build-scripts/wireshark/build
+    - name: rename artifact
+      run: cp wireshark/build-scripts/wireshark/build/run/RelWithDebInfo/plugins/4.4/epan/ja4.dll ja4.dll
+    - name: upload-linux-macos
+      uses: actions/upload-artifact@v4
+      with:
+          name: windows-ja4
+          path: ja4.dll
+    
+  release-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+    - name: set env
+      run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
+    - name: download-artifacts
+      uses: actions/download-artifact@v4
     - name: release
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
-      run:  gh release upload ${{ env.NOW }} wireshark/build-scripts/wireshark/build/run/RelWithDebInfo/plugins/4.4/epan/ja4.dll#Windows
-
-    
+      run: gh release create ${{ env.NOW }} linux-ja4.so#Linux macos-ja4.so#Mac ja4.dll#Windows
