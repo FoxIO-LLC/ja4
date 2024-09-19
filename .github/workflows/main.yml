@@ -97,6 +97,7 @@ jobs:
     
   release-artifacts:
     runs-on: ubuntu-latest
+    needs: [ wireshark-linux, wireshark-macos, wireshark-windows ]
     steps:
     - name: set env
       run: echo "NOW=$(date +'%Y.%m.%d.%M')" >> $GITHUB_ENV
