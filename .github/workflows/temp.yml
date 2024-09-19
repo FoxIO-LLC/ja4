@@ -15,7 +15,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
           name: upload-one
-          path: wireshark/binaries/one.txt
+          path: one.txt
 
   upload-two:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
           name: upload-two
-          path: wireshark/binaries/two.txt
+          path: two.txt
 
   upload-all:
     runs-on: ubuntu-latest
