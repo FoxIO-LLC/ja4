@@ -26,14 +26,14 @@ if [ ! -d wireshark-$VER ]
     cd wireshark-$VER
 fi
 
-
+rm -rf ./plugins/epan/ja4
 cp -r ../../source ./plugins/epan/ja4
 
 if [ ! -d build ]; then
     mkdir build 
 fi
 
-cd build && cmake -DCUSTOM_PLUGIN_SRC_DIR=plugins/epan/ja4 ../
+cd build && cmake -DCUSTOM_PLUGIN_SRC_DIR=plugins/epan/ja4 -DBUILD_wireshark=off ../
 echo 'building using make...'
 make -j8
 
@@ -42,5 +42,6 @@ if [ ! -d ../../../../ja4-plugin ]; then
 fi
 
 cp `find . -name ja4.so` ../../../../ja4-plugin/
-echo "Your JA4 Plugin is ready at `pwd`/../../../../ja4-plugin/ja4.so"
+echo "Your JA4 Plugin is ready at" `find . -name ja4.so`
+
 
