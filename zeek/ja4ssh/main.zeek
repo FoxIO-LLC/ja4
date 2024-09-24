@@ -25,6 +25,8 @@ export {
     
   };
 
+  option ja4_ssh_packet_count = 200;
+
   # Logging boilerplate
   redef enum Log::ID += { LOG };
   global log_fingerprint_ja4ssh: event(rec: Info);
@@ -123,7 +125,7 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         }
     }
     # TODO:  add config for packet count
-    if(|c$fp$ja4ssh$orig_pack_len| + |c$fp$ja4ssh$resp_pack_len| >= 200) {
+    if(|c$fp$ja4ssh$orig_pack_len| + |c$fp$ja4ssh$resp_pack_len| >= ja4_ssh_packet_count) {
       do_ja4ssh(c);
     }
 }
