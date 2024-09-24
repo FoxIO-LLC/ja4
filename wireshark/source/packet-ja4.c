@@ -48,6 +48,16 @@ fvalue_t* get_value_ptr(field_info *field) {
 #endif
 }
 
+static inline
+const guint8* field_bytes(fvalue_t const *fv) {
+#if ((WIRESHARK_VERSION_MAJOR > 4) || \
+     (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 1))
+    return fvalue_get_bytes_data((fvalue_t *) fv);
+#else
+    return fv->value.bytes->data;
+#endif
+}
+
 char *bytes_to_string(fvalue_t *fv) {
 	return fvalue_to_string_repr(wmem_packet_scope(), fv, FTREPR_DISPLAY, 0);
 }
@@ -934,9 +944,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
 				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
-				const guint8 *bytes = fvalue_get_bytes_data(field->value);
-				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
-				for (int j=0; j< (int)size; j++) {
+				const guint8 *bytes = field_bytes(get_value_ptr(field));
+				for (gint j=0; j < field->length; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
 			}
@@ -950,9 +959,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				    wmem_strbuf_append(current_cert->oids[oid_type], ",");
 				}
 				//BUG-FIX: Ja4x should use Hex codes instead of ascii
-				const guint8 *bytes = fvalue_get_bytes_data(field->value);
-				gsize size = g_bytes_get_size(fvalue_get_bytes(field->value));
-				for (int j=0; j< (int)size; j++) {
+				const guint8 *bytes = field_bytes(get_value_ptr(field));
+				for (gint j=0; j < field->length; j++) {
 				    wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
 				}
 			}
