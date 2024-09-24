@@ -24,14 +24,14 @@ def to_ja4h(x, debug_stream=-1):
     unsorted_cookie_values = []
 
     x['headers'] = [ h.split(':')[0] for h in x['headers'] ]
-    x['headers'] = [ h for h in x['headers'] 
-            if not h.startswith(':') and not h.lower().startswith('cookie') 
+    x['headers'] = [ h for h in x['headers']
+            if not h.startswith(':') and not h.lower().startswith('cookie')
             and h.lower() != 'referer' and h ]
 
     raw_headers = x['headers'][:]
 
     #x['headers'] = [ '-'.join([ y.capitalize() for y in h.split('-')]) for h in x['headers'] ]
-    header_len = '{:02d}'.format(len(x['headers']))
+    header_len = '{:02d}'.format(min(len(x['headers']), 99))
 
     if 'cookies' in x:
         if isinstance(x['cookies'], list):
