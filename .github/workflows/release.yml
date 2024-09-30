@@ -31,6 +31,7 @@ jobs:
         with:
           changelog: rust/CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
+          allow-missing-changelog: true
 
   build-and-upload:
     name: ${{ matrix.job.target }}
