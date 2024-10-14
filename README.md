@@ -48,15 +48,18 @@ Tools that support JA4+:
 [ntop's ntopng](https://github.com/ntop/ntopng) | JA4+
 [ntop's nDPI](https://github.com/ntop/nDPI) | JA4
 [Team Cymru](https://www.team-cymru.com/) | JA4+ (you have to ask for it)
-[NetQuest](https://netquestcorp.com/) | JA4+ (under development)
-[Censys](https://censys.com/) | JA4+ (under development)
+[NetQuest](https://netquestcorp.com/) | JA4+  
+[Censys](https://censys.com/) | JA4+  
 [Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H
 [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4
 [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4
 [MISP](https://www.misp-project.org/) | JA4+
 [OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+  
 [Vercel](https://vercel.com/docs/security/tls-fingerprints) | JA4  
-[Seika](https://seika.io/) | JA4  
+[Seika](https://seika.io/) | JA4+  
+[VirusTotal](https://www.virustotal.com/) | JA4  
+[AWS](https://aws.amazon.com/about-aws/whats-new/2024/10/amazon-cloudfront-ja4-fingerprinting/) | JA4  
+
 with more to be announced...  
 
 ## Examples
