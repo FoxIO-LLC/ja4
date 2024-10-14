@@ -124,7 +124,6 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
           c$fp$ja4ssh$resp_pack_len += rp$tcp$dl;
         }
     }
-    # TODO:  add config for packet count
     if(|c$fp$ja4ssh$orig_pack_len| + |c$fp$ja4ssh$resp_pack_len| >= ja4_ssh_packet_count) {
       do_ja4ssh(c);
     }
