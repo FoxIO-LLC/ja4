@@ -661,14 +661,14 @@ char *ja4t (ja4t_info_t *data, conn_info_t *conn) {
 		wmem_strbuf_append_printf(display,
 			"%d_%s_%02d_%02d",
 			data->window_size,
-			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options),
+			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "00" : wmem_strbuf_get_str(data->tcp_options),
 			data->mss_val,
 			data->window_scale);
 	} else {
 		wmem_strbuf_append_printf(display,
 			"%d_%s_%02d_%d",
 			data->window_size,
-			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "0" : wmem_strbuf_get_str(data->tcp_options),
+			(wmem_strbuf_get_len(data->tcp_options) == 0) ? "00" : wmem_strbuf_get_str(data->tcp_options),
 			data->mss_val,
 			data->window_scale);
 	}
