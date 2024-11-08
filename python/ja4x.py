@@ -51,9 +51,9 @@ def to_ja4x(x, debug_stream=-1):
     # Get issuer name from CN and ON by scanning the sequence.
     # This is very specific to the way tshark holds the sequence.
     if 'printable_certs' in x:
-        certs = x['printable_certs'].copy()
-        issuers = x['issuers'].copy()
-        subjects = x['subjects'].copy()
+        certs = str(x['printable_certs'])
+        issuers = str(x['issuers'])
+        subjects = str(x['subjects'])
         idx = 1
         for _i, _s in zip(issuers, subjects):
             remove_oids(_i, ['550406', '55040b'])
