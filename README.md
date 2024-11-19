@@ -63,6 +63,8 @@ Tools that support JA4+:
 [Seika](https://seika.io/) | JA4+  
 [VirusTotal](https://www.virustotal.com/) | JA4  
 [AWS](https://aws.amazon.com/about-aws/whats-new/2024/10/amazon-cloudfront-ja4-fingerprinting/) | JA4  
+[ELLIO](https://ellio.tech/) | JA4+  
+
 
 with more to be announced...  
 
