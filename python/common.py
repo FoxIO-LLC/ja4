@@ -102,7 +102,7 @@ def get_hex_sorted(entry, field, sort=True):
 
     # remove GREASE and calculate length
     c = [ x[2:] for x in values if x not in GREASE_TABLE ]
-    actual_length = len(c)
+    actual_length = min(len(c), 99)
 
     # now remove SNI and ALPN values
     if field == 'extensions' and sort:
