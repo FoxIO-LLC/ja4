@@ -6,7 +6,7 @@
 #
 #!/usr/bin/env python3
 
-import os, sys, json
+import os, sys, csv, json
 from hashlib import sha256
 import argparse
 from subprocess import PIPE, Popen, call
@@ -412,6 +412,7 @@ def main():
 
     parser.add_argument("-v", "--verbose", required=False, action="store_true", default=False, help="verbose mode")
     parser.add_argument("-J", "--json", required=False, action="store_true", default=False, help="output in JSON")
+    parser.add_argument("-C", "--csv", required=False, action="store_true", default=False, help="output in CSV")
     parser.add_argument("--ja4", "--ja4", action="store_true", default=False, help="Output JA4 fingerprints only")
     parser.add_argument("--ja4s", "--ja4s", action="store_true", default=False, help="Output JA4S fingerprints only")
     parser.add_argument("--ja4l", "--ja4l", action="store_true", default=False, help="Output JA4L-C/S fingerprints only")
@@ -437,7 +438,7 @@ def main():
     output_types.append('ja4ssh') if args.ja4ssh else None
     output_types.append('ja4l') if args.ja4l else None
     debug = True if args.verbose else False
-    mode = "json" if args.json else "default"
+    mode = "json" if args.json else ('csv' if args.csv else 'default')
 
     if args.raw_fingerprint:
         raw_fingerprint = True
@@ -579,6 +580,13 @@ def main():
 
     if fp_out and mode == 'json':
         json.dump(jsons, fp_out, indent=4)
+    if fp_out and mode == 'csv':
+        keys = set()
+        for item in jsons:
+            keys = keys.union(item.keys())
+        w = csv.DictWriter(fp_out,list(keys),extrasaction='ignore')
+        w.writeheader()
+        w.writerows(jsons)
 
 if __name__ == '__main__':
     main()
