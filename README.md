@@ -65,6 +65,7 @@ Tools that support JA4+:
 [AWS](https://aws.amazon.com/about-aws/whats-new/2024/10/amazon-cloudfront-ja4-fingerprinting/) | JA4  
 [ELLIO](https://ellio.tech/) | JA4+  
 [Webscout](https://webscout.io/) | JA4+  
+[Rama](https://github.com/plabayo/rama) | JA4 and JA4H  
 
 
 with more to be announced...  
