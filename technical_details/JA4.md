@@ -5,7 +5,7 @@
 JA4 looks at the TLS Client Hello packet and builds a fingerprint of the client based on attributes within the packet.
 
 ### JA4 Algorithm:
-(QUIC=”q”, DTLS="d", or Normal TLS=”t”)  
+(QUIC=”q”, DTLS="d", or TLS over TCP=”t”)  
 (2 character TLS version)  
 (SNI=”d” or no SNI=”i”)  
 (2 character count of ciphers)  
@@ -23,7 +23,7 @@ t13d1516h2_8daaf6152771_b186095e22b6
 The program needs to ignore GREASE values anywhere it sees them: (https://datatracker.ietf.org/doc/html/draft-davidben-tls-grease-01#page-5)
 
 ### QUIC and DTLS:
-“q”, "d" or “t”, denotes whether the hello packet is for QUIC, DTLS, or normal TLS.
+“q”, "d" or “t”, denotes whether the hello packet is for QUIC, DTLS, or normal TLS over TCP.  
 
 https://en.wikipedia.org/wiki/QUIC  
 QUIC is the protocol which the new HTTP/3 standard utilizes, encapsulating TLS 1.3 into UDP packets. As QUIC was developed by Google, if an organization heavily utilizes Google products, QUIC could make up half of their network traffic, so this is important to capture.  
