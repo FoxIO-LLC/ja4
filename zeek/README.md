@@ -20,9 +20,9 @@ Run the following command on your Zeek nodes:
 zkg install zeek/foxio/ja4
 ```
 
-If you don't have the zeek package manager, copy this directory to zeek/share/zeek/site/ja4plus and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
+If you don't have the zeek package manager, copy this directory to zeek/share/zeek/site/ja4 and add this line to either __load__.zeek or local.zeek in zeek/share/zeek/site/:
 ```
-@load ja4plus
+@load ja4
 ```
 
 ## Requirements
