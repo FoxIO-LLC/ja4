@@ -2,7 +2,7 @@
 name = "ja4"
 description = "JA4 suite of passive network fingerprinting methods"
 version.workspace = true
-edition = "2021"
+edition.workspace = true
 authors = ["Valeriy V. Vorotyntsev <valery.vv@gmail.com>"]
 license.workspace = true
 repository.workspace = true
@@ -15,7 +15,7 @@ publish = false
 [dependencies]
 clap.workspace = true
 color-eyre.workspace = true
-config = { version = "0.13", default-features = false, features = ["toml"] }
+config = { version = "0.15", default-features = false, features = ["toml"] }
 duct = "0.13"
 fs-err.workspace = true
 hex.workspace = true
@@ -34,5 +34,5 @@ tracing.workspace = true
 tracing-subscriber.workspace = true
 
 [dev-dependencies]
-expect-test = "1.4"
-insta = { version = "1.33", features = ["glob", "yaml"] }
+expect-test = "1.5"
+insta = { version = "1.42", features = ["glob", "yaml"] }
