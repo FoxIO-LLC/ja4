@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!--
+  -- ## Types of changes
+  --
+  -- * `Added` for new features.
+  -- * `Changed` for changes in existing functionality.
+  -- * `Deprecated` for soon-to-be removed features.
+  -- * `Removed` for now removed features.
+  -- * `Fixed` for any bug fixes.
+  -- * `Security` in case of vulnerabilities.
+  -->
+
 ## [Unreleased]
+
+## [0.18.5] - 2025-01-17
+
+- Update dependencies.
+
+## [0.18.4] - 2024-09-30
+
+- Update the `release` CI workflow to generate macOS binaries of the Rust apps.
 
 ## [0.18.3] - 2024-09-10
 
@@ -95,7 +114,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Rust sources of `ja4` and `ja4x` CLI tools.
 
-[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.3...HEAD
+<!-- Links -->
+
+[unreleased]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.5...HEAD
+[0.18.5]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.4...v0.18.5
+[0.18.4]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.3...v0.18.4
 [0.18.3]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/FoxIO-LLC/ja4/compare/v0.18.0...v0.18.1

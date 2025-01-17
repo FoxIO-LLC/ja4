@@ -2,7 +2,7 @@
 name = "ja4x"
 description = "generate JA4X fingerprints for X.509 certificates"
 version.workspace = true
-edition = "2021"
+edition.workspace = true
 authors = ["Valeriy V. Vorotyntsev <valery.vv@gmail.com>"]
 license.workspace = true
 repository.workspace = true
@@ -25,4 +25,4 @@ serde_yaml.workspace = true
 sha2.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
-x509-parser = "0.15"
+x509-parser = "0.16"
