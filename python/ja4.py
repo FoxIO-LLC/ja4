@@ -173,7 +173,7 @@ def to_ja4s(x, debug_stream):
 
     # get extensions in hex in the order they are present (include grease values)
     x['extensions'] = [ '{:04x}'.format(int(k)) for k in x['extensions'] ]
-    ext_len = '{:02d}'.format(len(x['extensions']))
+    ext_len = '{:02d}'.format(min(len(x['extensions']), 99))
     extensions = sha_encode(x['extensions'])
 
     # only one cipher for ja4s
@@ -209,7 +209,7 @@ def to_ja4(x, debug_stream):
     ptype = 'q' if x['quic'] else 't'
 
     x['extensions'] = [ '0x{:04x}'.format(int(k)) for k in x['extensions'] ]
-    ext_len = '{:02d}'.format(len([ x for x in x['extensions'] if x not in GREASE_TABLE]))
+    ext_len = '{:02d}'.format(min(len([ x for x in x['extensions'] if x not in GREASE_TABLE]), 99))
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
     if ('0x000d' in x['extensions']):
