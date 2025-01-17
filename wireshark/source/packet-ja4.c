@@ -281,7 +281,7 @@ gint sort_by_string(gconstpointer s1, gconstpointer s2) {
 // Fix #63
 proto_tree *locate_tree(proto_tree *tree, const char *s) {
 	proto_tree *position = tree->first_child;
-	while ((position != NULL) && (strcmp(position->finfo->hfinfo->abbrev, s) != 0)) {
+	while ((position != NULL) && (position->finfo != NULL) && (strcmp(position->finfo->hfinfo->abbrev, s) != 0)) {
 		position = position->next;
 	}
 	return position;
@@ -1226,8 +1226,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 				conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
 				conn->pkts++;
 
-				fvalue_get_uinteger(get_value_ptr(field)) ? conn->server_pkts++ : conn->client_pkts++;
-				fvalue_get_uinteger(get_value_ptr(field)) ?
+				fvalue_get_uinteger64(get_value_ptr(field)) ? conn->server_pkts++ : conn->client_pkts++;
+				fvalue_get_uinteger64(get_value_ptr(field)) ?
 					update_mode(tcp_len, conn->server_mode) :
 					update_mode(tcp_len, conn->client_mode);
 
