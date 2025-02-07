@@ -417,14 +417,16 @@ conn_info_t *conn_lookup (char proto, int stream) {
 void decode_http_lang(wmem_strbuf_t **out, const char *val) {
 	char lang[5] = "0000"; 
 	int len = 0;
+
 	for (int i=0; i<5; i++) {
-		if ((val[i] == ',') || (val[i] == ';') || (len == 4)) {
+		if ((val[i] == ',') || (val[i] == ';') || (len == 4) || (val[i] == '\0')) {
 			break;
 		}
 		if ((!g_ascii_isspace(val[i])) && (val[i] != '-')) {
 			lang[len++] = g_ascii_tolower(val[i]);
 		}
 	}
+
 	wmem_strbuf_append_printf(*out, "%s", lang);
 }
 
