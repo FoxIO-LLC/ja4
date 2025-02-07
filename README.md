@@ -4,12 +4,18 @@
 
 # JA4+ Network Fingerprinting
 
-JA4+ is a suite of network fingerprinting methods that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
+JA4+ is a suite of network fingerprinting methods by [FoxIO](https://foxio.io/) that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
 
-Please read our blogs for details on how JA4+ works, why it works, and examples of what can be detected/prevented with it:  
+For a quick explainer on JA4+ and to use as a reference during analysis see:  
+[JA4+ Cheat Sheet](https://x.com/4A4133/status/1887269972545839559)
+
+For in-depth detail, please read our blogs on how JA4+ works, why it works, and examples of what can be detected/prevented with it:  
 [JA4+ Network Fingerprinting](https://blog.foxio.io/ja4%2B-network-fingerprinting) (JA4/S/H/L/X/SSH)  
 [JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)  
 [Investigating Surfshark and NordVPN with JA4T](https://blog.foxio.io/investigating-surfshark-and-nordvpn-with-ja4t) (JA4T)
+
+If you love JA4+, consider getting a t-shirt or hoodie:  
+[JA4+ Shirts, Hoodies, and Stickers](https://store.foxio.io/)
 
 Current methods and implementation details:  
 | Full Name | Short Name | Description |
@@ -37,10 +43,10 @@ Tools that support JA4+:
 [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark) | JA4+
 [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+
 [Arkime](https://arkime.com/settings#ja4plus) | JA4+
-[Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4
+[Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4+ (under development)
 [GreyNoise](https://www.greynoise.io/) | JA4+ (you have to ask for it)
 [Hunt](https://hunt.io/) | JA4+
-[Driftnet](https://driftnet.io/) | JA4X
+[Driftnet](https://driftnet.io/) | JA4+
 [DarkSail](https://darksail.ai) | JA4+
 [GoLang](https://github.com/driftnet-io/go-ja4x) | JA4X
 [nzyme](https://www.nzyme.org/) | JA4+ (under development)
@@ -66,6 +72,7 @@ Tools that support JA4+:
 [ELLIO](https://ellio.tech/) | JA4+  
 [Webscout](https://webscout.io/) | JA4+  
 [Rama](https://github.com/plabayo/rama) | JA4 and JA4H  
+[Vectra](https://www.vectra.ai/) | JA4+ (under development)
 
 
 with more to be announced...  
