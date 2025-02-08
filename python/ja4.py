@@ -208,31 +208,46 @@ def to_ja4(x, debug_stream):
         print (f"computing ja4 for stream {x['stream']}")
     ptype = 'q' if x['quic'] else 't'
 
+    if 'extensions' not in x:
+        x['extensions'] = []
+
+    if 'ciphers' not in x:
+        x['ciphers'] = []
+
     x['extensions'] = [ '0x{:04x}'.format(int(k)) for k in x['extensions'] ]
     ext_len = '{:02d}'.format(min(len([ x for x in x['extensions'] if x not in GREASE_TABLE]), 99))
     cache_update(x, 'client_ciphers', x['ciphers'], debug_stream)
 
     if ('0x000d' in x['extensions']):
-    	x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
+        x['signature_algorithms'] = [ y[2:] for y in get_signature_algorithms(x) ]
     else:
-    	x['signature_algorithms'] = ''
+        x['signature_algorithms'] = ''
 
     cache_update(x, 'client_extensions', x['extensions'], debug_stream)
 
-    # Modified to include original rendering
     x['sorted_extensions'], _len, _ = get_hex_sorted(x, 'extensions')
     x['original_extensions'], _len, _ = get_hex_sorted(x, 'extensions', sort=False)
     if (x['signature_algorithms'] == ''):
-	    x['sorted_extensions'] = x['sorted_extensions']
-	    x['original_extensions'] = x['original_extensions']
+        x['sorted_extensions'] = x['sorted_extensions']
+        x['original_extensions'] = x['original_extensions']
     else:
         x['sorted_extensions'] = x['sorted_extensions'] + '_' + ','.join(x['signature_algorithms'])
         x['original_extensions'] = x['original_extensions'] + '_' + ','.join(x['signature_algorithms'])
-    sorted_extensions = sha_encode(x['sorted_extensions'])
-    original_extensions = sha_encode(x['original_extensions'])
+
+    if x['extensions']:
+        sorted_extensions = sha_encode(x['sorted_extensions'])
+        original_extensions = sha_encode(x['original_extensions'])
+    else:
+        sorted_extensions = '000000000000'
+        original_extensions = '000000000000'
+    
     x['sorted_ciphers'], cipher_len, sorted_ciphers = get_hex_sorted(x, 'ciphers')
     x['original_ciphers'], cipher_len, original_ciphers = get_hex_sorted(x, 'ciphers', sort=False)
 
+    if not x['ciphers']:
+        sorted_ciphers = '000000000000'
+        original_ciphers = '000000000000'
+        cipher_len = '00'
 
     sni = 'd' if 'domain' in x else 'i'
     x['version'] = x['version'][0] if isinstance(x['version'], list) else x['version']
@@ -567,7 +582,7 @@ def main():
                     to_ja4h(x, STREAM)
                     display(x)
 
-            if 'extensions' in x and x['type'] == '1':
+            if x['hl'] == 'tls' and x.get('type') == '1':
                 try:
                     to_ja4(x, STREAM)
                 except Exception as e:
