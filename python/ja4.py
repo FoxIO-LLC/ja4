@@ -171,10 +171,20 @@ def to_ja4s(x, debug_stream):
         print (f"computing ja4s for stream {x['stream']}")
     ptype = 'q' if x['quic'] else 't'
 
+    if 'extensions' not in x:
+        x['extensions'] = []
+
+    if 'ciphers' not in x:
+        x['ciphers'] = []
+
     # get extensions in hex in the order they are present (include grease values)
     x['extensions'] = [ '{:04x}'.format(int(k)) for k in x['extensions'] ]
     ext_len = '{:02d}'.format(min(len(x['extensions']), 99))
-    extensions = sha_encode(x['extensions'])
+    
+    if x['extensions']:
+        extensions = sha_encode(x['extensions'])
+    else:
+        extensions = '000000000000'
 
     # only one cipher for ja4s
     x['ciphers'] = x['ciphers'][2:]
@@ -570,7 +580,7 @@ def main():
                         display(x)
 
             # Hash calculations. 
-            if 'extensions' in x and x['type'] == '2':
+            if x['hl'] == 'tls' and x.get('type') == '2':
                 to_ja4s(x, STREAM)
 
             if x['hl'] == 'x509af':
