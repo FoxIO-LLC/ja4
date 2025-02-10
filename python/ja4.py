@@ -278,12 +278,19 @@ def to_ja4(x, debug_stream):
     if ord(alpn[0]) > 127:
         alpn = '99'
 
-    x['JA4'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{sorted_ciphers}_{sorted_extensions}"
-    x['JA4_o'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{original_ciphers}_{original_extensions}"
-    x['JA4_r'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{x['sorted_ciphers']}_{x['sorted_extensions']}"
-    x['JA4_ro'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{x['original_ciphers']}_{x['original_extensions']}"
+    entry = get_cache(x)[x['stream']]
+    if not entry.get('count'):
+        idx = 0
+    else:
+        idx = entry['count']
+    idx += 1
+    cache_update(x, 'count', idx, debug_stream)
 
-    [ cache_update(x, key, x[key], debug_stream) for key in [ 'domain', 'JA4', 'JA4_r', 'JA4_o', 'JA4_ro'] if key in x ]
+    x[f'JA4.{idx}'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{sorted_ciphers}_{sorted_extensions}"
+    x[f'JA4_o.{idx}'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{original_ciphers}_{original_extensions}"
+    x[f'JA4_r.{idx}'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{x['sorted_ciphers']}_{x['sorted_extensions']}"
+    x[f'JA4_ro.{idx}'] = f"{ptype}{version}{sni}{cipher_len}{ext_len}{alpn}_{x['original_ciphers']}_{x['original_extensions']}"
+    [ cache_update(x, key, x[key], debug_stream) for key in [ 'domain', f'JA4.{idx}', f'JA4_r.{idx}', f'JA4_o.{idx}', f'JA4_ro.{idx}'] if key in x ]
 
 ############ END OF JA4 and JA4S FUNCTIONS #####################
 
