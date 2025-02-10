@@ -1,4 +1,6 @@
 rust/target
 wireshark/build-scripts/build
+wireshark/build-scripts/wireshark-*
 .DS_Store
 .vscode/
+__pycache__/
