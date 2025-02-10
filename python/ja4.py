@@ -492,7 +492,7 @@ def main():
         if args.pcap.endswith('.ek'):
             ps = Popen(["cat", args.pcap], stdout=PIPE, encoding='utf-8')
         else:
-            ps = Popen(["tshark", "-r", args.pcap, "-T", "ek"], stdout=PIPE, encoding='utf-8')
+            ps = Popen(["tshark", "-r", args.pcap, "-T", "ek", "-n"], stdout=PIPE, encoding='utf-8')
 
     for idx, line in enumerate(iter(ps.stdout.readline, '')): # enumerate(sys.stdin):
         if "layers" in line:
