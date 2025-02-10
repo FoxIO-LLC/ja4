@@ -11,6 +11,7 @@ def http_method(method):
 
 def http_language(lang):
     lang = lang.replace('-','').replace(';',',').lower().split(',')[0]
+    lang = lang[:4]
     return f"{lang}{'0'*(4-len(lang))}"
 
 def to_ja4h(x, debug_stream=-1):
