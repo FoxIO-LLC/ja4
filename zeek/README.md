@@ -13,6 +13,7 @@ JA4TS &rarr; `conn.log`
 JA4SSH &rarr; `ja4ssh.log`  
 JA4X &rarr; `x509.log` (still in development)  
 
+See [JA4+ and implementations into other open source tools](../../README.md) for more detail on JA4+ and implementations into other open source tools.
 
 ## Table of Contents <!-- omit from toc -->
 
@@ -47,4 +48,4 @@ The raw output for JA4+ methods (non-hashed) can also be enabled in config.zeek
 
 ## License
 
-See [License FAQ](https://github.com/FoxIO-LLC/ja4/blob/main/License%20FAQ.md) for details.
+See [License FAQ](../../License%20FAQ.md) for details.
