@@ -4,6 +4,7 @@
 
 JA4H fingerprints the HTTP client based on each HTTP request.
 
-### Number of Headers:
+### Number of Headers
+
 2 digit number of headers, not counting Cookie and Referer. For 3 headers the value is "03".
 If there are more than 99, the output is 99.
