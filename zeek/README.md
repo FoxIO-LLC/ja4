@@ -1,4 +1,4 @@
-# JA4+ for Zeek
+# JA4+ for Zeek <!-- omit from toc -->
 
 This will add JA4+ fingerprints to respective protocol zeek logs.  
 JA4SSH will output to it's own log.  
@@ -13,7 +13,13 @@ JA4TS &rarr; `conn.log`
 JA4SSH &rarr; `ja4ssh.log`  
 JA4X &rarr; `x509.log` (still in development)  
 
-See https://github.com/FoxIO-LLC/ja4 for more detail on JA4+ and implementations into other open source tools.
+
+## Table of Contents <!-- omit from toc -->
+
+- [Install](#install)
+- [Requirements](#requirements)
+- [Config](#config)
+- [License](#license)
 
 ## Install
 

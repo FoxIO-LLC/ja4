@@ -2,7 +2,7 @@
 <img src="ja4+_transparent_logo.png" alt="logo" width="250"/>
 </p>
 
-# JA4+ Network Fingerprinting
+****# JA4+ Network Fingerprinting <!-- omit from toc -->
 
 JA4+ is a suite of network fingerprinting methods by [FoxIO](https://foxio.io/) that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
 
@@ -17,7 +17,28 @@ For in-depth detail, please read our blogs on how JA4+ works, why it works, and 
 If you love JA4+, consider getting a t-shirt or hoodie:  
 [JA4+ Shirts, Hoodies, and Stickers](https://store.foxio.io/)
 
-Current methods and implementation details:  
+## Table of contents <!-- omit from toc -->
+
+- [Current methods and implementation details](#current-methods-and-implementation-details)
+- [Implementations](#implementations)
+- [Tools that support JA4+](#tools-that-support-ja4)
+- [Examples](#examples)
+- [Plugins](#plugins)
+- [Binaries](#binaries)
+  - [Release Assets](#release-assets)
+  - [Installing tshark](#installing-tshark)
+    - [Linux](#linux)
+    - [macOS](#macos)
+    - [Windows](#windows)
+  - [Running JA4+](#running-ja4)
+- [Database](#database)
+- [JA4+ Details](#ja4-details)
+- [Licensing](#licensing)
+- [Q\&A](#qa)
+- [JA4+ was created by](#ja4-was-created-by)
+
+## Current methods and implementation details
+
 | Full Name | Short Name | Description |
 |---|---|---|
 | JA4 | JA4 | TLS Client Fingerprinting  
@@ -217,7 +238,8 @@ So I want to make this clear: JA4 fingerprints will change as application TLS li
 Q: Doesn't TLS 1.3 make fingerprinting TLS clients harder?  
 A: No, it makes it easier! Since TLS 1.3, clients have had a much larger set of extensions and even though TLS1.3 only supports a few ciphers, browsers and applications still support many more.
 
-## JA4+ was created by: 
+## JA4+ was created by
+
 [John Althouse](https://www.linkedin.com/in/johnalthouse/), with feedback from:
 
 Josh Atkins  
