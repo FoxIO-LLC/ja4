@@ -1,6 +1,6 @@
 # JA4H: HTTP Client Fingerprint
 
-![JA4H](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4H.png)
+![JA4H](./JA4H.png)
 
 JA4H fingerprints the HTTP client based on each HTTP request.
 

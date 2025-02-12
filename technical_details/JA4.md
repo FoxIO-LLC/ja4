@@ -1,6 +1,6 @@
 # JA4: TLS Client Fingerprinting
 
-![JA4](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/JA4.png)
+![JA4](./JA4.png)
 
 JA4 looks at the TLS Client Hello packet and builds a fingerprint of the client based on attributes within the packet.
 
