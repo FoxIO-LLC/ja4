@@ -1,8 +1,23 @@
-# JA4: TLS Client Fingerprinting
+# JA4: TLS Client Fingerprinting <!-- omit from toc -->
 
 ![JA4](./JA4.png)
 
 JA4 looks at the TLS Client Hello packet and builds a fingerprint of the client based on attributes within the packet.
+
+## Table of Contents <!-- omit from toc -->
+
+- [JA4 Algorithm](#ja4-algorithm)
+- [Details](#details)
+  - [QUIC and DTLS](#quic-and-dtls)
+  - [TLS and DTLS Version](#tls-and-dtls-version)
+  - [SNI](#sni)
+  - [Number of Ciphers](#number-of-ciphers)
+  - [Number of Extensions](#number-of-extensions)
+  - [ALPN Extension Value](#alpn-extension-value)
+  - [Cipher hash](#cipher-hash)
+  - [Extension hash](#extension-hash)
+- [Example](#example)
+- [Raw Output](#raw-output)
 
 ## JA4 Algorithm
 
