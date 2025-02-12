@@ -35,7 +35,7 @@ The full name or short name can be used interchangeably. Additional JA4+ methods
 
 To understand how to read JA4+ fingerprints, see [Technical Details](https://github.com/FoxIO-LLC/ja4/blob/main/technical_details/README.md)
 
-This repo includes JA4+ in Python, Rust, Zeek and C, as a Wireshark plugin. 
+This repo includes JA4+ in [Python](python/README.md), [Rust](rust/README.md), [Zeek](zeek/README.md) and [C, as a Wireshark plugin](wireshark/README.md).
 
 Tools that support JA4+:  
 | Tool/Vendor | JA4+ Support |
@@ -73,7 +73,6 @@ Tools that support JA4+:
 [Webscout](https://webscout.io/) | JA4+  
 [Rama](https://github.com/plabayo/rama) | JA4 and JA4H  
 [Vectra](https://www.vectra.ai/) | JA4+ (under development)
-
 
 with more to be announced...  
 
