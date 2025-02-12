@@ -106,38 +106,62 @@ For a complete database, see [ja4db.com](https://ja4db.com/)
 
 ## Binaries
 
-Recommended to have tshark version 4.0.6 or later for full functionality. See: https://pkgs.org/search/?q=tshark  
+JA4 binaries are built from the [Rust implementation](rust/README.md) of the suite. To ensure full functionality, `tshark` (version 4.0.6 or later) is required. Download the latest JA4 binaries from the [Releases](https://github.com/FoxIO-LLC/ja4/releases) page. The release versions for the Rust implementation follow [Semantic Versioning](https://semver.org/) and are marked as `vX.Y.Z`, unlike Wireshark plugin releases.
 
-Download the latest JA4 binaries from: [Releases](https://github.com/FoxIO-LLC/ja4/releases).
+### Release Assets
 
-### JA4+ on Ubuntu  
+JA4 binaries are provided as compressed archives named according to the target platform, following a pattern like:
+
+```txt
+ja4-vX.Y.Z-<architecture>-<platform>.tar.gz
 ```
+
+For example, `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux or `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64. Choose the appropriate file for your system.
+
+### Installing tshark
+
+#### Linux
+
+Install it using your package manager (the name of the package `tshark` or `wireshark-cli` depends on the distribution). For example, on Ubuntu:
+
+```sh
 sudo apt install tshark
-./ja4 [options] [pcap]
 ```
 
-### JA4+ on Mac
-1) Install Wireshark https://www.wireshark.org/download.html which will install tshark
-2) Add tshark to $PATH
-```
-ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
-./ja4 [options] [pcap]
-```
+#### macOS
 
-### JA4+ on Windows
-1) Install Wireshark for Windows from https://www.wireshark.org/download.html which will install tshark.exe  
-tshark.exe is at the location where wireshark is installed, for example: C:\Program Files\Wireshark\thsark.exe  
-2) Add the location of tshark to your "PATH" environment variable in Windows.  
-   (System properties > Environment Variables... > Edit Path)  
-3) Open cmd, navigate the ja4 folder
-```
-ja4 [options] [pcap]
-```
+1. [Download](https://www.wireshark.org/download.html) and install Wireshark (includes `tshark`).
+2. Add `tshark` to your `PATH`:
+   ```sh
+   sudo ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
+   ```
+
+#### Windows
+
+1. [Download](https://www.wireshark.org/download.html) and install Wireshark (includes `tshark.exe`).
+2. Locate `tshark.exe` (usually in `C:\Program Files\Wireshark\tshark.exe`).
+3. Add the folder containing `tshark.exe` to your system `PATH`:
+   - Open **System Properties** > **Environment Variables** > **Edit Path**.
+
+### Running JA4+
+
+Once `tshark` and the JA4+ binaries are available, run JA4+ using the following command:
+
+- On Linux and macOS:
+  ```sh
+  ./ja4 [options] [pcap]
+  ```
+- On Windows, open **Command Prompt** and run:
+  ```cmd
+  ja4 [options] [pcap]
+  ```
+
+For more details on running JA4+ and its advanced configurations, refer to the [Rust implementation README](rust/README.md), which provides information on its features, usage scenarios, and customization options.
 
 ## Database
 
 The official JA4+ database of fingerprints, associated applications and recommended detection logic is here: [ja4db.com](https://ja4db.com/)  
-This database is under very active development. Expect orders of magnitude more fingerprint combinations and data over the next few months (Aug 2024).
+This database is under very active development. Expect orders of magnitude more fingerprint combinations and data over the next few months.
 
 A sample [ja4plus-mapping.csv](https://github.com/FoxIO-LLC/ja4/blob/main/ja4plus-mapping.csv) is also available for quick reference.
 
