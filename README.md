@@ -58,7 +58,12 @@ To understand how to read JA4+ fingerprints, see [Technical Details](./technical
 
 ## Implementations
 
-This repo includes JA4+ in [Python](./python/README.md), [Rust](./rust/README.md), [Zeek](./zeek/README.md) and [C, as a Wireshark plugin](./wireshark/README.md).
+This repo includes JA4+ in
+
+- [Python](./python/README.md)
+- [Rust](./rust/README.md)
+- [C, as a Wireshark plugin](./wireshark/README.md).
+- [Zeek](./zeek/README.md)
 
 ## Tools that support JA4+
 
@@ -195,26 +200,11 @@ JA4+ is a set of simple yet powerful network fingerprints for multiple protocols
 
 All JA4+ fingerprints have an a_b_c format, delimiting the different sections that make up the fingerprint. This allows for hunting and detection utilizing just ab or ac or c only. If one wanted to just do analysis on incoming cookies into their app, they would look at JA4H_c only. This new locality-preserving format facilitates deeper and richer analysis while remaining simple, easy to use, and allowing for extensibility.
 
-For example; GreyNoise is an internet listener that identifies internet scanners and is implementing JA4+ into their product. They have an actor who scans the internet with a constantly changing single TLS cipher. This generates a massive amount of completely different JA3 fingerprints but with JA4, only the b part of the JA4 fingerprint changes, parts a and c remain the same. As such, GreyNoise can track the actor by looking at the JA4_ac fingerprint (joining a+c, dropping b).
+For example, GreyNoise is an internet listener that identifies internet scanners and is implementing JA4+ into their product. They have an actor who scans the internet with a constantly changing single TLS cipher. This generates a massive amount of completely different JA3 fingerprints but with JA4, only the b part of the JA4 fingerprint changes, parts a and c remain the same. As such, GreyNoise can track the actor by looking at the JA4_ac fingerprint (joining a+c, dropping b).
 
-Current methods and implementation details:
+For a list of JA4+ methods and their descriptions, see [Current methods and implementation details](#current-methods-and-implementation-details).
 
-| Full Name | Short Name | Description |
-|---|---|---|
-| JA4 | JA4 | TLS Client Fingerprinting |
-| JA4Server | JA4S | TLS Server Response / Session Fingerprinting |
-| JA4HTTP | JA4H | HTTP Client Fingerprinting |
-| JA4Latency | JA4L | Client to Server Latency Measurment / Light Distance |
-| JA4LatencyServer | JA4LS | Server to Client Latency Measurement / Light Distance |
-| JA4X509 | JA4X | X509 TLS Certificate Fingerprinting |
-| JA4SSH | JA4SSH | SSH Traffic Fingerprinting |
-| JA4TCP | JA4T | TCP Client Fingerprinting |
-| JA4TCPServer | JA4TS | TCP Server Response Fingerprinting |
-| [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan) |
-
-The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
-
-To understand how to read JA4+ fingerprints, see [Technical Details](./technical_details/README.md)
+To understand how to read JA4+ fingerprints, see [Technical Details](./technical_details/README.md).
 
 ## Licensing
 
