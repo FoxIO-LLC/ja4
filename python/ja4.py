@@ -452,8 +452,8 @@ def main():
     parser.add_argument("--ja4ssh", action="store_true", default=False, help="Output JA4SSH fingerprints only")
     parser.add_argument("-r", "--raw_fingerprint", required=False, action="store_true", help="Output raw fingerprint")
     parser.add_argument("-o", "--original_rendering", required=False, action="store_true", help="Output original rendering")
-    parser.add_argument("-f", "--output", nargs='?', const='OUTFILE', help="Send output to file <filename>")
-    parser.add_argument("-s", "--stream", nargs='?', const='OUTFILE', help="Send output to file <filename>")
+    parser.add_argument("-f", "--output", nargs='?', const='ja4.output', help="Send output to file <filename>")
+    parser.add_argument("-s", "--stream", nargs='?', const='0', help="Inspect a specific stream <stream>")
 
     try:
         args = parser.parse_args()
