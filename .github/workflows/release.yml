@@ -78,6 +78,6 @@ jobs:
         bin: ja4,ja4x
         archive: ja4-$tag-$target
         target: ${{ matrix.job.target }}
-        include: rust/ja4/README.md
+        include: rust/README.md
         token: ${{ secrets.GITHUB_TOKEN }}
         manifest_path: rust/Cargo.toml

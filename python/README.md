@@ -1,91 +1,160 @@
-# JA4+
+# JA4+ (Python Implementation) <!-- omit from toc -->
 
-Recommended to have tshark version 4.0.6 or later for full functionality. See: https://pkgs.org/search/?q=tshark  
+This Python tool implements JA4+, a fingerprinting methodology for network traffic analysis. It processes PCAP files and extracts JA4+ fingerprints for multiple protocols, including TLS, HTTP, SSH, TCP, and X.509 certificates. The output is structured in JSON format, providing detailed metadata such as IP addresses, ports, domains, and fingerprintable handshake characteristics. This tool is designed for security research, threat detection, and network traffic investigation.
 
-### JA4+ on Ubuntu  
-```
+For more details on JA4+ and its implementations in other open-source tools (Rust, Wireshark, and Zeek), see the [main JA4+ README](../README.md).
+
+## Table of Contents <!-- omit from toc -->
+
+- [Dependencies](#dependencies)
+  - [Installing tshark](#installing-tshark)
+    - [Linux](#linux)
+    - [macOS](#macos)
+    - [Windows](#windows)
+  - [Installing Python](#installing-python)
+    - [Linux](#linux-1)
+    - [macOS](#macos-1)
+    - [Windows](#windows-1)
+- [Running JA4+](#running-ja4)
+  - [Usage](#usage)
+    - [Command-line Arguments](#command-line-arguments)
+  - [Examples](#examples)
+    - [Running `ja4.py`](#running-ja4py)
+    - [Example output](#example-output)
+    - [JSON Output Format](#json-output-format)
+  - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
+- [Testing](#testing)
+- [License](#license)
+
+## Dependencies
+
+To run JA4+, `tshark` and Python 3 are required. For full functionality, `tshark` version 4.0.6 or later is recommended.
+
+### Installing tshark
+
+#### Linux
+
+Install it using your package manager (the package name is either `tshark` or `wireshark-cli`, depending on the distribution). For example, on Ubuntu:
+
+```sh
 sudo apt install tshark
-python3 ja4.py
 ```
 
-### JA4+ on Mac
-1) Install python3 https://www.python.org/downloads/macos/
-2) Install Wireshark https://www.wireshark.org/download.html which will install tshark
-3) Add tshark to $PATH
-```
-ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
-python3 ja4.py
+#### macOS
+
+1. [Download](https://www.wireshark.org/download.html) and install Wireshark (includes `tshark`).
+2. Add `tshark` to your `PATH`:
+   ```sh
+   sudo ln -s /Applications/Wireshark.app/Contents/MacOS/tshark /usr/local/bin/tshark
+   ```
+
+#### Windows
+
+1. [Download](https://www.wireshark.org/download.html) and install Wireshark (includes `tshark.exe`).
+2. Locate `tshark.exe` (usually in `C:\Program Files\Wireshark\tshark.exe`).
+3. Add the folder containing `tshark.exe` to your system `PATH`:
+   - Open **System Properties** > **Environment Variables** > **Edit Path**.
+
+### Installing Python
+
+#### Linux
+
+Install Python 3 using your package manager. For example, on Ubuntu:
+
+```sh
+sudo apt install python3
 ```
 
-### JA4+ on Windows
-1) Install python3 using the Windows Installer https://www.python.org/downloads/windows/
-2) Install Wireshark for Windows from https://www.wireshark.org/download.html, this will install tshark.exe  
-tshark.exe is at the location where wireshark is installed, for example: C:\Program Files\Wireshark\thsark.exe  
-3) Add the location of tshark to your "PATH" environment variable in Windows. This is important for pyshark to work correctly.  
-   (System properties > Environment Variables... > Edit Path)  
-4) Open cmd, navigate the ja4 folder
-```
-python3 ja4.py
-```
+#### macOS
 
+[Download](https://www.python.org/downloads/macos/) and install Python 3 using the universal installer.
 
-## Usage
-A set of python scripts for extracting JA4 fingerprints from PCAP files
+#### Windows
 
-```
+[Download](https://www.python.org/downloads/windows/) and install Python 3 using the Windows installer.
+
+## Running JA4+
+
+Once `tshark` and Python 3 are installed, you can run `ja4.py` as follows:
+
+- On Linux and macOS:
+  ```sh
+  python3 ja4.py [pcap] [options]
+  ```
+- On Windows, open **Command Prompt** and run:
+  ```cmd
+  python ja4.py [pcap] [options]
+  ```
+
+### Usage
+
+#### Command-line Arguments
+
+```txt
 positional arguments:
-  pcap                  The pcap file to process
+  pcap                      The pcap file to process
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -key KEY              The key file to use for decryption
-  -v, --verbose         verbose mode
-  -J, --json            output in JSON
-  --ja4, --ja4          Output JA4 fingerprints only
-  --ja4s, --ja4s        Output JA4S fingerprints only
-  --ja4l, --ja4l        Output JA4L-C/S fingerprints only
-  --ja4h, --ja4h        Output JA4H fingerprints only
-  --ja4x, --ja4x        Output JA4X fingerprints only
-  --ja4ssh, --ja4ssh      Output JA4SSH fingerprints only
-  -r, --raw_fingerprint
-                        Output raw fingerprint
-  -o, --original_rendering
-                        Output original rendering
-  -f [OUTPUT], --output [OUTPUT]
-                        Send output to file <filename>
-  -s [STREAM], --stream [STREAM]
+  -h, --help                Show this help message and exit
+  -key KEY                  The key file to use for decryption
+  -v, --verbose             Verbose mode
+  -J, --json                Output in JSON format
+  --ja4                     Output JA4 fingerprints only
+  --ja4s                    Output JA4S fingerprints only
+  --ja4l                    Output JA4L-C/S fingerprints only
+  --ja4h                    Output JA4H fingerprints only
+  --ja4x                    Output JA4X fingerprints only
+  --ja4ssh                  Output JA4SSH fingerprints only
+  -r, --raw_fingerprint     Output raw fingerprint
+  -o, --original_rendering  Output original rendering
+  -f, --output [FILE]       Send output to file
+  -s, --stream [STREAM]     Inspect a specific stream
 ```
 
-### Running ja4.py on pcap without a key file
-```
-#For default output:
-ja4 capturefile.pcapng 
+### Examples
 
-#For JSON output:
-ja4 capturefile.pcapng -J
+#### Running `ja4.py`
 
-#To dump segments such as headers/cookies/ciphers, etc we can use -v
-ja4 capturefile.pcapng -Jv
+```sh
+# Default output:
+python3 ja4.py capturefile.pcapng 
 
-#To inspect a particular stream, use the -s option followed by the stream number
-ja4 capturefile.pcapng -Jv -s 17
+# JSON output:
+python3 ja4.py capturefile.pcapng -J
 
-#Use the --ja4[s|h|l|x|ssh] options to specify a filter on the type of packets. for example the following outputs JA4H fingerprints only
-ja4 capturefile.pcapng -J --ja4h
+# Verbose mode (dumping headers, cookies, ciphers, etc.):
+python3 ja4.py capturefile.pcapng -Jv
 
-#Use the keyfile to decrypt TLS packets if the capture does not show the decrypted http headers
-ja4 capturefile.pcapng -Jv -key sslkeylog.log
-```
+# Inspect a particular stream:
+python3 ja4.py capturefile.pcapng -Jv -s 17
 
-## Results - JSON format
-The script allows to dump the output in JSON using the -J switch as follows:
+# Filter by fingerprint type (e.g., JA4H only):
+python3 ja4.py capturefile.pcapng -J --ja4h
 
-```
-ja4 <pcap-filename> -J
+# Use a key file for TLS decryption:
+python3 ja4.py capturefile.pcapng -Jv -key sslkeylog.log
 ```
 
-The output is as follows:
+#### Example output
+
+Running `python3 ja4.py capturefile.pcapng` might produce output like this:
+
+```txt
+{'stream': 0, 'src': '192.168.1.168', 'dst': '142.251.16.94', 'srcport': '50112', 'dstport': '443', 'domain': 'clientservices.googleapis.com', 'JA4.1': 't13d1516h2_8daaf6152771_e5627efa2ab1', 'JA4_r.1': 't13d1516h2_002f,0035,009c,009d,1301,1302,1303,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0015,0017,001b,0023,002b,002d,0033,4469,ff01_0403,0804,0401,0503,0805,0501,0806,0601', 'JA4_o.1': 't13d1516h2_acb858a92679_8fc3c02244b2', 'JA4_ro.1': 't13d1516h2_1301,1302,1303,c02b,c02f,c02c,c030,cca9,cca8,c013,c014,009c,009d,002f,0035_ff01,0033,002d,0005,4469,000d,0010,0023,001b,002b,0000,0012,000a,0017,000b,0015_0403,0804,0401,0503,0805,0501,0806,0601'}
+{'stream': 1, 'src': '192.168.1.168', 'dst': '142.251.163.147', 'srcport': '50113', 'dstport': '443', 'domain': 'www.google.com', 'JA4.1': 't13d1516h2_8daaf6152771_e5627efa2ab1', 'JA4_r.1': 't13d1516h2_002f,0035,009c,009d,1301,1302,1303,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0015,0017,001b,0023,002b,002d,0033,4469,ff01_0403,0804,0401,0503,0805,0501,0806,0601', 'JA4_o.1': 't13d1516h2_acb858a92679_2331e95fde68', 'JA4_ro.1': 't13d1516h2_1301,1302,1303,c02b,c02f,c02c,c030,cca9,cca8,c013,c014,009c,009d,002f,0035_001b,0017,ff01,0010,000d,002b,0005,0023,0033,0000,0012,000b,000a,4469,002d,0015_0403,0804,0401,0503,0805,0501,0806,0601'}
 ```
+
+#### JSON Output Format
+
+To output results in JSON format, use `-J`:
+
+```sh
+python3 ja4.py <pcap-filename> -J
+```
+
+Example JSON output:
+
+```json
 {
     "stream": 2,
     "src": "192.168.1.168",
@@ -131,3 +200,30 @@ The output is as follows:
     "JA4SSH.4": "c36s36_c12s12_c11s1"
 }
 ```
+
+### Using a Key File for TLS Decryption
+
+The `-key` option lets `ja4.py` decrypt TLS traffic using a **key log file**, which contains session keys needed for decryption.
+
+Key log files can be generated by **browsers** (e.g., Firefox, Chrome) or **servers** running OpenSSL-based software. The file must be captured during traffic recording for decryption to work.
+
+Run `ja4.py` with a key file:
+
+```sh
+ja4.py capturefile.pcapng -key sslkeylog.log
+```
+
+For details on generating an SSL key log file, see:  
+[Wireshark Wiki: Using the (Pre)-Master-Secret Log File](https://wiki.wireshark.org/TLS#using-the-pre-master-secret)
+
+**Note:** Works for TLS 1.3 only with session keys; PFS may prevent decryption.
+
+## Testing
+
+Sample PCAP files for testing `ja4.py` are available in the [`pcap`](../pcap/) directory. These files cover various network protocols and scenarios, including TLS, QUIC, HTTP, SSH, and edge cases. They can be used to verify expected output and assess fingerprinting accuracy.
+
+## License
+
+See the [Licensing](../README.md#licensing) section in the repo root. We are committed to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
+
+Copyright (c) 2024, FoxIO
