@@ -97,11 +97,13 @@ This repo includes JA4+ in
 | [Vercel](https://vercel.com/docs/security/tls-fingerprints) | JA4 |
 | [Seika](https://seika.io/) | JA4+ |
 | [VirusTotal](https://www.virustotal.com/) | JA4 |
-| [AWS](https://aws.amazon.com/about-aws/whats-new/2024/10/amazon-cloudfront-ja4-fingerprinting/) | JA4 |
+| [AWS Cloudfront](https://aws.amazon.com/about-aws/whats-new/2024/10/amazon-cloudfront-ja4-fingerprinting/) | JA4 |
 | [ELLIO](https://ellio.tech/) | JA4+ |
 | [Webscout](https://webscout.io/) | JA4+ |
 | [Rama](https://github.com/plabayo/rama) | JA4 and JA4H |
 | [Vectra](https://www.vectra.ai/) | JA4+ (under development) |
+| [AWS WAF](https://aws.amazon.com/about-aws/whats-new/2025/03/aws-waf-ja4-fingerprinting-aggregation-ja3-ja4-fingerprints-rate-based-rules/) | JA4 |
+| [Tacticly](https://tactic.ly/) | JA4+ |
 
 with more to be announced...  
 
