@@ -27,6 +27,8 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
   - [Adding JA4+ Columns in Wireshark](#adding-ja4-columns-in-wireshark)
     - [Method 1: Using Wireshark Preferences UI](#method-1-using-wireshark-preferences-ui)
     - [Method 2: Editing the Preferences File Directly](#method-2-editing-the-preferences-file-directly)
+  - [Available Preferences](#available-preferences)
+    - [Usage in TShark](#usage-in-tshark)
 - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
 - [License](#license)
@@ -200,6 +202,21 @@ Alternatively, you can manually modify Wireshark's **preferences file** using a 
    ```
 
 3. Save the file and restart Wireshark.
+
+### Available Preferences
+
+The JA4+ plugin provides a preference option that controls how certain fingerprint fields are formatted.
+
+- `omit_ja4h_zero_sections`:  
+  If enabled, the plugin omits zeroed JA4H fingerprint sections (`000000000000`) when cookie-related fields are missing.  
+  This makes JA4H output more compact when cookies are not present.
+
+#### Usage in TShark
+
+To enable this option in `tshark`, use the `-o` flag:
+
+```bash
+tshark -o ja4.omit_ja4h_zero_sections:true -r capture.pcap -Y ja4 -T fields -e ja4.ja4h
 
 ## Using a Key File for TLS Decryption
 
