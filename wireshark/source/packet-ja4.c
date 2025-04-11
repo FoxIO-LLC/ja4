@@ -31,6 +31,7 @@
 #include <epan/epan_dissect.h>
 #include <epan/oids.h>
 #include <epan/tap.h>
+#include <epan/prefs.h>
 //#include <epan/conversation.h>
 //#include <epan/dissectors/packet-tls-utils.h>
 
@@ -84,6 +85,8 @@ static int hf_ja4ts = -1;
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy);
 
 static dissector_handle_t ja4_handle;
+
+static bool pref_omit_ja4h_zero_sections = FALSE;
 
 const value_string ssl_versions[] = {
     	{ 0x0002,   "s2" },
@@ -645,7 +648,8 @@ char *ja4h (ja4h_info_t *data) {
 	gchar *hash1 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->headers),-1);
 	gchar *hash2 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->sorted_cookie_fields),-1);
 	gchar *hash3 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->sorted_cookie_values),-1);
-	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%12.12s_%12.12s_%12.12s",
+	const char *zero_hash = pref_omit_ja4h_zero_sections ? "" : "000000000000";
+	wmem_strbuf_append_printf(display, "%s%s%s%s%02d%s_%12.12s_%.12s_%.12s",
 		wmem_strbuf_get_str(data->method),
 		wmem_strbuf_get_str(data->version),
 		data->cookie ? "c" : "n",
@@ -653,8 +657,8 @@ char *ja4h (ja4h_info_t *data) {
 		data->num_headers,
 		wmem_strbuf_get_str(data->lang),
 		hash1,
-		data->cookie ? hash2 : "000000000000",
-		data->cookie ? hash3 : "000000000000"
+		data->cookie ? hash2 : zero_hash,
+		data->cookie ? hash3 : zero_hash
 	);
 	if (hash1 != NULL) g_free(hash1);
 	if (hash2 != NULL) g_free(hash2);
@@ -1630,4 +1634,10 @@ proto_register_ja4(void)
 	register_cleanup_routine(cleanup_globals);
 	//dissector_add_uint("tcp.port", 443, ja4_handle);
 	register_postdissector(ja4_handle);
+
+	module_t *ja4_module = prefs_register_protocol(proto_ja4, NULL);
+	prefs_register_bool_preference(ja4_module, "omit_ja4h_zero_sections",
+		"Omit zero sections in JA4H",
+		"If enabled, zeroed JA4H fingerprint sections (e.g., '000000000000') will be omitted when cookies are missing.",
+		&pref_omit_ja4h_zero_sections);
 }
