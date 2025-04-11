@@ -20,6 +20,7 @@ fi
 
 cd wireshark-$VER
 git checkout tags/wireshark-$VER
+rm -rf ./plugins/epan/ja4
 cp -r ../../source ./plugins/epan/ja4
 mv CMakeListsCustom.txt.example CMakeListsCustom.txt
 sed -i "/plugins\/epan\/foo/c\plugins\/epan\/ja4" CMakeListsCustom.txt
