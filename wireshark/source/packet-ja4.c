@@ -879,9 +879,8 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 	GPtrArray *items = proto_all_finfos(tree);
         if (items != NULL) {
-            	guint i;
-            	for (i=0; i< items->len; i++) {
-                	field_info *field = (field_info *)g_ptr_array_index(items,i);
+            	for (guint item_idx=0; item_idx< items->len; item_idx++) {
+                	field_info *field = (field_info *)g_ptr_array_index(items,item_idx);
 
                 	if ((strcmp(field->hfinfo->abbrev, "tls.handshake.type") == 0) ||
                 	    (strcmp(field->hfinfo->abbrev, "dtls.handshake.type") == 0)) {
@@ -990,12 +989,68 @@ dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy
 
 			// Added for JA4H - HTTP1.0 and 1.1
 
-                        if (strcmp(field->hfinfo->abbrev, "http.request.method") == 0) {
-				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(get_value_ptr(field))[0]));
-				wmem_strbuf_append_printf(ja4h_data.method, "%c", g_ascii_tolower(fvalue_get_string(get_value_ptr(field))[1]));
-                                http_req = field->hfinfo->parent;
-
-                        }
+			static const struct {
+				const char *method;
+				const char *code;
+			} http_method_map[] = {
+				{ "ACL", "ac" },
+				{ "BASELINE-CONTROL", "ba" },
+				{ "BIND", "bi" },
+				{ "CHECKIN", "cn" },
+				{ "CHECKOUT", "ct" },
+				{ "CONNECT", "co" },
+				{ "COPY", "cy" },
+				{ "DELETE", "de" },
+				{ "GET", "ge" },
+				{ "HEAD", "he" },
+				{ "LABEL", "la" },
+				{ "LINK", "li" },
+				{ "LOCK", "lo" },
+				{ "MERGE", "me" },
+				{ "MKACTIVITY", "ma" },
+				{ "MKCALENDAR", "mc" },
+				{ "MKCOL", "ml" },
+				{ "MKREDIRECTREF", "mr" },
+				{ "MKWORKSPACE", "mw" },
+				{ "MOVE", "mo" },
+				{ "OPTIONS", "op" },
+				{ "PATCH", "pa" },
+				{ "POST", "po" },
+				{ "PRI", "pr" },
+				{ "PROPFIND", "pf" },
+				{ "PROPPATCH", "pp" },
+				{ "PUT", "pu" },
+				{ "REBIND", "rb" },
+				{ "REPORT", "rp" },
+				{ "SEARCH", "se" },
+				{ "TRACE", "tr" },
+				{ "UNBIND", "ub" },
+				{ "UNCHECKOUT", "uc" },
+				{ "UNLINK", "ui" },
+				{ "UNLOCK", "uo" },
+				{ "UPDATE", "up" },
+				{ "UPDATEREDIRECTREF", "ur" },
+				{ "VERSION-CONTROL", "ve" },
+				{ NULL, NULL }
+			};
+			
+			// Map full HTTP method to its two-letter JA4H code
+			if (strcmp(field->hfinfo->abbrev, "http.request.method") == 0) {
+				const char *method_str = fvalue_get_string(get_value_ptr(field));
+				const char *ja4h_code = "00";  // fallback for unknown methods
+			
+				for (guint i = 0; http_method_map[i].method != NULL; i++) {
+					if (g_ascii_strcasecmp(method_str, http_method_map[i].method) == 0) {
+						ja4h_code = http_method_map[i].code;
+						break;
+					}
+				}
+			
+				wmem_strbuf_append_printf(ja4h_data.method, "%s", ja4h_code);
+			
+				http_req = field->hfinfo->parent;
+			}
+			
 
                 	if (strcmp(field->hfinfo->abbrev, "http.request.version") == 0) {
 				decode_http_version(&ja4h_data.version, fvalue_get_string(get_value_ptr(field)));
