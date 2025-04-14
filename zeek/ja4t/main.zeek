@@ -102,6 +102,9 @@ function get_tcp_options(): TCP_Options {
             next;
         }
         local opt_len = bytestring_to_count(pkt$data[offset + 1]);
+        if (opt_len < 2) {
+            return opts;  # Conversion failure or corrupt packet
+        }
 
         if (opt_kind == 2 && offset + 3 < header_end) {
             opts$max_segment_size = bytestring_to_count(pkt$data[offset+2:offset+4]);
