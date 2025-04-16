@@ -3,8 +3,8 @@
 # All rights reserved.
 # Patent Pending
 # JA4 is Open-Source, Licensed under BSD 3-Clause
-# JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH, JA4T) are licenced under the FoxIO License 1.1. For full
-license text, see the repo root.
+# JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH, JA4T) are licenced under the FoxIO License 1.1.
+# For full license text, see the repo root.
 */
 
 #ifndef OOT_BUILD
@@ -1616,25 +1616,18 @@ void proto_register_ja4(void) {
     static hf_register_info hf[] = {
         // Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in
         // our plugin.
-        /*{ &hf_ja4_raw,
-                { "JA4 Raw", "ja4.ja4_r",
-                  FT_STRING, BASE_NONE, NULL, 0x0,
-                  NULL, HFILL }
-        },
-        { &hf_ja4_raw_original,
-                { "JA4 Raw (Original)", "ja4.ja4_ro",
-                  FT_STRING, BASE_NONE, NULL, 0x0,
-                  NULL, HFILL }
-        },*/
+        /*
+        {&hf_ja4_raw,           {"JA4 Raw", "ja4.ja4_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
+        {&hf_ja4_raw_original,
+         {"JA4 Raw (Original)", "ja4.ja4_ro", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL} },
+        */
         {&hf_ja4s_raw,          {"JA4S Raw", "ja4.ja4s_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}},
         {&hf_ja4s,              {"JA4S", "ja4.ja4s", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
         // Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in
         // our plugin.
-        /*{ &hf_ja4,
-                { "JA4", "ja4.ja4",
-                  FT_STRING, BASE_NONE, NULL, 0x0,
-                  NULL, HFILL }
-        },*/
+        /*
+        {&hf_ja4,               {"JA4", "ja4.ja4", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}        },
+        */
         {&hf_ja4x_raw,          {"JA4X Raw", "ja4.ja4x_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}},
         {&hf_ja4x,              {"JA4X", "ja4.ja4x", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
         {&hf_ja4h,              {"JA4H", "ja4.ja4h", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
