@@ -1,0 +1,11 @@
+# For more information, see:
+#   https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+AlignEscapedNewlines: Left
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Left
+IndentCaseLabels: true

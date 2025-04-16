@@ -31,8 +31,7 @@ WS_DLL_PUBLIC_DEF const int plugin_want_minor = WIRESHARK_VERSION_MINOR;
 
 WS_DLL_PUBLIC void plugin_register(void);
 
-void plugin_register(void)
-{
+void plugin_register(void) {
     static proto_plugin plug_ja4;
 
     plug_ja4.register_protoinfo = proto_register_ja4;
