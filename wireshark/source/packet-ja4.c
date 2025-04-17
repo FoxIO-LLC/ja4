@@ -754,7 +754,7 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
     ja4_data->alpn = wmem_strbuf_new(wmem_packet_scope(), "");
 }
 
-static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
+static void set_ja4s_extensions(proto_tree *tree, ja4_info_t *data) {
     guint value;
     GPtrArray *items;
     if (data->proto == 'd') {
@@ -770,17 +770,13 @@ static void set_ja4_extensions(proto_tree *tree, ja4_info_t *data) {
             field_info *field = (field_info *)g_ptr_array_index(items, i);
             value = fvalue_get_uinteger(get_value_ptr(field));
             if (!IS_GREASE_TLS(value)) {
-                if ((value != 0x0000) && (value != 0x0010)) {
-                    // Ignore SNI and ALPN when storing extensions
-                    wmem_list_insert_sorted(
-                        data->sorted_extensions, GUINT_TO_POINTER(value), wmem_compare_uint
-                    );
-                    wmem_strbuf_append_printf(data->extensions, "%04x,", value);
-                }
+                wmem_list_insert_sorted(
+                    data->sorted_extensions, GUINT_TO_POINTER(value), wmem_compare_uint
+                );
+                wmem_strbuf_append_printf(data->extensions, "%04x,", value);
 
                 if (value == 0x0000)
                     data->sni = true;
-                // Count has SNI and ALPN!
                 data->ext_len++;
             }
         }
@@ -910,7 +906,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 // we need to compute ja4s and then go on to compute ja4x
                 if (handshake_type == 2) {
                     set_ja4_ciphers(tree, &ja4_data);
-                    set_ja4_extensions(tree, &ja4_data);
+                    set_ja4s_extensions(tree, &ja4_data);
                     update_tree_item(
                         pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto
                     );
@@ -1441,7 +1437,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
 
     if (handshake_type == 2) {
         set_ja4_ciphers(tree, &ja4_data);
-        set_ja4_extensions(tree, &ja4_data);
+        set_ja4s_extensions(tree, &ja4_data);
         update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto);
         update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto);
         mark_complete(pinfo->num);
