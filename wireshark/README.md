@@ -217,6 +217,7 @@ To enable this option in `tshark`, use the `-o` flag:
 
 ```bash
 tshark -o ja4.omit_ja4h_zero_sections:true -r capture.pcap -Y ja4 -T fields -e ja4.ja4h
+```
 
 ## Using a Key File for TLS Decryption
 
