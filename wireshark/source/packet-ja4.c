@@ -99,7 +99,7 @@ const value_string ssl_versions[] = {
     {0x00,   NULL}
 };
 
-#define HFIDS 48
+#define HFIDS 53
 const char *interesting_hfids[HFIDS] = {
     "tls.handshake.type",
     "dtls.handshake.type",
@@ -129,6 +129,11 @@ const char *interesting_hfids[HFIDS] = {
     "http.cookie_pair",
     "http.referer",
     "http.request.line",
+    "http2.headers.method",
+    "http2.headers.accept_language",
+    "http2.headers.cookie",
+    "http2.headers.referer",
+    "http2.header.name",
     "ip.ttl",
     "tcp.stream",
     "tcp.srcport",
@@ -1063,10 +1068,10 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
             };
 
             // Map full HTTP method to its two-letter JA4H code
-            if (strcmp(field->hfinfo->abbrev, "http.request.method") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "http.request.method") == 0) || (strcmp(field->hfinfo->abbrev, "http2.headers.method") == 0)) {
                 const char *method_str = fvalue_get_string(get_value_ptr(field));
                 const char *ja4h_code = "00"; // fallback for unknown methods
-
+ 
                 for (guint i = 0; http_method_map[i].method != NULL; i++) {
                     if (g_ascii_strcasecmp(method_str, http_method_map[i].method) == 0) {
                         ja4h_code = http_method_map[i].code;
@@ -1079,21 +1084,25 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 http_req = field->hfinfo->parent;
             }
 
+            if (strcmp(field->hfinfo->abbrev, "http2.headers.method") == 0) {
+                wmem_strbuf_append_printf(ja4h_data.version, "20");
+            }
+
             if (strcmp(field->hfinfo->abbrev, "http.request.version") == 0) {
                 decode_http_version(&ja4h_data.version, fvalue_get_string(get_value_ptr(field)));
             }
 
-            if (strcmp(field->hfinfo->abbrev, "http.accept_language") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "http.accept_language") == 0) || (strcmp(field->hfinfo->abbrev, "http2.headers.accept_language") == 0)) {
                 decode_http_lang(&ja4h_data.lang, fvalue_get_string(get_value_ptr(field)));
             }
-            if (strcmp(field->hfinfo->abbrev, "http.cookie") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "http.cookie") == 0) || (strcmp(field->hfinfo->abbrev, "http2.headers.cookie") == 0)) {
                 ja4h_data.cookie = true;
             }
-            if (strcmp(field->hfinfo->abbrev, "http.referer") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "http.referer") == 0) || (strcmp(field->hfinfo->abbrev, "http2.headers.referer") == 0)) {
                 ja4h_data.referer = true;
             }
 
-            if (strcmp(field->hfinfo->abbrev, "http.cookie_pair") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "http.cookie_pair") == 0) || (strcmp(field->hfinfo->abbrev, "http2.headers.cookie") == 0)) {
                 strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", 2);
                 if (strings[0] && strings[1]) {
                     http_cookie_t *new_cookie = wmem_new(wmem_packet_scope(), http_cookie_t);
@@ -1113,7 +1122,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
             }
 
             if (field->hfinfo->parent == http_req) {
-                if (strcmp(field->hfinfo->abbrev, "http.request.line") == 0) {
+                if ((strcmp(field->hfinfo->abbrev, "http.request.line") == 0) || (strcmp(field->hfinfo->abbrev, "http2.header.name") == 0)) {
                     strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), ":", -1);
                     if ((strings[0] != NULL) && (strings[1] != NULL)) {
                         if ((strcmp(strings[0], "Cookie") != 0) &&
@@ -1478,10 +1487,14 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
             wmem_strbuf_append_printf(ja4h_data.lang, "%s", "0000");
         }
 
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(&ja4h_data), "http");
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(&ja4h_data), "http");
+        char *http_proto = "http";
+        if (strcmp(wmem_strbuf_get_str(ja4h_data.version), "20") == 0) {
+            http_proto = "http2";
+        }
+        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(&ja4h_data), http_proto);
+        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(&ja4h_data), http_proto);
         update_tree_item(
-            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw_original, ja4h_ro(&ja4h_data), "http"
+            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw_original, ja4h_ro(&ja4h_data), http_proto
         );
         mark_complete(pinfo->num);
     }
@@ -1539,6 +1552,10 @@ static ja4_tap_t const ja4_taps[] = {
     {"http",  &hf_ja4h_raw,          NULL                                      },
     {"http",  &hf_ja4h_raw_original, NULL                                      },
     {"http",  &hf_ja4h_raw_original, NULL                                      },
+    {"http2",  &hf_ja4h,              NULL                                      },
+    {"http2",  &hf_ja4h_raw,          NULL                                      },
+    {"http2",  &hf_ja4h_raw_original, NULL                                      },
+    {"http2",  &hf_ja4h_raw_original, NULL                                      },
     {"tcp",   &hf_ja4l,              "tcp.flags == 0x018"                      },
     {"tcp",   &hf_ja4ls,             "tcp.flags == 0x018"                      },
     {"tcp",   &hf_ja4ssh,            "ssh.direction"                           },
