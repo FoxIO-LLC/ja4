@@ -82,7 +82,7 @@ This repo includes JA4+ in
 | [Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released) | JA4+ (under development) |
 | [Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner) | JA4+ (under development) |
 | [NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module) | JA4+ (under development) |
-| [F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+ |
+| [F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+ (via iRules) |
 | [nfdump](https://github.com/phaag/nfdump) | JA4+ |
 | [ntop's ntopng](https://github.com/ntop/ntopng) | JA4+ |
 | [ntop's nDPI](https://github.com/ntop/nDPI) | JA4 |
