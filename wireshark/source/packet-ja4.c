@@ -188,6 +188,7 @@ typedef struct {
     int num_headers;
     gboolean cookie;
     gboolean referer;
+    gboolean http2;
 } ja4h_info_t;
 
 typedef struct {
@@ -878,6 +879,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     ja4h_data.method = wmem_strbuf_new(wmem_packet_scope(), "");
     ja4h_data.cookie = false;
     ja4h_data.referer = false;
+    ja4h_data.http2 = false;
     ja4h_data.num_headers = 0;
     ja4h_data.sorted_cookies = wmem_list_new(wmem_packet_scope());
     ja4h_data.unsorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
@@ -1092,6 +1094,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
 
             if (strcmp(field->hfinfo->abbrev, "http2.headers.method") == 0) {
                 wmem_strbuf_append_printf(ja4h_data.version, "20");
+                ja4h_data.http2 = true;
             }
 
             if (strcmp(field->hfinfo->abbrev, "http.request.version") == 0) {
@@ -1134,9 +1137,13 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
             if (field->hfinfo->parent == http_req) {
                 if ((strcmp(field->hfinfo->abbrev, "http.request.line") == 0) ||
                     (strcmp(field->hfinfo->abbrev, "http2.header.name") == 0)) {
+                    // Splitting the HTTP header name and value. No need to check HTTP2 header
+                    // values as they are already parsed and stored in separate fields.
                     strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), ":", -1);
-                    if ((strings[0] != NULL) && (strings[1] != NULL)) {
-                        if ((strcmp(strings[0], "Cookie") != 0) &&
+                    if ((strings[0] != NULL) &&
+                        (strings[1] != NULL || ja4h_data.http2 == true)) {
+                        if ((strcmp(strings[0], "") != 0) &&
+                            (strcmp(strings[0], "Cookie") != 0) &&
                             (strcmp(strings[0], "cookie") != 0) &&
                             (strcmp(strings[0], "Referer") != 0) &&
                             (strcmp(strings[0], "referer") != 0)) {
@@ -1499,7 +1506,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
         }
 
         char *http_proto = "http";
-        if (strcmp(wmem_strbuf_get_str(ja4h_data.version), "20") == 0) {
+        if (ja4h_data.http2 == true) {
             http_proto = "http2";
         }
         update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(&ja4h_data), http_proto);
