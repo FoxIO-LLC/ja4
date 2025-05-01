@@ -60,3 +60,6 @@ Telegram,,,,,,po11nn07enus_b9cd978c9817_000000000000_000000000000,,,,
 ,,Phillips Hue Bridge,,t12d350600_9d4c96c0953b_0a9c83bf8b96,,,,29200_2-1-1-4-1-3_1460_3,,
 ,WinINET,,Windows 10/11,t12d190800_d83cc789557e_7af1ed941c26,,,,,,
 ,GoLang,,,t12d190800_d83cc789557e_7af1ed941c26,,,,,,
+,,Cloudflare,,,,,,,65535_2-4-8-1-3_1400_13_1,
+,,Cloudflare,,,,,,65535_2-4-8-1-3_1400_13,,JA4TS when connecting to Cloudflare from Mac/Unix
+,,Cloudflare,,,,,,65535_2-1-1-4-1-3_1400_13,,JA4TS when connecting to Cloudflare from Windows
