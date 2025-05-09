@@ -79,24 +79,28 @@ You can use the `tshark` CLI tool as well. Refer to [Installing tshark](../READM
 
 #### Linux
 
-1. Copy `ja4.so` to the global Wireshark plugins directory:  
+1. Move and rename `ja4.so` to the global Wireshark plugins directory:  
    ```bash
-   sudo cp ja4.so /usr/lib/x86_64-linux-gnu/wireshark/plugins/4.0/epan/
+   sudo mv ja4.so.linux /usr/lib/x86_64-linux-gnu/wireshark/plugins/4.4/epan/ja4.so
    ```
    or  
    ```bash
-   sudo cp ja4.so /usr/lib/wireshark/plugins/4.0/epan/
+   sudo mv ja4.so.linux /usr/lib/wireshark/plugins/4.4/epan/ja4.so
    ```
    *(The exact location depends on your system's distribution and Wireshark installation.)*
 2. Start Wireshark.
 
 #### macOS
 
-1. Copy `ja4.so` to the global Wireshark plugins directory:  
+1. Move and rename `ja4.so` to the global Wireshark plugins directory:  
    ```bash
-   sudo cp ja4.so /Applications/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/
+   sudo mv ja4.so.macos /Applications/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so
    ```
-2. Start Wireshark.
+2. Start Wireshark.  
+3. If you receive an error, you may need to install glib via brew.
+   ```bash
+   brew install glib
+   ```
 
 #### Windows
 
