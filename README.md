@@ -105,6 +105,7 @@ This repo includes JA4+ in
 | [AWS WAF](https://aws.amazon.com/about-aws/whats-new/2025/03/aws-waf-ja4-fingerprinting-aggregation-ja3-ja4-fingerprints-rate-based-rules/) | JA4 |
 | [Tacticly](https://tactic.ly/) | JA4+ |
 | [Palo Alto Networks](https://www.paloaltonetworks.com/cortex/cortex-xpanse) | JA4+ (under development) |
+| [ngrok](https://ngrok.com/docs/traffic-policy/variables/connection/#conntlsja4_fingerprint) | JA4 |
 
 with more to be announced...  
 
