@@ -1,0 +1,20 @@
+[
+  {
+    "_index": "packets-2022-10-28",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "6"
+        ],
+        "ja4.ja4s_r": [
+          "t130200_1301_0033,002b"
+        ],
+        "ja4.ja4s": [
+          "t130200_1301_234ea6891581"
+        ]
+      }
+    }
+  }
+]

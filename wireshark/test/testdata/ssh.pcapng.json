@@ -1,0 +1,17 @@
+[
+  {
+    "_index": "packets-2023-07-06",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "200"
+        ],
+        "ja4.ja4ssh": [
+          "c36s36_c76s124_c0s0"
+        ]
+      }
+    }
+  }
+]

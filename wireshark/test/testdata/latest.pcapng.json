@@ -1,0 +1,444 @@
+[
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "7"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "8"
+        ],
+        "ja4.ja4ts": [
+          "26883_2-1-1-4-1-3_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "16"
+        ],
+        "ja4.ja4s_r": [
+          "t1206h2_c02f_0000,000b,ff01,0010,0023,0017"
+        ],
+        "ja4.ja4s": [
+          "t1206h2_c02f_3603f09c43ba"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "19"
+        ],
+        "ja4.ja4x_r": [
+          "550406,55040a,550403_550406,550408,550407,55040a,550403_551d23,551d0e,551d11,551d0f,551d25,551d1f,551d20,2b06010505070101,551d13,2b06010401d679020402",
+          "550406,55040a,55040b,550403_550406,55040a,550403_551d13,551d0e,551d23,551d0f,551d25,2b06010505070101,551d1f,551d20"
+        ],
+        "ja4.ja4x": [
+          "a373a9f83c6b_2bab15409345_7bf9a7bf7029",
+          "7d5dbb3783b4_a373a9f83c6b_a83ffcd6e6c2"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "23"
+        ],
+        "ja4.ja4l": [
+          "62_128_930"
+        ],
+        "ja4.ja4ls": [
+          "33804_227_35440"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "72"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "73"
+        ],
+        "ja4.ja4ts": [
+          "65535_2-1-1-4-1-3_1440_9"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "78"
+        ],
+        "ja4.ja4s_r": [
+          "t120600_c02f_0000,000b,ff01,0005,0023,0017"
+        ],
+        "ja4.ja4s": [
+          "t120600_c02f_51ad275821ba"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "81"
+        ],
+        "ja4.ja4x_r": [
+          "550406,55040a,550403_550406,550408,550407,55040a,550403_551d23,551d0e,551d11,551d0f,551d25,551d1f,551d20,2b06010505070101,551d13,2b06010401d679020402",
+          "550406,55040a,55040b,550403_550406,55040a,550403_551d13,551d0e,551d23,551d0f,551d25,2b06010505070101,551d1f,551d20",
+          "550406,55040a,550403_550406,550408,550407,55040a,550403_551d23,551d0e,551d11,551d0f,551d25,551d1f,551d20,2b06010505070101,551d13,2b06010401d679020402",
+          "550406,55040a,55040b,550403_550406,55040a,550403_551d13,551d0e,551d23,551d0f,551d25,2b06010505070101,551d1f,551d20"
+        ],
+        "ja4.ja4x": [
+          "a373a9f83c6b_2bab15409345_7bf9a7bf7029",
+          "7d5dbb3783b4_a373a9f83c6b_a83ffcd6e6c2",
+          "a373a9f83c6b_2bab15409345_7bf9a7bf7029",
+          "7d5dbb3783b4_a373a9f83c6b_a83ffcd6e6c2"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "82"
+        ],
+        "ja4.ja4l": [
+          "57_128_2696"
+        ],
+        "ja4.ja4ls": [
+          "7096_245_3800"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "95"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "99"
+        ],
+        "ja4.ja4ts": [
+          "32500_2-1-1-4-1-3_1300_12"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "104"
+        ],
+        "ja4.ja4s_r": [
+          "t130300_1301_0029,0033,002b"
+        ],
+        "ja4.ja4s": [
+          "t130300_1301_6bbbaf601ed8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "109"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "111"
+        ],
+        "ja4.ja4ts": [
+          "64240_2-1-1-4-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "113"
+        ],
+        "ja4.ja4h": [
+          "ge11nn07enus_3e3b55d61660_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__",
+          "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "117"
+        ],
+        "ja4.ja4l": [
+          "47_128_34471"
+        ],
+        "ja4.ja4ls": [
+          "14207_43_18819"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "147"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "156"
+        ],
+        "ja4.ja4ts": [
+          "65535_2-1-3-1-1-4_1440_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "163"
+        ],
+        "ja4.ja4s_r": [
+          "t120300_c030_0005,0017,ff01"
+        ],
+        "ja4.ja4s": [
+          "t120300_c030_09f674154ab3"
+        ],
+        "ja4.ja4x_r": [
+          "550406,55040a,550403_550406,550408,550407,55040a,550403_2b06010401d679020402,2b060104018237150a,2b0601040182371507,2b06010505070101,551d0e,551d0f,551d11,551d13,551d1f,551d20,551d23,551d25",
+          "550406,55040a,55040b,550403_550406,55040a,550403_551d0e,551d23,551d0f,551d25,551d13,2b06010505070101,551d1f,551d20,2b0601040182371501"
+        ],
+        "ja4.ja4x": [
+          "a373a9f83c6b_2bab15409345_0f2217ba412e",
+          "7d5dbb3783b4_a373a9f83c6b_c34b04c10969"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "165"
+        ],
+        "ja4.ja4l": [
+          "40_128_1829"
+        ],
+        "ja4.ja4ls": [
+          "42103_109_42502"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "182"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "186"
+        ],
+        "ja4.ja4ts": [
+          "65535_2-1-3-1-1-4_1440_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "197"
+        ],
+        "ja4.ja4s_r": [
+          "t120300_c030_0005,0017,ff01"
+        ],
+        "ja4.ja4s": [
+          "t120300_c030_09f674154ab3"
+        ],
+        "ja4.ja4x_r": [
+          "550406,55040a,550403_550406,550408,550407,55040a,550403_2b06010401d679020402,2b060104018237150a,2b0601040182371507,2b06010505070101,551d0e,551d0f,551d11,551d13,551d1f,551d20,551d23,551d25",
+          "550406,55040a,55040b,550403_550406,55040a,550403_551d0e,551d23,551d0f,551d25,551d13,2b06010505070101,551d1f,551d20,2b0601040182371501"
+        ],
+        "ja4.ja4x": [
+          "a373a9f83c6b_2bab15409345_0f2217ba412e",
+          "7d5dbb3783b4_a373a9f83c6b_c34b04c10969"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "199"
+        ],
+        "ja4.ja4l": [
+          "61_128_1680"
+        ],
+        "ja4.ja4ls": [
+          "53595_109_42401"
+        ]
+      }
+    }
+  }
+]
