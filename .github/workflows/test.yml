@@ -77,6 +77,8 @@ jobs:
         working-directory: rust/
       - run: cargo test --locked --all-features --all-targets --workspace
         working-directory: rust/
+      - name: Install pytest
+        run: pip install pytest
       - name: wireshark pytest
         run: pytest
         working-directory: wireshark/test/
