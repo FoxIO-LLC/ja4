@@ -73,7 +73,7 @@ This repo includes JA4+ in
 | [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+ |
 | [Arkime](https://arkime.com/settings#ja4plus) | JA4+ |
 | [Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4+ (under development) |
-| [GreyNoise](https://www.greynoise.io/) | JA4+ (you have to ask for it) |
+| [GreyNoise](https://www.greynoise.io/) | JA4+ |
 | [Hunt](https://hunt.io/) | JA4+ |
 | [Driftnet](https://driftnet.io/) | JA4+ |
 | [DarkSail](https://darksail.ai) | JA4+ |
@@ -86,7 +86,7 @@ This repo includes JA4+ in
 | [nfdump](https://github.com/phaag/nfdump) | JA4+ |
 | [ntop's ntopng](https://github.com/ntop/ntopng) | JA4+ |
 | [ntop's nDPI](https://github.com/ntop/nDPI) | JA4 |
-| [Team Cymru](https://www.team-cymru.com/) | JA4+ (you have to ask for it) |
+| [Team Cymru](https://www.team-cymru.com/) | JA4+ |
 | [NetQuest](https://netquestcorp.com/) | JA4+ |
 | [Censys](https://censys.com/) | JA4+ |
 | [Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H |
