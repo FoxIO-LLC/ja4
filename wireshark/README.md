@@ -241,6 +241,25 @@ For details on generating an SSL key log file, see:
 
 Sample PCAP files for testing the plugin are available in the [`pcap`](../pcap/) directory. These files cover various network protocols and scenarios, including TLS, QUIC, HTTP, SSH, and edge cases. They can be used to verify expected output and assess fingerprinting accuracy.
 
+To automate plugin testing, use the provided scripts in the [`test`](./test/) directory:
+
+- **Output Generation:**  
+  Run `generate-output-files.sh` to generate expected output files from the PCAPs using your current version of `tshark` and the JA4 plugin. This script will create `.json` files in `test/testdata/` for each PCAP in the `pcap/` directory.  
+  You can also specify one or more PCAP files as command-line arguments to generate output only for those files:
+  ```bash
+  ./generate-output-files.sh ../../pcap/example1.pcap ../../pcap/example2.pcapng
+  ```
+
+- **Automated Testing:**  
+  The `test_tshark_output.py` script (run with `pytest`) compares the actual output of `tshark` against the generated expected output files. This ensures the plugin produces consistent and correct JA4+ fingerprints.
+
+Example usage:
+```bash
+cd wireshark/test
+./generate-output-files.sh
+pytest
+```
+
 ## License
 
 See the [Licensing](../README.md#licensing) section in the repo root. We are committed to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
