@@ -1,0 +1,54 @@
+[
+  {
+    "_index": "packets-2022-05-19",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4t": [
+          "8192_00_00_00"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2022-05-19",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4ts": [
+          "8192_00_00_00"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2022-05-19",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "4"
+        ],
+        "ja4.ja4h": [
+          "ge10nn000000_e3b0c44298fc_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge10nn000000___"
+        ],
+        "ja4.ja4h_ro": [
+          "ge10nn000000___",
+          "ge10nn000000___"
+        ]
+      }
+    }
+  }
+]

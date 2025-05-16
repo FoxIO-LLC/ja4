@@ -1,0 +1,54 @@
+[
+  {
+    "_index": "packets-2023-07-27",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4t": [
+          "65535_2-1-3-1-1-8-4-0-0_16344_6"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-27",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4ts": [
+          "65535_2-1-3-1-1-8-4-0-0_16344_6"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-27",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "5"
+        ],
+        "ja4.ja4h": [
+          "ge11cr04da00_8ddaef5d77af_280f366eaa04_c2fb0fe53442"
+        ],
+        "ja4.ja4h_r": [
+          "ge11cr04da00_Host,User-Agent,Accept,Accept-Language_tasty_cookie,yummy_cookie_tasty_cookie=strawberry,yummy_cookie=choco"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11cr04da00_Host,User-Agent,Accept,Accept-Language_yummy_cookie,tasty_cookie_yummy_cookie=choco,tasty_cookie=strawberry,",
+          "ge11cr04da00_Host,User-Agent,Accept,Accept-Language_yummy_cookie,tasty_cookie_yummy_cookie=choco,tasty_cookie=strawberry,"
+        ]
+      }
+    }
+  }
+]

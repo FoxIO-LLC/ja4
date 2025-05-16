@@ -1,0 +1,50 @@
+[
+  {
+    "_index": "packets-2013-12-20",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4t": [
+          "14600_2-1-1-4-1-3_1460_9"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2013-12-20",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4ts": [
+          "5840_2-1-1-4-1-3_1460_2"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2013-12-20",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "6"
+        ],
+        "ja4.ja4l": [
+          "7_64_480189"
+        ],
+        "ja4.ja4ls": [
+          "462_60_-480132"
+        ]
+      }
+    }
+  }
+]

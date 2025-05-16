@@ -1,0 +1,293 @@
+[
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4t": [
+          "64240_2-1-3-1-1-4_1460_8"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4ts": [
+          "29200_2-1-1-4-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "7"
+        ],
+        "ja4.ja4l": [
+          "94_128_5421"
+        ],
+        "ja4.ja4ls": [
+          "32_64_9660"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "286"
+        ],
+        "ja4.ja4ssh": [
+          "c64s64_c107s93_c74s10"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "296"
+        ],
+        "ja4.ja4t": [
+          "29200_2-4-8-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "297"
+        ],
+        "ja4.ja4ts": [
+          "62643_2-4-8-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "305"
+        ],
+        "ja4.ja4l": [
+          "14_64_115"
+        ],
+        "ja4.ja4ls": [
+          "4171_116_8099"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "335"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "339"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "392"
+        ],
+        "ja4.ja4t": [
+          "29200_2-4-8-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "393"
+        ],
+        "ja4.ja4ts": [
+          "62643_2-4-8-1-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "400"
+        ],
+        "ja4.ja4l": [
+          "12_64_230"
+        ],
+        "ja4.ja4ls": [
+          "3169_116_7225"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "706"
+        ],
+        "ja4.ja4ssh": [
+          "c76s76_c104s96_c19s82"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1011"
+        ],
+        "ja4.ja4ssh": [
+          "c76s76_c108s92_c0s105"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1318"
+        ],
+        "ja4.ja4ssh": [
+          "c76s76_c106s94_c0s107"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1620"
+        ],
+        "ja4.ja4ssh": [
+          "c76s76_c111s89_c0s102"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1826"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1831"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1850"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-14",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1851"
+        ]
+      }
+    }
+  }
+]
