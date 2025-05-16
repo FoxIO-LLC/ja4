@@ -5,8 +5,8 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent # Directory of this script
 ROOT_DIR = SCRIPT_DIR.parent.parent # Root directory of the project
 
-PCAP_DIR = ROOT_DIR / "pcap"
-EXPECTED_DIR = SCRIPT_DIR / "testdata"
+PCAP_DIR = ROOT_DIR / "pcap" # Directory containing PCAP files
+EXPECTED_DIR = SCRIPT_DIR / "testdata" # Directory containing expected output files
 
 pcap_files = sorted(PCAP_DIR.rglob("*.pcap*"))
 if not pcap_files:
@@ -17,6 +17,7 @@ def get_expected_output(pcap_file):
     with expected_file.open() as f:
         return [line.strip() for line in f.readlines()]
 
+# Run tshark on each PCAP file and compare the output to the expected output
 @pytest.mark.parametrize("pcap_file", pcap_files)
 def test_tshark_output_matches_expected(pcap_file):
     result = subprocess.run(
