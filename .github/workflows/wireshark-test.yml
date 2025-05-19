@@ -3,10 +3,12 @@ name: Wireshark Plugin Test
 on:
   push:
     paths:
-      - 'wireshark/packet-ja4.c'
+      - .github/workflows/wireshark-test.yml
+      - wireshark/**
   pull_request:
     paths:
-      - 'wireshark/packet-ja4.c'
+      - .github/workflows/wireshark-test.yml
+      - wireshark/**
 
 jobs:
   run-wireshark-tests:
@@ -21,7 +23,13 @@ jobs:
         run: |
           sudo apt update
           sudo apt upgrade -y
-          sudo apt -y install cmake ninja-build tshark python3-pytest
+          sudo apt -y install \
+            cmake \
+            ninja-build \
+            tshark \
+            python3-pytest \
+            libglib2.0-dev \
+            libc-ares-dev
 
       - name: Build Wireshark plugin
         run: |
@@ -29,7 +37,7 @@ jobs:
             | head -n1 \
             | sed -E 's/.* ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           PLUGIN_VERSION=$(echo "$TSHARK_VERSION" | cut -d. -f1,2)
-          ./linux_build.sh --tshark-version "$TSHARK_VERSION"
+          sudo ./linux_build.sh $TSHARK_VERSION
           sudo cp wireshark-$TSHARK_VERSION/build/run/plugins/$PLUGIN_VERSION/epan/ja4.so /usr/lib/x86_64-linux-gnu/wireshark/plugins/$PLUGIN_VERSION/epan
         working-directory: wireshark/build-scripts
 
