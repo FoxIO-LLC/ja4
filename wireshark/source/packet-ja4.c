@@ -797,7 +797,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     ja4t_data.mss_val = 0;
     ja4t_data.window_scale = 0;
     ja4t_data.window_size = 0;
-    // End of Ja4T data
+    // End of JA4T data
 
     ja4h_data.version = wmem_strbuf_new(wmem_packet_scope(), "");
     ja4h_data.headers = wmem_strbuf_new(wmem_packet_scope(), "");
@@ -1192,8 +1192,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                                 // Denotes third PSH, ACK - JA4L-C goes here
                                 nstime_copy(&conn->timestamp_F, packet_time);
 
-                                // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1,
-                                // ENC_NA); ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                                 wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
                                 wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
 
@@ -1261,8 +1259,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                         (nstime_is_zero(&conn->timestamp_D))) {
                         nstime_copy(&conn->timestamp_D, packet_time);
 
-                        // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1,
-                        // ENC_NA); ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                         wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
                         wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
 
@@ -1313,8 +1309,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                     : update_mode(tcp_len, conn->client_mode);
 
                 if ((conn->pkts % SAMPLE_COUNT) == 0) {
-                    // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
-                    // ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                     update_tree_item(
                         pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "ssh"
                     );
@@ -1340,8 +1334,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
         conn->window_scale = ja4t_data.window_scale;
         conn->window_size = ja4t_data.window_size;
         conn->mss_val = ja4t_data.mss_val;
-        // wmem_strbuf_append_printf(conn->tcp_options, "%s",
-        // wmem_strbuf_get_str(ja4t_data.tcp_options));
         if (conn->tcp_options == NULL)
             conn->tcp_options =
                 wmem_strbuf_new(wmem_file_scope(), wmem_strbuf_get_str(ja4t_data.tcp_options));
