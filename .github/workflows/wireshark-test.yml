@@ -1,0 +1,46 @@
+name: Wireshark Plugin Test
+
+on:
+  push:
+    paths:
+      - .github/workflows/wireshark-test.yml
+      - wireshark/**
+  pull_request:
+    paths:
+      - .github/workflows/wireshark-test.yml
+      - wireshark/**
+
+jobs:
+  run-wireshark-tests:
+    name: Run Wireshark tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install required packages
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+          sudo apt -y install \
+            cmake \
+            ninja-build \
+            tshark \
+            python3-pytest \
+            libglib2.0-dev \
+            libc-ares-dev
+
+      - name: Build Wireshark plugin
+        run: |
+          TSHARK_VERSION=$(tshark --version \
+            | head -n1 \
+            | sed -E 's/.* ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          PLUGIN_VERSION=$(echo "$TSHARK_VERSION" | cut -d. -f1,2)
+          sudo ./linux_build.sh $TSHARK_VERSION
+          sudo cp wireshark-$TSHARK_VERSION/build/run/plugins/$PLUGIN_VERSION/epan/ja4.so /usr/lib/x86_64-linux-gnu/wireshark/plugins/$PLUGIN_VERSION/epan
+        working-directory: wireshark/build-scripts
+
+      - name: Run tests
+        run: pytest
+        working-directory: wireshark/test/
