@@ -2,8 +2,6 @@ name: Wireshark Plugin Test
 
 on:
   push:
-    branches:
-      - main
     paths:
       - 'wireshark/packet-ja4.c'
   pull_request:
