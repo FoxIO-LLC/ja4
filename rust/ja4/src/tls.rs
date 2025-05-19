@@ -463,7 +463,7 @@ impl ServerStats {
 
         OutServer {
             pkt_ja4s: packet,
-            ja4s: format!("{two_chunks}_{}", crate::hash12(&exts)),
+            ja4s: format!("{two_chunks}_{hash}", hash = crate::hash12(&exts)),
             ja4s_r: flags.with_raw.then(|| format!("{two_chunks}_{exts}")),
         }
     }

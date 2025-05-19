@@ -54,7 +54,7 @@ fn main() -> eyre::Result<()> {
         } else {
             tracing::debug!(?path, format = "DER");
             let (rem, x509) = X509Certificate::from_der(&buf)
-                .wrap_err_with(|| format!("{}: unsupported file format", path.display()))
+                .wrap_err_with(|| format!("{path}: unsupported file format", path = path.display()))
                 .suggestion("please provide DER- or PEM-encoded certificate")?;
             debug_assert!(rem.is_empty());
             ja4x::X509Rec::from(x509)
