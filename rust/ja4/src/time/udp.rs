@@ -234,8 +234,8 @@ mod state {
             debug_assert!(ja4l_s >= 0); // 0 if the difference == 1
 
             Self::Done(Fingerprints {
-                ja4l_c: format!("{ja4l_c}_{}", client_ttl.0),
-                ja4l_s: format!("{ja4l_s}_{}", server_ttl.0),
+                ja4l_c: format!("{ja4l_c}_{client_ttl}", client_ttl = client_ttl.0),
+                ja4l_s: format!("{ja4l_s}_{server_ttl}", server_ttl = server_ttl.0),
             })
         }
     }

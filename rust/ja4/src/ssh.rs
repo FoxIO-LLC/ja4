@@ -278,8 +278,7 @@ impl From<Stats> for Option<Fingerprint> {
         let mode_server = min_key_with_max_value(server_tcp_len_counts).unwrap_or(0);
 
         let fp = format!(
-            "c{mode_client}s{mode_server}_c{}s{}_c{}s{}",
-            nr_ssh_client_packets, nr_ssh_server_packets, nr_tcp_client_acks, nr_tcp_server_acks,
+            "c{mode_client}s{mode_server}_c{nr_ssh_client_packets}s{nr_ssh_server_packets}_c{nr_tcp_client_acks}s{nr_tcp_server_acks}"
         );
         Some(Fingerprint(fp))
     }
