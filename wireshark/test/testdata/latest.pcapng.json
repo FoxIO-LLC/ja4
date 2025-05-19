@@ -144,13 +144,9 @@
         ],
         "ja4.ja4x_r": [
           "550406,55040a,550403_550406,550408,550407,55040a,550403_551d23,551d0e,551d11,551d0f,551d25,551d1f,551d20,2b06010505070101,551d13,2b06010401d679020402",
-          "550406,55040a,55040b,550403_550406,55040a,550403_551d13,551d0e,551d23,551d0f,551d25,2b06010505070101,551d1f,551d20",
-          "550406,55040a,550403_550406,550408,550407,55040a,550403_551d23,551d0e,551d11,551d0f,551d25,551d1f,551d20,2b06010505070101,551d13,2b06010401d679020402",
           "550406,55040a,55040b,550403_550406,55040a,550403_551d13,551d0e,551d23,551d0f,551d25,2b06010505070101,551d1f,551d20"
         ],
         "ja4.ja4x": [
-          "a373a9f83c6b_2bab15409345_7bf9a7bf7029",
-          "7d5dbb3783b4_a373a9f83c6b_a83ffcd6e6c2",
           "a373a9f83c6b_2bab15409345_7bf9a7bf7029",
           "7d5dbb3783b4_a373a9f83c6b_a83ffcd6e6c2"
         ]
@@ -269,7 +265,6 @@
           "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__"
         ],
         "ja4.ja4h_ro": [
-          "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__",
           "ge11nn07enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language,If-None-Match,If-Modified-Since__"
         ]
       }
