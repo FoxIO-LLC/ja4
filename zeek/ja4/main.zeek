@@ -78,9 +78,7 @@ function make_a(c: connection): string {
     #  Doign that would require checking that the string has a value TLD, a valid number of 
     #  subdomains, only valid characters, and likely other checks too.
     #  Consider the example SNI value of "foo.localhost", it's not a real domain but is also not an IP address
-    if (c$fp$client_hello$sni[0] != fmt("%s", c$id$resp_h)) {
       sni = "d";
-    }
   }
 
   local alpn: string = "00";
