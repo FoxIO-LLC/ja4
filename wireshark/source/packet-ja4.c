@@ -54,10 +54,6 @@ static inline const guint8 *field_bytes(fvalue_t const *fv) {
 #endif
 }
 
-char *bytes_to_string(fvalue_t *fv) {
-    return fvalue_to_string_repr(wmem_packet_scope(), fv, FTREPR_DISPLAY, 0);
-}
-
 static int proto_ja4;
 static gint ett_ja4 = -1;
 static int hf_ja4s_raw = -1;
