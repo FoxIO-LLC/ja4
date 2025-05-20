@@ -270,7 +270,7 @@ pkt_info_t *packet_table_lookup(int frame_number) {
     pkt_info_t *data = wmem_map_lookup(packet_table, GINT_TO_POINTER(frame_number));
     if (data == NULL) {
         data = wmem_new0(wmem_file_scope(), pkt_info_t);
-        data->pkt_hashes = wmem_array_new(wmem_file_scope(), 100);
+        data->pkt_hashes = wmem_array_sized_new(wmem_file_scope(), sizeof(packet_hash_t), 100);
         data->frame_number = frame_number;
         data->num_of_hashes = 0;
         data->complete = false;
@@ -822,7 +822,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
     }
 }
 
-static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy _U_) {
+static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy _U_) {
     guint32 handshake_type = 0;
     gboolean alpn_visited = false;
     proto_tree *ja4_tree = NULL;
@@ -833,7 +833,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     // For JA4X
     guint cert_num = -1;
     guint oid_type = -1;
-    wmem_array_t *certificate_list = wmem_array_new(wmem_packet_scope(), 100);
+    wmem_array_t *certificate_list = wmem_array_sized_new(pinfo->pool, sizeof(cert_t), 100);
 
     // For JA4H
     gchar **strings;
@@ -873,19 +873,19 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     ja4t_data.window_size = 0;
     // End of Ja4T data
 
-    ja4h_data.version = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.headers = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.lang = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.method = wmem_strbuf_new(wmem_packet_scope(), "");
+    ja4h_data.version = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.headers = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.lang = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.method = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.cookie = false;
     ja4h_data.referer = false;
     ja4h_data.http2 = false;
     ja4h_data.num_headers = 0;
-    ja4h_data.sorted_cookies = wmem_list_new(wmem_packet_scope());
-    ja4h_data.unsorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.unsorted_cookie_values = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.sorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.sorted_cookie_values = wmem_strbuf_new(wmem_packet_scope(), "");
+    ja4h_data.sorted_cookies = wmem_list_new(pinfo->pool);
+    ja4h_data.unsorted_cookie_fields = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.unsorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.sorted_cookie_fields = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.sorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
 
     char *proto = "tls";
     switch (ja4_data.proto) {
@@ -980,9 +980,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 (strcmp(field->hfinfo->abbrev, "dtls.handshake.certificate") == 0)) {
                 cert_t cert;
                 for (guint n = 0; n < 3; n++) {
-                    cert.oids[n] = wmem_strbuf_new(wmem_packet_scope(), "");
+                    cert.oids[n] = wmem_strbuf_new(pinfo->pool, "");
                 }
-                cert.raw = wmem_strbuf_new(wmem_packet_scope(), "");
+                cert.raw = wmem_strbuf_new(pinfo->pool, "");
                 wmem_array_append_one(certificate_list, cert);
                 oid_type = 0;
                 cert_num++;
@@ -1118,9 +1118,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 (strcmp(field->hfinfo->abbrev, "http2.headers.cookie") == 0)) {
                 strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", 2);
                 if (strings[0] && strings[1]) {
-                    http_cookie_t *new_cookie = wmem_new(wmem_packet_scope(), http_cookie_t);
-                    new_cookie->field = wmem_strbuf_new(wmem_packet_scope(), strings[0]);
-                    new_cookie->value = wmem_strbuf_new(wmem_packet_scope(), strings[1]);
+                    http_cookie_t *new_cookie = wmem_new(pinfo->pool, http_cookie_t);
+                    new_cookie->field = wmem_strbuf_new(pinfo->pool, strings[0]);
+                    new_cookie->value = wmem_strbuf_new(pinfo->pool, strings[1]);
                     wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_fields, "%s,", strings[0]);
                     wmem_strbuf_append_printf(
                         ja4h_data.unsorted_cookie_values, "%s,",
