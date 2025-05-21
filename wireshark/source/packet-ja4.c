@@ -33,9 +33,6 @@
 #include <epan/packet.h>
 #include <epan/packet_info.h>
 #include <epan/prefs.h>
-#include <epan/tap.h>
-// #include <epan/conversation.h>
-// #include <epan/dissectors/packet-tls-utils.h>
 
 #define MAX_SSL_VESION(a, b) ((a) > (b) ? (a) : (b))
 #define IS_GREASE_TLS(x) ((((x) & 0x0f0f) == 0x0a0a) && (((x) & 0xff) == (((x) >> 8) & 0xff)))
@@ -57,17 +54,10 @@ static inline const guint8 *field_bytes(fvalue_t const *fv) {
 #endif
 }
 
-char *bytes_to_string(fvalue_t *fv) {
-    return fvalue_to_string_repr(wmem_packet_scope(), fv, FTREPR_DISPLAY, 0);
-}
-
 static int proto_ja4;
 static gint ett_ja4 = -1;
-// static int hf_ja4_raw = -1;
-// static int hf_ja4_raw_original = -1;
 static int hf_ja4s_raw = -1;
 static int hf_ja4s = -1;
-// static int hf_ja4 = -1;
 static int hf_ja4x_raw = -1;
 static int hf_ja4x = -1;
 static int hf_ja4h = -1;
@@ -248,36 +238,13 @@ typedef struct {
     char *hf_value;
 } packet_hash_t;
 
-typedef struct {
-    int frame_number;
-    int num_of_hashes;
-    wmem_array_t *pkt_hashes;
-    bool complete;
-    char *insert_at;
-} pkt_info_t;
-
-wmem_map_t *conn_hash = NULL; // = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
-wmem_map_t *quic_conn_hash = NULL; // Added for JA4L on quic
-wmem_map_t *packet_table = NULL;
+wmem_map_t *conn_hash = NULL;
+wmem_map_t *quic_conn_hash = NULL;
 
 static int64_t timediff(nstime_t *current, nstime_t *prev) {
     nstime_t result;
     nstime_delta(&result, current, prev);
     return (int64_t)(round(nstime_to_sec(&result)));
-}
-
-pkt_info_t *packet_table_lookup(int frame_number) {
-    pkt_info_t *data = wmem_map_lookup(packet_table, GINT_TO_POINTER(frame_number));
-    if (data == NULL) {
-        data = wmem_new0(wmem_file_scope(), pkt_info_t);
-        data->pkt_hashes = wmem_array_new(wmem_file_scope(), 100);
-        data->frame_number = frame_number;
-        data->num_of_hashes = 0;
-        data->complete = false;
-        data->insert_at = NULL;
-        wmem_map_insert(packet_table, GINT_TO_POINTER(frame_number), data);
-    }
-    return data;
 }
 
 gint sort_by_string(gconstpointer s1, gconstpointer s2) {
@@ -287,7 +254,6 @@ gint sort_by_string(gconstpointer s1, gconstpointer s2) {
     );
 }
 
-// Fix #63
 proto_tree *locate_tree(proto_tree *tree, const char *s) {
     proto_tree *position = tree->first_child;
     while ((position != NULL) && (position->finfo != NULL) &&
@@ -297,9 +263,8 @@ proto_tree *locate_tree(proto_tree *tree, const char *s) {
     return position;
 }
 
-// Fix #63
 void update_tree_item(
-    int frame_number, tvbuff_t *tvb, proto_tree *tree, proto_tree **ja4_tree, int field,
+    tvbuff_t *tvb, proto_tree *tree, proto_tree **ja4_tree, int field,
     const char *str, const char *insert_at
 ) {
 
@@ -318,46 +283,7 @@ void update_tree_item(
         *ja4_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
     }
 
-    // proto_item *ti = proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, "");
-    // proto_item *ti = proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, str);
-    // proto_item_append_text(ti, "%s", str);
-    // proto_item_set_generated(ti);
-    pkt_info_t *pi = packet_table_lookup(frame_number);
-    if (!pi->complete) {
-        packet_hash_t *recorded_hash = wmem_new0(wmem_file_scope(), packet_hash_t);
-        recorded_hash->hf_field = field;
-        recorded_hash->hf_value = (char *)str;
-        wmem_array_append(pi->pkt_hashes, recorded_hash, 1);
-        pi->num_of_hashes++;
-        pi->insert_at = (char *)insert_at;
-    }
-}
-
-void mark_complete(int frame_number) {
-    pkt_info_t *pi = packet_table_lookup(frame_number);
-    pi->complete = true;
-}
-
-// Wireshark columns only work if the hash is added to the tree and displayed
-// using proto_tree_add_string without using proto_item_append_text
-// Tshark OTOH takes both values from the JA4 tree as well as from here to show them
-// when using the -T fields option
-static int
-display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, int frame_number) {
-    pkt_info_t *pi = packet_table_lookup(frame_number);
-    if ((pi->complete) && (pi->insert_at)) {
-        proto_item *ja4_ti =
-            proto_tree_add_item(locate_tree(tree, pi->insert_at), proto_ja4, tvb, 0, -1, ENC_NA);
-        proto_tree *sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
-        for (int i = 0; i < pi->num_of_hashes; i++) {
-            packet_hash_t *hash = (packet_hash_t *)wmem_array_index(pi->pkt_hashes, i);
-            if ((hash->hf_field == hash_val) || (hash_val == 999)) {
-                proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, hash->hf_value);
-            }
-        }
-        return pi->num_of_hashes;
-    }
-    return 0;
+    proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, str);
 }
 
 void update_mode(int pkt_len, wmem_map_t *hash_table) {
@@ -376,12 +302,15 @@ int get_max_mode(wmem_map_t *hash_table) {
     wmem_list_t *keys = wmem_map_get_keys(wmem_file_scope(), hash_table);
     wmem_list_frame_t *key = wmem_list_head(keys);
     while (key) {
-
         int pkt_len = GPOINTER_TO_INT(wmem_list_frame_data(key));
         int mode = GPOINTER_TO_INT(wmem_map_lookup(hash_table, GINT_TO_POINTER(pkt_len)));
         if (mode > counter) {
             counter = mode;
             max_mode = pkt_len;
+        } else if (mode == counter) {
+            if (pkt_len < max_mode) {
+                max_mode = pkt_len;
+            }
         }
         key = wmem_list_frame_next(key);
     }
@@ -856,10 +785,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     if (tree == NULL)
         return tvb_captured_length(tvb);
 
-    int hashes = display_hashes_from_packet_table(999, tree, tvb, pinfo->num);
-    if (hashes > 0)
-        return tvb_captured_length(tvb);
-
     ja4_info_t ja4_data;
     ja4h_info_t ja4h_data;
 
@@ -871,7 +796,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     ja4t_data.mss_val = 0;
     ja4t_data.window_scale = 0;
     ja4t_data.window_size = 0;
-    // End of Ja4T data
+    // End of JA4T data
 
     ja4h_data.version = wmem_strbuf_new(wmem_packet_scope(), "");
     ja4h_data.headers = wmem_strbuf_new(wmem_packet_scope(), "");
@@ -915,10 +840,10 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                     set_ja4_ciphers(tree, &ja4_data);
                     set_ja4s_extensions(tree, &ja4_data);
                     update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto
+                        tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto
                     );
                     update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto
+                        tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto
                     );
                 }
 
@@ -1266,8 +1191,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                                 // Denotes third PSH, ACK - JA4L-C goes here
                                 nstime_copy(&conn->timestamp_F, packet_time);
 
-                                // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1,
-                                // ENC_NA); ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                                 wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
                                 wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
 
@@ -1278,7 +1201,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                                     latency2.nsecs / 2 / 1000
                                 );
                                 update_tree_item(
-                                    pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls,
+                                    tvb, tree, &ja4_tree, hf_ja4ls,
                                     wmem_strbuf_get_str(display), "tcp"
                                 );
 
@@ -1289,10 +1212,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                                     conn->client_ttl, latency2.nsecs / 2 / 1000
                                 );
                                 update_tree_item(
-                                    pinfo->num, tvb, tree, &ja4_tree, hf_ja4l,
+                                    tvb, tree, &ja4_tree, hf_ja4l,
                                     wmem_strbuf_get_str(display2), "tcp"
                                 );
-                                mark_complete(pinfo->num);
                             }
                         }
                     }
@@ -1302,9 +1224,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 if ((fvalue_get_uinteger(get_value_ptr(field)) == 0x011) &&
                     ((srcport == 22) || (dstport == 22))) {
                     update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "tcp"
+                        tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "tcp"
                     );
-                    mark_complete(pinfo->num);
                 }
             }
 
@@ -1337,29 +1258,26 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                         (nstime_is_zero(&conn->timestamp_D))) {
                         nstime_copy(&conn->timestamp_D, packet_time);
 
-                        // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1,
-                        // ENC_NA); ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                         wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
                         wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
 
                         nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
                         wmem_strbuf_append_printf(
-                            display, "%d_%d_q", latency.nsecs / 2 / 1000, conn->server_ttl
+                            display, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->server_ttl
                         );
                         update_tree_item(
-                            pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls,
-                            wmem_strbuf_get_str(display), "tcp"
+                            tvb, tree, &ja4_tree, hf_ja4ls,
+                            wmem_strbuf_get_str(display), "quic"
                         );
 
                         nstime_delta(&latency, &conn->timestamp_D, &conn->timestamp_C);
                         wmem_strbuf_append_printf(
-                            display2, "%d_%d_q", latency.nsecs / 2 / 1000, conn->client_ttl
+                            display2, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->client_ttl
                         );
                         update_tree_item(
-                            pinfo->num, tvb, tree, &ja4_tree, hf_ja4l,
-                            wmem_strbuf_get_str(display2), "tcp"
+                            tvb, tree, &ja4_tree, hf_ja4l,
+                            wmem_strbuf_get_str(display2), "quic"
                         );
-                        mark_complete(pinfo->num);
                     }
                 }
             }
@@ -1390,12 +1308,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                     : update_mode(tcp_len, conn->client_mode);
 
                 if ((conn->pkts % SAMPLE_COUNT) == 0) {
-                    // ti = proto_tree_add_item(tree->last_child, proto_ja4, tvb, 0, -1, ENC_NA);
-                    // ja4_tree = proto_item_add_subtree(ti, ett_ja4);
                     update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "ssh"
+                        tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(conn), "ssh"
                     );
-                    mark_complete(pinfo->num);
 
                     // reset conn parameters for the next ssh iteration
                     conn->tcp_server_acks = conn->tcp_client_acks = conn->client_pkts =
@@ -1411,21 +1326,17 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     }
 
     if (syn == 1) {
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4t, ja4t(&ja4t_data, NULL), "tcp");
-        mark_complete(pinfo->num);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4t, ja4t(&ja4t_data, NULL), "tcp");
     }
     if (syn == 2) {
         conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
         conn->window_scale = ja4t_data.window_scale;
         conn->window_size = ja4t_data.window_size;
         conn->mss_val = ja4t_data.mss_val;
-        // wmem_strbuf_append_printf(conn->tcp_options, "%s",
-        // wmem_strbuf_get_str(ja4t_data.tcp_options));
         if (conn->tcp_options == NULL)
             conn->tcp_options =
                 wmem_strbuf_new(wmem_file_scope(), wmem_strbuf_get_str(ja4t_data.tcp_options));
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
-        mark_complete(pinfo->num);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
     }
 
     if (syn == 3) {
@@ -1437,37 +1348,14 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
             wmem_strbuf_append_printf(
                 ja4t_data.tcp_options, "%s", wmem_strbuf_get_str(conn->tcp_options)
             );
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
-        mark_complete(pinfo->num);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4ts, ja4t(&ja4t_data, conn), "tcp");
     }
-
-    // Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in our
-    // plugin.
-    /*if ((handshake_type == 1) || (handshake_type == 2) || (handshake_type == 11) || (http_req !=
-    -100)) { if (ja4_tree == NULL) { ti = proto_tree_add_item(locate_tree(tree, "tls"), proto_ja4,
-    tvb, 0, -1, ENC_NA); ja4_tree = proto_item_add_subtree(ti, ett_ja4);
-            }
-    }*/
-
-    /*if (handshake_type == 1) {
-            set_ja4_ciphers(tree, &ja4_data);
-            set_ja4_extensions(tree, &ja4_data);
-            if (wmem_strbuf_get_len(ja4_data.signatures) > 3) {
-                    wmem_strbuf_truncate(ja4_data.signatures,
-    wmem_strbuf_get_len(ja4_data.signatures)-1);
-            }
-            update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4, ja4(&ja4_data), proto);
-            update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw, ja4_r(&ja4_data), proto);
-            update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4_raw_original,
-    ja4_ro(&ja4_data), proto); mark_complete(pinfo->num);
-    }*/
 
     if (handshake_type == 2) {
         set_ja4_ciphers(tree, &ja4_data);
         set_ja4s_extensions(tree, &ja4_data);
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto);
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto);
-        mark_complete(pinfo->num);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4s, ja4s(&ja4_data), proto);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(&ja4_data), proto);
     }
 
     if (handshake_type == 11) {
@@ -1479,12 +1367,11 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 wmem_strbuf_get_str(current_cert->oids[2])
             );
             update_tree_item(
-                pinfo->num, tvb, tree, &ja4_tree, hf_ja4x_raw,
+                tvb, tree, &ja4_tree, hf_ja4x_raw,
                 wmem_strbuf_get_str(current_cert->raw), proto
             );
-            update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x, ja4x(current_cert), proto);
+            update_tree_item(tvb, tree, &ja4_tree, hf_ja4x, ja4x(current_cert), proto);
         }
-        mark_complete(pinfo->num);
     }
 
     if (http_req != -100) {
@@ -1509,88 +1396,21 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
         if (ja4h_data.http2 == true) {
             http_proto = "http2";
         }
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(&ja4h_data), http_proto);
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4h, ja4h(&ja4h_data), http_proto);
         update_tree_item(
-            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(&ja4h_data), http_proto
+            tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(&ja4h_data), http_proto
         );
         update_tree_item(
-            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw_original, ja4h_ro(&ja4h_data), http_proto
+            tvb, tree, &ja4_tree, hf_ja4h_raw_original, ja4h_ro(&ja4h_data), http_proto
         );
-        mark_complete(pinfo->num);
     }
 
-    // tap_queue_packet(ja4_tap, pinfo, NULL);
     return tvb_reported_length(tvb);
 }
-
-static tap_packet_status tap_all(
-    void *tapdata _U_, packet_info *pinfo, epan_dissect_t *edt, const void *data _U_,
-    tap_flags_t flags _U_
-) {
-
-    display_hashes_from_packet_table(*(int *)tapdata, edt->tree, edt->tvb, pinfo->num);
-    return TAP_PACKET_REDRAW;
-}
-
-typedef struct ja4_tap_s {
-    const char *tap;
-    int *hfid; // tapdata
-    const char *filter;
-} ja4_tap_t;
-
-/* Wireshark ≤4.2 calls the TLS tap "tls",
- * after that it's "tls_follow"
- */
-#if ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 2))
-#define TLS_TAP "tls_follow"
-#else
-#define TLS_TAP "tls"
-#endif
-
-static ja4_tap_t const ja4_taps[] = {
-    {TLS_TAP, &hf_ja4s,              "tls.handshake.type == 2"                 },
-    {TLS_TAP, &hf_ja4s_raw,          "tls.handshake.type == 2"                 },
-
-    {"dtls",  &hf_ja4s,              "dtls.handshake.type == 2"                },
-    {"dtls",  &hf_ja4s_raw,          "dtls.handshake.type == 2"                },
-
-    //{ TLS_TAP,  &hf_ja4, "tls.handshake.type == 1" },
-    //{ TLS_TAP,  &hf_ja4_raw, "tls.handshake.type == 1" },
-    //{ TLS_TAP,  &hf_ja4_raw_original, "tls.handshake.type == 1" },
-
-    //{ "dtls", &hf_ja4, "dtls.handshake.type == 1" },
-    //{ "dtls", &hf_ja4_raw, "dtls.handshake.type == 1" },
-    //{ "dtls", &hf_ja4_raw_original, "dtls.handshake.type == 1" },
-
-    {TLS_TAP, &hf_ja4x,              "tls.handshake.type == 11"                },
-    {TLS_TAP, &hf_ja4x_raw,          "tls.handshake.type == 11"                },
-
-    {"dtls",  &hf_ja4x,              "dtls.handshake.type == 11"               },
-    {"dtls",  &hf_ja4x_raw,          "dtls.handshake.type == 11"               },
-
-    {"http",  &hf_ja4h,              NULL                                      },
-    {"http",  &hf_ja4h_raw,          NULL                                      },
-    {"http",  &hf_ja4h_raw_original, NULL                                      },
-    {"http",  &hf_ja4h_raw_original, NULL                                      },
-    {"http2", &hf_ja4h,              NULL                                      },
-    {"http2", &hf_ja4h_raw,          NULL                                      },
-    {"http2", &hf_ja4h_raw_original, NULL                                      },
-    {"http2", &hf_ja4h_raw_original, NULL                                      },
-    {"tcp",   &hf_ja4l,              "tcp.flags == 0x018"                      },
-    {"tcp",   &hf_ja4ls,             "tcp.flags == 0x018"                      },
-    {"tcp",   &hf_ja4ssh,            "ssh.direction"                           },
-    {"tcp",   &hf_ja4t,              "tcp.flags == 0x002"                      },
-    {"tcp",   &hf_ja4ts,             "tcp.flags == 0x012 || tcp.flags == 0x004"},
-
-    {NULL,    NULL,                  NULL                                      }  // keep this at the end
-};
-
-static GPtrArray *active_taps = NULL;
 
 static void init_globals(void) {
     conn_hash = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
     quic_conn_hash = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
-    packet_table = wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
 
     GArray *wanted_hfids = g_array_new(FALSE, FALSE, (guint)sizeof(int));
     for (int i = 0; i < HFIDS; i++) {
@@ -1599,68 +1419,19 @@ static void init_globals(void) {
     }
 
     set_postdissector_wanted_hfids(ja4_handle, wanted_hfids);
-
-    if (proto_is_protocol_enabled(find_protocol_by_id(proto_ja4))) {
-        GString *ret;
-        size_t i;
-
-        active_taps = g_ptr_array_sized_new(array_length(ja4_taps));
-        for (i = 0; ja4_taps[i].hfid != NULL; i++) {
-            ret = register_tap_listener(
-                ja4_taps[i].tap, ja4_taps[i].hfid, ja4_taps[i].filter, TL_REQUIRES_PROTO_TREE, NULL,
-                tap_all, NULL, NULL
-            );
-            if (ret == NULL) {
-                g_ptr_array_add(active_taps, ja4_taps[i].hfid);
-            } else {
-                ws_warning(
-                    "JA4 failed to register tap on \"%s\" with filter \"%s\": %s",
-                    ja4_taps[i].filter, ja4_taps[i].tap, ret->str
-                );
-                g_string_free(ret, TRUE);
-            }
-        }
-    }
 }
 
 static void cleanup_globals(void) {
     set_postdissector_wanted_hfids(ja4_handle, NULL);
-
-    if (active_taps != NULL) {
-        /* Note that multiple taps are registered with the same tapdata
-         * (which is simply the hfid). As long as we remove it the same
-         * number of times it was added then we should be ok.
-         */
-        for (size_t i = 0; i < active_taps->len; i++) {
-            int *hfid = g_ptr_array_index(active_taps, i);
-            remove_tap_listener(hfid);
-        }
-        g_ptr_array_free(active_taps, TRUE);
-        active_taps = NULL;
-    }
 }
 
 void proto_reg_handoff_ja4(void) {
-    // register_postdissector(ja4_handle);
-    // ja4_tap = register_tap("ja4");
 }
 
 void proto_register_ja4(void) {
     static hf_register_info hf[] = {
-        // Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in
-        // our plugin.
-        /*
-        {&hf_ja4_raw,           {"JA4 Raw", "ja4.ja4_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
-        {&hf_ja4_raw_original,
-         {"JA4 Raw (Original)", "ja4.ja4_ro", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL} },
-        */
         {&hf_ja4s_raw,          {"JA4S Raw", "ja4.ja4s_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}},
         {&hf_ja4s,              {"JA4S", "ja4.ja4s", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
-        // Since JA4 (not JA4+) is now supported by wireshark directly, it is no longer supported in
-        // our plugin.
-        /*
-        {&hf_ja4,               {"JA4", "ja4.ja4", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}        },
-        */
         {&hf_ja4x_raw,          {"JA4X Raw", "ja4.ja4x_r", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}},
         {&hf_ja4x,              {"JA4X", "ja4.ja4x", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
         {&hf_ja4h,              {"JA4H", "ja4.ja4h", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
@@ -1686,7 +1457,6 @@ void proto_register_ja4(void) {
 
     register_init_routine(init_globals);
     register_cleanup_routine(cleanup_globals);
-    // dissector_add_uint("tcp.port", 443, ja4_handle);
     register_postdissector(ja4_handle);
 
     module_t *ja4_module = prefs_register_protocol(proto_ja4, NULL);
