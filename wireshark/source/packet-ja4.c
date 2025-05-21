@@ -302,12 +302,15 @@ int get_max_mode(wmem_map_t *hash_table) {
     wmem_list_t *keys = wmem_map_get_keys(wmem_file_scope(), hash_table);
     wmem_list_frame_t *key = wmem_list_head(keys);
     while (key) {
-
         int pkt_len = GPOINTER_TO_INT(wmem_list_frame_data(key));
         int mode = GPOINTER_TO_INT(wmem_map_lookup(hash_table, GINT_TO_POINTER(pkt_len)));
         if (mode > counter) {
             counter = mode;
             max_mode = pkt_len;
+        } else if (mode == counter) {
+            if (pkt_len < max_mode) {
+                max_mode = pkt_len;
+            }
         }
         key = wmem_list_frame_next(key);
     }
