@@ -105,6 +105,24 @@
     "_source": {
       "layers": {
         "frame.number": [
+          "80"
+        ],
+        "ja4.ja4l": [
+          "14_128_tcp"
+        ],
+        "ja4.ja4ls": [
+          "3181_57_tcp"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-08-24",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
           "81"
         ],
         "ja4.ja4l": [

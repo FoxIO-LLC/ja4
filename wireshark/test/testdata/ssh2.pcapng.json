@@ -695,6 +695,24 @@
     "_source": {
       "layers": {
         "frame.number": [
+          "376"
+        ],
+        "ja4.ja4l": [
+          "45_128_tcp"
+        ],
+        "ja4.ja4ls": [
+          "6252_58_tcp"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-06",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
           "460"
         ],
         "ja4.ja4t": [
@@ -975,6 +993,24 @@
         ],
         "ja4.ja4h_ro": [
           "ge11nn030000_Connection,User-Agent,Host__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-07-06",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "958"
+        ],
+        "ja4.ja4l": [
+          "50_128_tcp"
+        ],
+        "ja4.ja4ls": [
+          "4272_58_tcp"
         ]
       }
     }
