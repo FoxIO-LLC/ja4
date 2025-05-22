@@ -55,6 +55,7 @@ static inline const guint8 *field_bytes(fvalue_t const *fv) {
 }
 
 static int proto_ja4;
+static int proto_http;
 static gint ett_ja4 = -1;
 static int hf_ja4s_raw = -1;
 static int hf_ja4s = -1;
@@ -1179,11 +1180,40 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                             // Denotes first PSH, ACK
                             nstime_copy(&conn->timestamp_D, packet_time);
                         } else {
+                            wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
+                            wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
+    
+                            bool is_http = false;
+                            GPtrArray *proto_http_array = proto_find_first_finfo(tree, proto_http);
+                            if (proto_http_array && proto_http_array->len > 0) {
+                                is_http = true;
+                            }
 
                             if ((packet_time != NULL) && (srcport < 5000) &&
                                 (nstime_is_zero(&conn->timestamp_E))) {
                                 // Denotes second PSH, ACK - JA4L-S goes here
                                 nstime_copy(&conn->timestamp_E, packet_time);
+
+                                if (is_http) {
+                                    nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
+                                    wmem_strbuf_append_printf(
+                                        display, "%d_%d_tcp", latency.nsecs / 2 / 1000, conn->server_ttl
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4ls,
+                                        wmem_strbuf_get_str(display), "tcp"
+                                    );
+
+                                    nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
+                                    wmem_strbuf_append_printf(
+                                        display2, "%d_%d_tcp", latency.nsecs / 2 / 1000,
+                                        conn->client_ttl
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4l,
+                                        wmem_strbuf_get_str(display2), "tcp"
+                                    );
+                                }
                             }
 
                             if ((packet_time != NULL) && (dstport < 5000) &&
@@ -1191,30 +1221,29 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                                 // Denotes third PSH, ACK - JA4L-C goes here
                                 nstime_copy(&conn->timestamp_F, packet_time);
 
-                                wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-                                wmem_strbuf_t *display2 = wmem_strbuf_new(wmem_file_scope(), "");
+                                if (!is_http) {
+                                    nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
+                                    nstime_delta(&latency2, &conn->timestamp_E, &conn->timestamp_D);
+                                    wmem_strbuf_append_printf(
+                                        display, "%d_%d_%d", latency.nsecs / 2 / 1000, conn->server_ttl,
+                                        latency2.nsecs / 2 / 1000
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4ls,
+                                        wmem_strbuf_get_str(display), "tcp"
+                                    );
 
-                                nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
-                                nstime_delta(&latency2, &conn->timestamp_E, &conn->timestamp_D);
-                                wmem_strbuf_append_printf(
-                                    display, "%d_%d_%d", latency.nsecs / 2 / 1000, conn->server_ttl,
-                                    latency2.nsecs / 2 / 1000
-                                );
-                                update_tree_item(
-                                    tvb, tree, &ja4_tree, hf_ja4ls,
-                                    wmem_strbuf_get_str(display), "tcp"
-                                );
-
-                                nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
-                                nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
-                                wmem_strbuf_append_printf(
-                                    display2, "%d_%d_%d", latency.nsecs / 2 / 1000,
-                                    conn->client_ttl, latency2.nsecs / 2 / 1000
-                                );
-                                update_tree_item(
-                                    tvb, tree, &ja4_tree, hf_ja4l,
-                                    wmem_strbuf_get_str(display2), "tcp"
-                                );
+                                    nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
+                                    nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
+                                    wmem_strbuf_append_printf(
+                                        display2, "%d_%d_%d", latency.nsecs / 2 / 1000,
+                                        conn->client_ttl, latency2.nsecs / 2 / 1000
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4l,
+                                        wmem_strbuf_get_str(display2), "tcp"
+                                    );
+                                }
                             }
                         }
                     }
@@ -1419,6 +1448,8 @@ static void init_globals(void) {
     }
 
     set_postdissector_wanted_hfids(ja4_handle, wanted_hfids);
+
+    proto_http = proto_registrar_get_id_byname("http");
 }
 
 static void cleanup_globals(void) {

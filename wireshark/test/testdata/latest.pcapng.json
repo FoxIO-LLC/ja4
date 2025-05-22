@@ -277,6 +277,24 @@
     "_source": {
       "layers": {
         "frame.number": [
+          "116"
+        ],
+        "ja4.ja4l": [
+          "32_128_tcp"
+        ],
+        "ja4.ja4ls": [
+          "3915_57_tcp"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
           "117"
         ],
         "ja4.ja4l": [
