@@ -360,8 +360,8 @@ conn_info_t *conn_lookup(char proto, int stream) {
     return data;
 }
 
-void decode_http_lang(wmem_strbuf_t **out, const char *val) {
-    wmem_strbuf_t *lang = wmem_strbuf_new(wmem_packet_scope(), "");
+void decode_http_lang(wmem_allocator_t *scope, wmem_strbuf_t **out, const char *val) {
+    wmem_strbuf_t *lang = wmem_strbuf_new(scope, "");
     int count = 0;
 
     // Format the language string
@@ -412,8 +412,8 @@ void decode_http_version(wmem_strbuf_t **out, const char *val) {
     }
 }
 
-char *wmem_list_to_str(wmem_list_t *l) {
-    wmem_strbuf_t *temp = wmem_strbuf_new(wmem_packet_scope(), "");
+char *wmem_list_to_str(wmem_allocator_t *scope, wmem_list_t *l) {
+    wmem_strbuf_t *temp = wmem_strbuf_new(scope, "");
     wmem_list_frame_t *curr_entry = wmem_list_head(l);
     while (curr_entry && wmem_list_frame_next(curr_entry)) {
         wmem_strbuf_append_printf(
@@ -453,11 +453,11 @@ void create_sorted_cookies(wmem_strbuf_t **fields, wmem_strbuf_t **values, wmem_
 char *ja4(ja4_info_t *data) {
     wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
     gchar *cipher_hash = g_compute_checksum_for_string(
-        G_CHECKSUM_SHA256, wmem_list_to_str(data->sorted_ciphers), -1
+        G_CHECKSUM_SHA256, wmem_list_to_str(wmem_file_scope(), data->sorted_ciphers), -1
     );
 
     wmem_strbuf_t *temp = wmem_strbuf_new(wmem_file_scope(), "");
-    wmem_strbuf_append_printf(temp, "%s", wmem_list_to_str(data->sorted_extensions));
+    wmem_strbuf_append_printf(temp, "%s", wmem_list_to_str(wmem_file_scope(), data->sorted_extensions));
     if (wmem_strbuf_get_len(data->signatures) > 0) {
         wmem_strbuf_append_printf(temp, "_%s", wmem_strbuf_get_str(data->signatures));
     }
@@ -491,7 +491,7 @@ char *ja4_r(ja4_info_t *data) {
         (wmem_strbuf_get_len(data->alpn) > 0)
             ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
             : '0',
-        wmem_list_to_str(data->sorted_ciphers), wmem_list_to_str(data->sorted_extensions)
+        wmem_list_to_str(wmem_file_scope(), data->sorted_ciphers), wmem_list_to_str(wmem_file_scope(), data->sorted_extensions)
     );
     if (wmem_strbuf_get_len(data->signatures) > 0) {
         wmem_strbuf_append_printf(display, "_%s", wmem_strbuf_get_str(data->signatures));
@@ -682,12 +682,12 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
     if (proto_is_frame_protocol(pinfo->layers, "dtls"))
         ja4_data->proto = 'd';
 
-    ja4_data->sorted_ciphers = wmem_list_new(wmem_packet_scope());
-    ja4_data->sorted_extensions = wmem_list_new(wmem_packet_scope());
-    ja4_data->ciphers = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4_data->extensions = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4_data->signatures = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4_data->alpn = wmem_strbuf_new(wmem_packet_scope(), "");
+    ja4_data->sorted_ciphers = wmem_list_new(pinfo->pool);
+    ja4_data->sorted_extensions = wmem_list_new(pinfo->pool);
+    ja4_data->ciphers = wmem_strbuf_new(pinfo->pool, "");
+    ja4_data->extensions = wmem_strbuf_new(pinfo->pool, "");
+    ja4_data->signatures = wmem_strbuf_new(pinfo->pool, "");
+    ja4_data->alpn = wmem_strbuf_new(pinfo->pool, "");
 }
 
 static void set_ja4s_extensions(proto_tree *tree, ja4_info_t *data) {
@@ -752,7 +752,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
     }
 }
 
-static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *dummy _U_) {
+static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy _U_) {
     guint32 handshake_type = 0;
     gboolean alpn_visited = false;
     proto_tree *ja4_tree = NULL;
@@ -799,19 +799,19 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     ja4t_data.window_size = 0;
     // End of JA4T data
 
-    ja4h_data.version = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.headers = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.lang = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.method = wmem_strbuf_new(wmem_packet_scope(), "");
+    ja4h_data.version = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.headers = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.lang = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.method = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.cookie = false;
     ja4h_data.referer = false;
     ja4h_data.http2 = false;
     ja4h_data.num_headers = 0;
-    ja4h_data.sorted_cookies = wmem_list_new(wmem_packet_scope());
-    ja4h_data.unsorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.unsorted_cookie_values = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.sorted_cookie_fields = wmem_strbuf_new(wmem_packet_scope(), "");
-    ja4h_data.sorted_cookie_values = wmem_strbuf_new(wmem_packet_scope(), "");
+    ja4h_data.sorted_cookies = wmem_list_new(pinfo->pool);
+    ja4h_data.unsorted_cookie_fields = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.unsorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.sorted_cookie_fields = wmem_strbuf_new(pinfo->pool, "");
+    ja4h_data.sorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
 
     char *proto = "tls";
     switch (ja4_data.proto) {
@@ -906,9 +906,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 (strcmp(field->hfinfo->abbrev, "dtls.handshake.certificate") == 0)) {
                 cert_t cert;
                 for (guint n = 0; n < 3; n++) {
-                    cert.oids[n] = wmem_strbuf_new(wmem_packet_scope(), "");
+                    cert.oids[n] = wmem_strbuf_new(pinfo->pool, "");
                 }
-                cert.raw = wmem_strbuf_new(wmem_packet_scope(), "");
+                cert.raw = wmem_strbuf_new(pinfo->pool, "");
                 wmem_array_append_one(certificate_list, cert);
                 oid_type = 0;
                 cert_num++;
@@ -1029,7 +1029,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
 
             if ((strcmp(field->hfinfo->abbrev, "http.accept_language") == 0) ||
                 (strcmp(field->hfinfo->abbrev, "http2.headers.accept_language") == 0)) {
-                decode_http_lang(&ja4h_data.lang, fvalue_get_string(get_value_ptr(field)));
+                decode_http_lang(pinfo->pool, &ja4h_data.lang, fvalue_get_string(get_value_ptr(field)));
             }
             if ((strcmp(field->hfinfo->abbrev, "http.cookie") == 0) ||
                 (strcmp(field->hfinfo->abbrev, "http2.headers.cookie") == 0)) {
@@ -1044,9 +1044,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
                 (strcmp(field->hfinfo->abbrev, "http2.headers.cookie") == 0)) {
                 strings = g_strsplit(fvalue_get_string(get_value_ptr(field)), "=", 2);
                 if (strings[0] && strings[1]) {
-                    http_cookie_t *new_cookie = wmem_new(wmem_packet_scope(), http_cookie_t);
-                    new_cookie->field = wmem_strbuf_new(wmem_packet_scope(), strings[0]);
-                    new_cookie->value = wmem_strbuf_new(wmem_packet_scope(), strings[1]);
+                    http_cookie_t *new_cookie = wmem_new(pinfo->pool, http_cookie_t);
+                    new_cookie->field = wmem_strbuf_new(pinfo->pool, strings[0]);
+                    new_cookie->value = wmem_strbuf_new(pinfo->pool, strings[1]);
                     wmem_strbuf_append_printf(ja4h_data.unsorted_cookie_fields, "%s,", strings[0]);
                     wmem_strbuf_append_printf(
                         ja4h_data.unsorted_cookie_values, "%s,",
