@@ -763,7 +763,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, 
     // For JA4X
     guint cert_num = -1;
     guint oid_type = -1;
-    wmem_array_t *certificate_list = wmem_array_new(wmem_packet_scope(), 100);
+    wmem_array_t *certificate_list = wmem_array_sized_new(pinfo->pool, sizeof(cert_t), 100);
 
     // For JA4H
     gchar **strings;
