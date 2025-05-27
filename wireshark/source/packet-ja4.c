@@ -412,22 +412,6 @@ void decode_http_version(wmem_strbuf_t **out, const char *val) {
     }
 }
 
-char *wmem_list_to_str(wmem_allocator_t *scope, wmem_list_t *l) {
-    wmem_strbuf_t *temp = wmem_strbuf_new(scope, "");
-    wmem_list_frame_t *curr_entry = wmem_list_head(l);
-    while (curr_entry && wmem_list_frame_next(curr_entry)) {
-        wmem_strbuf_append_printf(
-            temp, "%04x,", GPOINTER_TO_UINT(wmem_list_frame_data(curr_entry))
-        );
-        curr_entry = wmem_list_frame_next(curr_entry);
-    }
-
-    if (curr_entry != NULL) {
-        wmem_strbuf_append_printf(temp, "%04x", GPOINTER_TO_UINT(wmem_list_frame_data(curr_entry)));
-    }
-    return (char *)wmem_strbuf_get_str(temp);
-}
-
 void create_sorted_cookies(wmem_strbuf_t **fields, wmem_strbuf_t **values, wmem_list_t *l) {
     wmem_list_frame_t *curr_entry = wmem_list_head(l);
     http_cookie_t *curr_cookie = NULL;
@@ -448,73 +432,6 @@ void create_sorted_cookies(wmem_strbuf_t **fields, wmem_strbuf_t **values, wmem_
         *values, "%s=%s", wmem_strbuf_get_str(curr_cookie->field),
         wmem_strbuf_get_str(curr_cookie->value)
     );
-}
-
-char *ja4(ja4_info_t *data) {
-    wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-    gchar *cipher_hash = g_compute_checksum_for_string(
-        G_CHECKSUM_SHA256, wmem_list_to_str(wmem_file_scope(), data->sorted_ciphers), -1
-    );
-
-    wmem_strbuf_t *temp = wmem_strbuf_new(wmem_file_scope(), "");
-    wmem_strbuf_append_printf(temp, "%s", wmem_list_to_str(wmem_file_scope(), data->sorted_extensions));
-    if (wmem_strbuf_get_len(data->signatures) > 0) {
-        wmem_strbuf_append_printf(temp, "_%s", wmem_strbuf_get_str(data->signatures));
-    }
-    gchar *ext_hash =
-        g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(temp), -1);
-
-    wmem_strbuf_append_printf(
-        display, "%c%s%c%02d%02d%c%c_%12.12s_%12.12s", data->proto,
-        val_to_str_const(data->version, ssl_versions, "00"), (data->sni ? 'd' : 'i'),
-        data->cipher_len, data->ext_len,
-        (wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
-        (wmem_strbuf_get_len(data->alpn) > 0)
-            ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
-            : '0',
-        cipher_hash, wmem_strbuf_get_len(temp) ? ext_hash : "000000000000"
-    );
-    if (cipher_hash != NULL)
-        g_free(cipher_hash);
-    if (ext_hash != NULL)
-        g_free(ext_hash);
-    return (char *)wmem_strbuf_get_str(display);
-}
-
-char *ja4_r(ja4_info_t *data) {
-    wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-    wmem_strbuf_append_printf(
-        display, "%c%s%c%02d%02d%c%c_%s_%s", data->proto,
-        val_to_str_const(data->version, ssl_versions, "00"), (data->sni ? 'd' : 'i'),
-        data->cipher_len, data->ext_len,
-        (wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
-        (wmem_strbuf_get_len(data->alpn) > 0)
-            ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
-            : '0',
-        wmem_list_to_str(wmem_file_scope(), data->sorted_ciphers), wmem_list_to_str(wmem_file_scope(), data->sorted_extensions)
-    );
-    if (wmem_strbuf_get_len(data->signatures) > 0) {
-        wmem_strbuf_append_printf(display, "_%s", wmem_strbuf_get_str(data->signatures));
-    }
-    return (char *)wmem_strbuf_get_str(display);
-}
-
-char *ja4_ro(ja4_info_t *data) {
-    wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
-    wmem_strbuf_append_printf(
-        display, "%c%s%c%02d%02d%c%c_%s_%s", data->proto,
-        val_to_str_const(data->version, ssl_versions, "00"), (data->sni ? 'd' : 'i'),
-        data->cipher_len, data->ext_len,
-        (wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
-        (wmem_strbuf_get_len(data->alpn) > 0)
-            ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
-            : '0',
-        wmem_strbuf_get_str(data->ciphers), wmem_strbuf_get_str(data->extensions)
-    );
-    if (wmem_strbuf_get_len(data->signatures) > 0) {
-        wmem_strbuf_append_printf(display, "_%s", wmem_strbuf_get_str(data->signatures));
-    }
-    return (char *)wmem_strbuf_get_str(display);
 }
 
 char *ja4s_r(ja4_info_t *data) {
