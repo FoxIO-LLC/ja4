@@ -372,11 +372,11 @@ void decode_http_lang(wmem_allocator_t *scope, wmem_strbuf_t **out, const char *
         if ((g_ascii_isspace(val[i])) || (val[i] == '-')) {
             continue;
         }
-        if (g_ascii_isalpha(val[i]) || g_ascii_isdigit(val[i])) {
+        if (g_ascii_isalpha(val[i])) {
             wmem_strbuf_append_c(lang, g_ascii_tolower(val[i]));
             count++;
         } else {
-            // Convert a special character to hex
+            // Convert a non-alpha character to hex
             static const char hex[16] = {'0', '1', '2', '3', '4', '5', '6', '7',
                                          '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
             wmem_strbuf_append_c(lang, hex[(val[i] >> 4) & 0xF]);
