@@ -75,7 +75,9 @@ event ssl_server_hello(c: connection, version: count, record_version: count, pos
   server_random: string, session_id: string, cipher: count, comp_method: count) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   
-  c$fp$server_hello$version =  version;
+  if (!c$fp$server_hello?$version) {
+    c$fp$server_hello$version = version;
+  }
   c$fp$server_hello$cipher = cipher;
 }
 
@@ -95,6 +97,24 @@ event ssl_extension_application_layer_protocol_negotiation(c: connection, is_cli
     # NOTE:  Assumes the server only returns one ALPN, there might be a bypass if multiple are returned and the last
     # or a random one is used
     c$fp$server_hello$alpn = protocols[0];
+  }
+}
+
+# If the supported versions extension is present, find the largest offered version and store it
+event ssl_extension_supported_versions(c: connection, is_client: bool, versions: index_vec) {
+  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
+  if (!is_client) {
+    local largest: count = 0;
+    for (idx in versions) {
+      local val = versions[idx];
+      if (val in FINGERPRINT::TLS_GREASE_TYPES) {
+        next;
+      }
+      if (val > largest) {
+        largest = val;
+      }
+    }
+    c$fp$server_hello$version = largest;
   }
 }
 
