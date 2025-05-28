@@ -73,7 +73,7 @@ If the SNI extension (0x0000) exists, then the destination of the connection is 
 
 ### Number of Ciphers
 
-2 character number of cipher suites, so if there’s 6 cipher suites in the hello packet, then the value should be “06”. If there’s > 99, which there should never be, then output “99”. Remember, ignore GREASE values. They don’t count.
+2 character number of cipher suites, so if there’s 6 cipher suites in the hello packet, then the value should be “06”. If there’s > 99, which there should never be, then output “99”. Remember, ignore GREASE values. They don’t count. Do, however, count other non-cipher values such as SCSV (0x00FF, 0x5600) and Experimental/Reserved values (0xFE00-0xFEFF).
 
 ### Number of Extensions
 
@@ -100,7 +100,7 @@ If the first or last byte of the first ALPN is non-alphanumeric (meaning not `0x
 
 ### Cipher hash
 
-A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE.  
+A 12 character truncated sha256 hash of the list of ciphers sorted in hex order, first 12 characters. The list is created using the 4 character hex values of the ciphers, lower case, comma delimited, ignoring GREASE yet still including other non-cipher values such as SCSV (0x00FF, 0x5600) and Experimental/Reserved values (0xFE00-0xFEFF).  
 Example:
 
 ```txt
