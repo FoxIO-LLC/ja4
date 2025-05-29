@@ -39,6 +39,8 @@ The end result is a fingerprint that looks like:
 
 The program needs to ignore GREASE values anywhere it sees them: (https://datatracker.ietf.org/doc/html/draft-davidben-tls-grease-01#page-5)
 
+All sha256 functions must output in lower case.
+
 ### QUIC and DTLS
 
 “q”, "d" or “t”, denotes whether the hello packet is for QUIC, DTLS, or normal TLS over TCP.  
