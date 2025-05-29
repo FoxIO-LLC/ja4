@@ -106,6 +106,7 @@ This repo includes JA4+ in
 | [Tacticly](https://tactic.ly/) | JA4+ |
 | [Palo Alto Networks](https://www.paloaltonetworks.com/cortex/cortex-xpanse) | JA4+ (under development) |
 | [ngrok](https://ngrok.com/docs/traffic-policy/variables/connection/#conntlsja4_fingerprint) | JA4 |
+| [Vertex Synapse](https://vertex.link/) | JA4 and JA4S |
 
 with more to be announced...  
 
