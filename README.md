@@ -107,6 +107,7 @@ This repo includes JA4+ in
 | [Palo Alto Networks](https://www.paloaltonetworks.com/cortex/cortex-xpanse) | JA4+ (under development) |
 | [ngrok](https://ngrok.com/docs/traffic-policy/variables/connection/#conntlsja4_fingerprint) | JA4 |
 | [Vertex Synapse](https://vertex.link/) | JA4 and JA4S |
+| [Google Cloud Armor](https://cloud.google.com/armor/docs/rules-language-reference#allow_or_deny_traffic_based_on_a_known_ja4_fingerprint) | JA4 |
 
 with more to be announced...  
 
