@@ -108,6 +108,7 @@ This repo includes JA4+ in
 | [ngrok](https://ngrok.com/docs/traffic-policy/variables/connection/#conntlsja4_fingerprint) | JA4 |
 | [Vertex Synapse](https://vertex.link/) | JA4 and JA4S |
 | [Google Cloud Armor](https://cloud.google.com/armor/docs/rules-language-reference#allow_or_deny_traffic_based_on_a_known_ja4_fingerprint) | JA4 |
+| [Fortinet](https://docs.fortinet.com/document/fortindr-cloud/25.2.c/user-guide/393114/event-fields#SSL) | JA4 |
 
 with more to be announced...  
 
