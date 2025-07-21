@@ -192,23 +192,15 @@ event http_message_done(c: connection, is_orig: bool, stat: http_message_stat)
     local ja4h_a = get_ja4h_a(c);
     local ja4h_b_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names_o);
     local ja4h_b_r = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$header_names);
-    local ja4h_b = FINGERPRINT::sha256_12(ja4h_b_r);
+    local ja4h_b = FINGERPRINT::sha256_or_null__12(ja4h_b_r);
     local ja4h_c_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_names);
     local ja4h_c_r = get_ja4h_c(c);  
     local ja4h_c: string;
-    if (ja4h_c_r == "") {
-        ja4h_c = "000000000000";
-    } else {
-        ja4h_c = FINGERPRINT::sha256_12(ja4h_c_r);
-    }
+    ja4h_c = FINGERPRINT::sha256_or_null__12(ja4h_c_r);
     local ja4h_d_o = FINGERPRINT::vector_of_str_to_str(c$fp$http_client$cookie_values);
     local ja4h_d_r = get_ja4h_d(c);
     local ja4h_d: string;
-    if (ja4h_d_r == "") {
-        ja4h_d = "000000000000";
-    } else {
-        ja4h_d = FINGERPRINT::sha256_12(ja4h_d_r);
-    }
+    ja4h_d = FINGERPRINT::sha256_or_null__12(ja4h_d_r);
     local delim =  FINGERPRINT::delimiter;
 
     c$fp$ja4h$uid = c$uid;  

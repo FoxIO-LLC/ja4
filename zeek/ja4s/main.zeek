@@ -142,7 +142,7 @@ function do_ja4s(c: connection) {
 
   c$fp$ja4s$uid = c$uid;  
   c$fp$ja4s$r = ja4s_a + delim + ja4s_b + delim + ja4s_c;
-  c$fp$ja4s$ja4s = ja4s_a + delim + ja4s_b + delim + FINGERPRINT::sha256_12(ja4s_c);
+  c$fp$ja4s$ja4s = ja4s_a + delim + ja4s_b + delim + FINGERPRINT::sha256_or_null__12(ja4s_c);
 
   if(c?$ssl) {
     c$ssl$ja4s = c$fp$ja4s$ja4s;
