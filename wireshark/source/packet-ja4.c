@@ -67,9 +67,9 @@ static int hf_ja4h_raw_original = -1;
 static int hf_ja4l = -1;
 static int hf_ja4ls = -1;
 static int hf_ja4ssh = -1;
-
 static int hf_ja4t = -1;
 static int hf_ja4ts = -1;
+static int hf_ja4d = -1;
 
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy);
 
@@ -90,7 +90,7 @@ const value_string ssl_versions[] = {
     {0x00,   NULL}
 };
 
-#define HFIDS 53
+#define HFIDS 61
 const char *interesting_hfids[HFIDS] = {
     "tls.handshake.type",
     "dtls.handshake.type",
@@ -144,7 +144,15 @@ const char *interesting_hfids[HFIDS] = {
     "frame.time_epoch",
     "frame.time_delta_displayed",
     "ssh.direction",
-    "quic.long.packet_type"
+    "quic.long.packet_type",
+    "dhcp.option.dhcp",
+    "dhcp.option.dhcp_max_message_size",
+    "dhcp.option.type",
+    "dhcp.option.request_list_item",
+    "dhcpv6.msgtype",
+    "dhcpv6.duid.bytes",
+    "dhcpv6.option.type",
+    "dhcpv6.requested_option_code",
 };
 
 typedef struct {
@@ -188,6 +196,14 @@ typedef struct {
     int window_scale;
     int window_size;
 } ja4t_info_t;
+
+typedef struct {
+    gchar proto;
+    guint32 type;
+    guint32 size;
+    wmem_strbuf_t *options;
+    wmem_strbuf_t *request_list;
+} ja4d_info_t;
 
 typedef struct {
     int stream;
@@ -589,6 +605,19 @@ char *ja4t(ja4t_info_t *data, conn_info_t *conn) {
     return (char *)wmem_strbuf_get_str(display);
 }
 
+char *ja4d(ja4d_info_t *data) {
+    wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
+    wmem_strbuf_append_printf(
+        display, "%c-%d-%d_%s_%s",
+        data->proto,
+        data->type,
+        data->size,
+        wmem_strbuf_get_str(data->options),
+        wmem_strbuf_get_str(data->request_list)
+    );
+    return (char *)wmem_strbuf_get_str(display);
+}
+
 static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
     ja4_data->version = 0;
     ja4_data->ext_len = 0;
@@ -704,18 +733,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         return tvb_captured_length(tvb);
 
     ja4_info_t ja4_data;
-    ja4h_info_t ja4h_data;
-
     init_ja4_data(pinfo, &ja4_data);
 
-    // JA4T data
-    ja4t_info_t ja4t_data;
-    ja4t_data.tcp_options = wmem_strbuf_new(wmem_file_scope(), "");
-    ja4t_data.mss_val = 0;
-    ja4t_data.window_scale = 0;
-    ja4t_data.window_size = 0;
-    // End of JA4T data
-
+    ja4h_info_t ja4h_data;
     ja4h_data.version = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.headers = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.lang = wmem_strbuf_new(pinfo->pool, "");
@@ -729,6 +749,19 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     ja4h_data.unsorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.sorted_cookie_fields = wmem_strbuf_new(pinfo->pool, "");
     ja4h_data.sorted_cookie_values = wmem_strbuf_new(pinfo->pool, "");
+
+    ja4t_info_t ja4t_data;
+    ja4t_data.tcp_options = wmem_strbuf_new(wmem_file_scope(), "");
+    ja4t_data.mss_val = 0;
+    ja4t_data.window_scale = 0;
+    ja4t_data.window_size = 0;
+
+    ja4d_info_t ja4d_data;
+    ja4d_data.proto = 0;
+    ja4d_data.type = 0;
+    ja4d_data.size = 0;
+    ja4d_data.options = wmem_strbuf_new(pinfo->pool, "");
+    ja4d_data.request_list = wmem_strbuf_new(pinfo->pool, "");
 
     char *proto = "tls";
     switch (ja4_data.proto) {
@@ -1267,6 +1300,47 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                         wmem_map_new(wmem_file_scope(), g_direct_hash, g_direct_equal);
                 }
             }
+
+            // JA4D processing
+
+            // DHCPv4
+            if (strcmp(field->hfinfo->abbrev, "dhcp.option.dhcp") == 0) {
+                ja4d_data.proto = '4';
+                ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcp.option.dhcp_max_message_size") == 0) {
+                ja4d_data.size = fvalue_get_uinteger(get_value_ptr(field));
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcp.option.type") == 0) {
+                guint val = fvalue_get_uinteger(get_value_ptr(field));
+                if (val != 0) {
+                    wmem_strbuf_append_printf(ja4d_data.options, "%d-", val);
+                }
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcp.option.request_list_item") == 0) {
+                wmem_strbuf_append_printf(
+                    ja4d_data.request_list, "%d-", fvalue_get_uinteger(get_value_ptr(field))
+                );
+            }
+
+            // DHCPv6
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.msgtype") == 0) {
+                ja4d_data.proto = '6';
+                ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.duid.bytes") == 0) {
+                ja4d_data.size = field->length;
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.option.type") == 0) {
+                wmem_strbuf_append_printf(
+                    ja4d_data.options, "%d-", fvalue_get_uinteger(get_value_ptr(field))
+                );
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.requested_option_code") == 0) {
+                wmem_strbuf_append_printf(
+                    ja4d_data.request_list, "%d-", fvalue_get_uinteger(get_value_ptr(field))
+                );
+            }
         }
         g_ptr_array_free(items, TRUE);
     }
@@ -1351,6 +1425,18 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         );
     }
 
+    if (ja4d_data.proto != 0) {
+        wmem_strbuf_truncate(ja4d_data.options, wmem_strbuf_get_len(ja4d_data.options) - 1);
+        wmem_strbuf_truncate(ja4d_data.request_list, wmem_strbuf_get_len(ja4d_data.request_list) - 1);
+        
+        char *dhcp_proto = "dhcp";
+        if (ja4d_data.proto == '6') {
+            dhcp_proto = "dhcpv6";
+        }
+        
+        update_tree_item(tvb, tree, &ja4_tree, hf_ja4d, ja4d(&ja4d_data), dhcp_proto);
+    }
+
     return tvb_reported_length(tvb);
 }
 
@@ -1361,7 +1447,11 @@ static void init_globals(void) {
     GArray *wanted_hfids = g_array_new(FALSE, FALSE, (guint)sizeof(int));
     for (int i = 0; i < HFIDS; i++) {
         int id = proto_registrar_get_id_byname(interesting_hfids[i]);
-        g_array_append_val(wanted_hfids, id);
+        if (id != -1) {
+            g_array_append_val(wanted_hfids, id);
+        } else {
+            g_warning("JA4: Unknown field: %s", interesting_hfids[i]);
+}
     }
 
     set_postdissector_wanted_hfids(ja4_handle, wanted_hfids);
@@ -1390,7 +1480,8 @@ void proto_register_ja4(void) {
         {&hf_ja4ls,             {"JA4LS", "ja4.ja4ls", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}    },
         {&hf_ja4ssh,            {"JA4SSH", "ja4.ja4ssh", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
         {&hf_ja4t,              {"JA4T", "ja4.ja4t", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
-        {&hf_ja4ts,             {"JA4T-S", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   }
+        {&hf_ja4ts,             {"JA4T-S", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   },
+        {&hf_ja4d,              {"JA4D", "ja4.ja4d", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      }
     };
 
     static gint *ett[] = {
