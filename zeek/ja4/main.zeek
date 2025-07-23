@@ -120,12 +120,12 @@ function make_a(c: connection): string {
 
 # Produce the JA4_b hash value
 function b_hash(input: vector of count): string {
-  return FINGERPRINT::sha256_12(FINGERPRINT::vector_of_count_to_str(input));
+  return FINGERPRINT::sha256_or_null__12(FINGERPRINT::vector_of_count_to_str(input));
 }
 
 # Produce the JA4_c hash value
 function c_hash(input: string): string {  
-  return FINGERPRINT::sha256_12(input);
+  return FINGERPRINT::sha256_or_null__12(input);
 }
 
 function do_ja4(c: connection) {

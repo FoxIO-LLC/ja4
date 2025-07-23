@@ -12,8 +12,8 @@ export {
     # Sort a vector of count by the count values
     global order_vector_of_count: function (input: vector of count): vector of count;
 
-    # Produce the hash value
-    global sha256_12: function (input: string): string;
+    # Produce the hash value (or 000000000000 for empty string)
+    global sha256_or_null__12: function (input: string): string;
 
 }
 
@@ -56,8 +56,11 @@ function order_vector_of_count(input: vector of count): vector of count {
     return outvec;
 }
 
-# Produce the hash value
-function sha256_12(input: string): string {
+# Produce the hash value (or 000000000000 for empty string)
+function sha256_or_null__12(input: string): string {
+    if (input == "") {
+        return "000000000000";
+    }
     local sha256_object = sha256_hash_init();
     sha256_hash_update(sha256_object, input);
     return sha256_hash_finish(sha256_object)[:12];

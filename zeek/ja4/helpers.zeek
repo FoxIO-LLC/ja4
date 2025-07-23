@@ -24,6 +24,8 @@ export {
 
     # The sni values present in the ClientHello
     sni: vector of string &optional;
+
+    is_complete: bool &default=F;
   };
 }
 
@@ -50,6 +52,7 @@ function make_quadword(byte1: count, byte2: count): count {
 event ssl_client_hello(c: connection, version: count, record_version: count, possible_ts: time,
  client_random: string, session_id: string, ciphers: index_vec, comp_methods: index_vec) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
+  if(c$fp$client_hello$is_complete) { return; }
   local no_grease_ciphers: index_vec = vector();
   for (idx in ciphers) {
     local val = ciphers[idx];
@@ -71,6 +74,7 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
   }
   c$fp$client_hello$cipher_suites = no_grease_ciphers;
   c$fp$client_hello$compression_methods = no_grease_comp_methods;
+  c$fp$client_hello$is_complete = T;
 }
 
 # For each extension, ignoring GREASE, build up an array of code in the order they appear
@@ -81,6 +85,7 @@ event ssl_extension(c: connection, is_client: bool, code: count, val: string) {
     if (!c$fp?$client_hello) {
       c$fp$client_hello = [];
     }
+    if(c$fp$client_hello$is_complete) { return; }
     c$fp$client_hello$extension_codes += code;
   }
 }
@@ -89,6 +94,7 @@ event ssl_extension(c: connection, is_client: bool, code: count, val: string) {
 event ssl_extension_application_layer_protocol_negotiation(c: connection, is_client: bool, protocols: string_vec) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
+    if(c$fp$client_hello$is_complete) { return; }
     if (!c$fp$client_hello?$alpns) {
       c$fp$client_hello$alpns = vector();
     }
@@ -100,6 +106,7 @@ event ssl_extension_application_layer_protocol_negotiation(c: connection, is_cli
 event ssl_extension_supported_versions(c: connection, is_client: bool, versions: index_vec) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
+    if(c$fp$client_hello$is_complete) { return; }
     local largest: count = 0;
     for (idx in versions) {
       local val = versions[idx];
@@ -118,6 +125,7 @@ event ssl_extension_supported_versions(c: connection, is_client: bool, versions:
 event ssl_extension_signature_algorithm(c: connection, is_client: bool, signature_algorithms: signature_and_hashalgorithm_vec) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
+    if(c$fp$client_hello$is_complete) { return; }
     for (idx in signature_algorithms) {
       local val = signature_algorithms[idx];
       local ha: count = val$HashAlgorithm;
@@ -131,6 +139,7 @@ event ssl_extension_signature_algorithm(c: connection, is_client: bool, signatur
 event ssl_extension_server_name(c: connection, is_client: bool, names: string_vec) {
   if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
   if (is_client) {
+    if(c$fp$client_hello$is_complete) { return; }
     c$fp$client_hello$sni = names;
   }
 }
