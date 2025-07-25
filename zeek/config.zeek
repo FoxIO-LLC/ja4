@@ -17,6 +17,7 @@ export {
   option JA4L_enabled:   bool = T;
   
   option JA4SSH_enabled: bool = T;
+  option JA4SSH_max_fingerprints: count = 0; # Maximum number of fingerprints to produce, 0 means no maximum.
 
   option JA4T_enabled: bool = T;
   option JA4TS_enabled: bool = T;
