@@ -200,7 +200,7 @@ typedef struct {
 typedef struct {
     gchar proto;
     guint32 type;
-    guint32 size;
+    wmem_strbuf_t *size;
     wmem_strbuf_t *options;
     wmem_strbuf_t *request_list;
 } ja4d_info_t;
@@ -607,11 +607,15 @@ char *ja4t(ja4t_info_t *data, conn_info_t *conn) {
 
 char *ja4d(ja4d_info_t *data) {
     wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
+    if (wmem_strbuf_get_len(data->size) == 0)
+        wmem_strbuf_append_printf(data->size, "00");
+    if (wmem_strbuf_get_len(data->request_list) == 0)
+        wmem_strbuf_append_printf(data->request_list, "00");
     wmem_strbuf_append_printf(
-        display, "%c-%d-%d_%s_%s",
+        display, "%c-%d-%s_%s_%s",
         data->proto,
         data->type,
-        data->size,
+        wmem_strbuf_get_str(data->size),
         wmem_strbuf_get_str(data->options),
         wmem_strbuf_get_str(data->request_list)
     );
@@ -701,6 +705,7 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy _U_) {
     guint32 handshake_type = 0;
     gboolean alpn_visited = false;
+    gboolean dhcpv6_option_type_1_exists = false;
     proto_tree *ja4_tree = NULL;
 
     // For JA4C/S, record signature algorithms only when extension type == 13
@@ -759,7 +764,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     ja4d_info_t ja4d_data;
     ja4d_data.proto = 0;
     ja4d_data.type = 0;
-    ja4d_data.size = 0;
+    ja4d_data.size = wmem_strbuf_new(pinfo->pool, "");
     ja4d_data.options = wmem_strbuf_new(pinfo->pool, "");
     ja4d_data.request_list = wmem_strbuf_new(pinfo->pool, "");
 
@@ -1309,11 +1314,13 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
             }
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.dhcp_max_message_size") == 0) {
-                ja4d_data.size = fvalue_get_uinteger(get_value_ptr(field));
+                wmem_strbuf_append_printf(
+                    ja4d_data.size, "%d", fvalue_get_uinteger(get_value_ptr(field))
+                );
             }
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.type") == 0) {
                 guint val = fvalue_get_uinteger(get_value_ptr(field));
-                if (val != 0) {
+                if (val != 0 && val != 53) {
                     wmem_strbuf_append_printf(ja4d_data.options, "%d-", val);
                 }
             }
@@ -1328,12 +1335,19 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 ja4d_data.proto = '6';
                 ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
             }
-            if (strcmp(field->hfinfo->abbrev, "dhcpv6.duid.bytes") == 0) {
-                ja4d_data.size = field->length;
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.duid.bytes") == 0 &&
+                wmem_strbuf_get_len(ja4d_data.size) == 0 &&
+                dhcpv6_option_type_1_exists == true) {
+                wmem_strbuf_append_printf(
+                    ja4d_data.size, "%d", field->length
+                );
             }
             if (strcmp(field->hfinfo->abbrev, "dhcpv6.option.type") == 0) {
+                guint val = fvalue_get_uinteger(get_value_ptr(field));
+                if (val == 1)
+                    dhcpv6_option_type_1_exists = true;
                 wmem_strbuf_append_printf(
-                    ja4d_data.options, "%d-", fvalue_get_uinteger(get_value_ptr(field))
+                    ja4d_data.options, "%d-", val
                 );
             }
             if (strcmp(field->hfinfo->abbrev, "dhcpv6.requested_option_code") == 0) {
