@@ -609,6 +609,8 @@ char *ja4d(ja4d_info_t *data) {
     wmem_strbuf_t *display = wmem_strbuf_new(wmem_file_scope(), "");
     if (wmem_strbuf_get_len(data->size) == 0)
         wmem_strbuf_append_printf(data->size, "00");
+    if (wmem_strbuf_get_len(data->options) == 0)
+        wmem_strbuf_append_printf(data->options, "00");
     if (wmem_strbuf_get_len(data->request_list) == 0)
         wmem_strbuf_append_printf(data->request_list, "00");
     wmem_strbuf_append_printf(
