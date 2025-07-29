@@ -111,6 +111,7 @@ This repo includes JA4+ in
 | [Fortinet](https://docs.fortinet.com/document/fortindr-cloud/25.2.c/user-guide/393114/event-fields#SSL) | JA4 |
 | [AppOmni](https://appomni.com/) | JA4+ |
 | [IntelliGenesis](https://intelligenesisllc.com/) | JA4+ |
+| [HAProxy](https://www.haproxy.org/) | [JA4](https://github.com/O-X-L/haproxy-ja4-fingerprint) and [JA4H](https://github.com/O-X-L/haproxy-ja4h-fingerprint) plugins by [OXL](https://www.o-x-l.com/) |
 
 with more to be announced...  
 
