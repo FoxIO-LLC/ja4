@@ -108,7 +108,6 @@ You can use the `tshark` CLI tool as well. Refer to [Installing tshark](../READM
    ```txt
    C:\Program Files\Wireshark\plugins\4.4\epan\
    ```
-   *(Run the command prompt as Administrator if necessary.)*
 2. Start Wireshark.
 
 ## Usage
@@ -162,13 +161,13 @@ JA4+ fields are found under `ja4.*` in Wireshark. These fields represent differe
 |--------------|--------------|
 | **JA4** (TLS Client Hello) | `tls.handshake.ja4` |
 | **JA4S** (TLS Server Hello) | `ja4.ja4s` |
-| **JA4H** (TLS Handshake) | `ja4.ja4h` |
-| **JA4L** (TLS Legacy) | `ja4.ja4l` |
-| **JA4LS** (TLS Legacy Server Hello) | `ja4.ja4ls` |
-| **JA4X** (Extended JA4) | `ja4.ja4x` |
-| **JA4SSH** (SSH Fingerprint) | `ja4.ja4ssh` |
-| **JA4T** (TLS Traffic Fingerprint) | `ja4.ja4t` |
-| **JA4TS** (TLS Traffic Server) | `ja4.ja4ts` |
+| **JA4H** (HTTP Client) | `ja4.ja4h` |
+| **JA4L** (Latency Client) | `ja4.ja4l` |
+| **JA4LS** (Latency Server) | `ja4.ja4ls` |
+| **JA4X** (X509 Certificate) | `ja4.ja4x` |
+| **JA4SSH** (SSH Traffic) | `ja4.ja4ssh` |
+| **JA4T** (TCP Client) | `ja4.ja4t` |
+| **JA4TS** (TCP Server) | `ja4.ja4ts` |
 
 ### Adding JA4+ Columns in Wireshark
 
