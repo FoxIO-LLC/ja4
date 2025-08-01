@@ -112,6 +112,7 @@ This repo includes JA4+ in
 | [AppOmni](https://appomni.com/) | JA4+ |
 | [IntelliGenesis](https://intelligenesisllc.com/) | JA4+ |
 | [HAProxy](https://www.haproxy.org/) | [JA4](https://github.com/O-X-L/haproxy-ja4-fingerprint) and [JA4H](https://github.com/O-X-L/haproxy-ja4h-fingerprint) plugins by [OXL](https://www.o-x-l.com/) |
+| [SentinelOne](https://www.sentinelone.com/) | JA4 |
 
 with more to be announced...  
 
