@@ -1,0 +1,62 @@
+[
+  {
+    "_index": "packets-2004-12-05",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4d": [
+          "4-1-00_61-50-55_1-3-6-42"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2004-12-05",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4d": [
+          "4-2-00_1-58-59-51-54_00"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2004-12-05",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "3"
+        ],
+        "ja4.ja4d": [
+          "4-3-00_61-50-54-55_1-3-6-42"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2004-12-05",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "4"
+        ],
+        "ja4.ja4d": [
+          "4-5-00_58-59-51-54-1_00"
+        ]
+      }
+    }
+  }
+]
