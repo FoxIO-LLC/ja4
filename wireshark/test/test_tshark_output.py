@@ -38,7 +38,8 @@ def test_tshark_output_matches_expected(pcap_file):
             "-e", "ja4.ja4ls",
             "-e", "ja4.ja4ssh",
             "-e", "ja4.ja4t",
-            "-e", "ja4.ja4ts"
+            "-e", "ja4.ja4ts",
+            "-e", "ja4.ja4d"
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
