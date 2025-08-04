@@ -63,7 +63,7 @@ impl<'a> Packet<'a> {
     }
 
     /// Returns an iterator over the [`Proto`]cols of this packet.
-    pub(crate) fn iter(&self) -> impl Iterator<Item = Proto> {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = Proto<'_>> {
         self.inner.iter().map(|layer| Proto {
             inner: layer,
             packet_num: self.num,
