@@ -15,7 +15,9 @@ FIELDS="-Y ja4 -T json \
 -e ja4.ja4h_r \
 -e ja4.ja4h_ro \
 -e ja4.ja4l \
+-e ja4.ja4l_delta \
 -e ja4.ja4ls \
+-e ja4.ja4ls_delta \
 -e ja4.ja4ssh \
 -e ja4.ja4t \
 -e ja4.ja4ts \

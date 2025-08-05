@@ -65,7 +65,9 @@ static int hf_ja4h = -1;
 static int hf_ja4h_raw = -1;
 static int hf_ja4h_raw_original = -1;
 static int hf_ja4l = -1;
+static int hf_ja4l_delta = -1;
 static int hf_ja4ls = -1;
+static int hf_ja4ls_delta = -1;
 static int hf_ja4ssh = -1;
 static int hf_ja4t = -1;
 static int hf_ja4ts = -1;
@@ -1190,6 +1192,15 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                         wmem_strbuf_finalize(display), "tcp"
                                     );
 
+                                    wmem_strbuf_t *display_delta = wmem_strbuf_new(pinfo->pool, "");
+                                    wmem_strbuf_append_printf(
+                                        display_delta, "%.1f", (double)latency2.nsecs / (double)latency.nsecs
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4ls_delta,
+                                        wmem_strbuf_finalize(display_delta), "tcp"
+                                    );
+
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
                                     wmem_strbuf_append_printf(
@@ -1199,6 +1210,15 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     update_tree_item(
                                         tvb, tree, &ja4_tree, hf_ja4l,
                                         wmem_strbuf_finalize(display2), "tcp"
+                                    );
+
+                                    wmem_strbuf_t *display2_delta = wmem_strbuf_new(pinfo->pool, "");
+                                    wmem_strbuf_append_printf(
+                                        display2_delta, "%.1f", (double)latency2.nsecs / (double)latency.nsecs
+                                    );
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4l_delta,
+                                        wmem_strbuf_finalize(display2_delta), "tcp"
                                     );
                                 }
                             }
@@ -1489,7 +1509,11 @@ void proto_register_ja4(void) {
         {&hf_ja4h_raw_original,
          {"JA4H Raw (Original)", "ja4.ja4h_ro", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}           },
         {&hf_ja4l,              {"JA4L", "ja4.ja4l", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
+        {&hf_ja4l_delta,
+         {"JA4L Delta", "ja4.ja4l_delta", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}                 },
         {&hf_ja4ls,             {"JA4LS", "ja4.ja4ls", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}    },
+        {&hf_ja4ls_delta,
+         {"JA4LS Delta", "ja4.ja4ls_delta", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}               },
         {&hf_ja4ssh,            {"JA4SSH", "ja4.ja4ssh", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
         {&hf_ja4t,              {"JA4T", "ja4.ja4t", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
         {&hf_ja4ts,             {"JA4T-S", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   },
