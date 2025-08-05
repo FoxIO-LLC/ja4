@@ -18,7 +18,8 @@ FIELDS="-Y ja4 -T json \
 -e ja4.ja4ls \
 -e ja4.ja4ssh \
 -e ja4.ja4t \
--e ja4.ja4ts"
+-e ja4.ja4ts \
+-e ja4.ja4d"
 
 mkdir -p "$OUT_DIR"
 
