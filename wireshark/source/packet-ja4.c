@@ -65,7 +65,9 @@ static int hf_ja4h = -1;
 static int hf_ja4h_raw = -1;
 static int hf_ja4h_raw_original = -1;
 static int hf_ja4l = -1;
+static int hf_ja4l_delta = -1;
 static int hf_ja4ls = -1;
+static int hf_ja4ls_delta = -1;
 static int hf_ja4ssh = -1;
 static int hf_ja4t = -1;
 static int hf_ja4ts = -1;
@@ -282,7 +284,7 @@ proto_tree *locate_tree(proto_tree *tree, const char *s) {
 
 void update_tree_item(
     tvbuff_t *tvb, proto_tree *tree, proto_tree **ja4_tree, int field,
-    const char *str, const char *insert_at
+    const void *data, const char *insert_at
 ) {
 
     // We get to the right part of the tree using locate_tree and insert the
@@ -300,7 +302,12 @@ void update_tree_item(
         *ja4_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
     }
 
-    proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, str);
+    enum ftenum type = proto_registrar_get_ftype(field);
+    if (type == FT_STRING) {
+        proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, (const char *)data);
+    } else if (type == FT_DOUBLE) {
+        proto_tree_add_double(*ja4_tree, field, NULL, 0, 0, *(const double *)data);
+    }
 }
 
 void update_mode(int pkt_len, wmem_map_t *hash_table) {
@@ -1190,6 +1197,13 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                         wmem_strbuf_finalize(display), "tcp"
                                     );
 
+                                    double delta = (double)latency2.nsecs / (double)latency.nsecs;
+                                    delta = round(delta * 10.0) / 10.0;
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4ls_delta,
+                                        &delta, "tcp"
+                                    );
+
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
                                     wmem_strbuf_append_printf(
@@ -1199,6 +1213,13 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     update_tree_item(
                                         tvb, tree, &ja4_tree, hf_ja4l,
                                         wmem_strbuf_finalize(display2), "tcp"
+                                    );
+
+                                    double delta2 = (double)latency2.nsecs / (double)latency.nsecs;
+                                    delta2 = round(delta2 * 10.0) / 10.0;
+                                    update_tree_item(
+                                        tvb, tree, &ja4_tree, hf_ja4l_delta,
+                                        &delta2, "tcp"
                                     );
                                 }
                             }
@@ -1489,7 +1510,11 @@ void proto_register_ja4(void) {
         {&hf_ja4h_raw_original,
          {"JA4H Raw (Original)", "ja4.ja4h_ro", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}           },
         {&hf_ja4l,              {"JA4L", "ja4.ja4l", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
+        {&hf_ja4l_delta,
+         {"JA4L Delta", "ja4.ja4l_delta", FT_DOUBLE, BASE_NONE, NULL, 0x0, NULL, HFILL}                 },
         {&hf_ja4ls,             {"JA4LS", "ja4.ja4ls", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}    },
+        {&hf_ja4ls_delta,
+         {"JA4LS Delta", "ja4.ja4ls_delta", FT_DOUBLE, BASE_NONE, NULL, 0x0, NULL, HFILL}               },
         {&hf_ja4ssh,            {"JA4SSH", "ja4.ja4ssh", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
         {&hf_ja4t,              {"JA4T", "ja4.ja4t", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
         {&hf_ja4ts,             {"JA4T-S", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   },

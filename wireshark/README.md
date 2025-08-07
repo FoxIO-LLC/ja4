@@ -168,6 +168,7 @@ JA4+ fields are found under `ja4.*` in Wireshark. These fields represent differe
 | **JA4SSH** (SSH Traffic) | `ja4.ja4ssh` |
 | **JA4T** (TCP Client) | `ja4.ja4t` |
 | **JA4TS** (TCP Server) | `ja4.ja4ts` |
+| **JA4D** (DHCP) | `ja4.ja4d` |
 
 ### Adding JA4+ Columns in Wireshark
 
@@ -202,6 +203,7 @@ Alternatively, you can manually modify Wireshark's **preferences file** using a 
    "JA4LS", "%Cus:ja4.ja4ls:0:R",
    "JA4X", "%Cus:ja4.ja4x:0:R",
    "JA4SSH", "%Cus:ja4.ja4ssh:0:R"
+   "JA4D", "%Cus:ja4.ja4d:0:R"
    ```
 
 3. Save the file and restart Wireshark.
