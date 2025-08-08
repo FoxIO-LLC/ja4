@@ -72,7 +72,7 @@ function get_mode(vec: vector of count): count {
 }
 
 function do_ja4ssh(c: connection) {
-  ja4ssh_fingerprints++;
+  ++ja4ssh_fingerprints;
   c$fp$ja4ssh$ja4ssh = fmt("c%ds%d_c%ds%d_c%ds%d", 
       get_mode(c$fp$ja4ssh$orig_pack_len),
       get_mode(c$fp$ja4ssh$resp_pack_len),
