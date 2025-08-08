@@ -103,7 +103,7 @@ event new_connection(c: connection) {
 }
 
 event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, is_orig: bool) {
-    if (JA4SSH_max_fingerprints != 0 && ja4ssh_fingerprints == JA4SSH_max_fingerprints) {
+    if (FINGERPRINT::JA4SSH_max_fingerprints != 0 && ja4ssh_fingerprints == FINGERPRINT::JA4SSH_max_fingerprints) {
         return;
     }
     if (!c$fp$ja4ssh$is_ssh && threshold > 5) {   # TODO: does this need to be configurable?
