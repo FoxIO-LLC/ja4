@@ -151,7 +151,7 @@ event ssh_server_version(c: connection, version: string) {
 }
 
 event connection_state_remove(c: connection) {
-  if(c?$fp && c$fp?$ja4ssh && c$fp$ja4ssh$is_ssh) {
+  if(c?$fp && c$fp?$ja4ssh && c$fp$ja4ssh$is_ssh && (FINGERPRINT::JA4SSH_max_fingerprints == 0 || ja4ssh_fingerprints < FINGERPRINT::JA4SSH_max_fingerprints)) {
     do_ja4ssh(c);
   }
 }
