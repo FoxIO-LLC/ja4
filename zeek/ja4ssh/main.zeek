@@ -27,14 +27,14 @@ export {
 
   option ja4_ssh_packet_count = 200;
 
-  global ja4ssh_fingerprints: count = 0;
-
   # Logging boilerplate
   redef enum Log::ID += { LOG };
   global log_fingerprint_ja4ssh: event(rec: Info);
   global log_policy: Log::PolicyHook;
 
 }
+
+global ja4ssh_fingerprints: count = 0;
 
 redef record FINGERPRINT::Info += {
   ja4ssh: FINGERPRINT::JA4SSH::Info &default=Info();
