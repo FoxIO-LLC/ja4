@@ -1,9 +1,0 @@
-name: Rust - Check (old)
-
-on: [push, pull_request]
-
-jobs:
-  noop:
-    runs-on: ubuntu-latest
-    steps:
-      - run: ":"   # bash no-op
