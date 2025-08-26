@@ -1,4 +1,4 @@
-name: Wireshark Plugin Test
+name: Wireshark - Test
 
 on:
   push:

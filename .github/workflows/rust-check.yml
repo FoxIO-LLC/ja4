@@ -3,7 +3,7 @@
 #
 # [screencast]: https://www.youtube.com/watch?v=xUH-4y92jPg
 
-name: check
+name: Rust - Check
 
 permissions:
   contents: read

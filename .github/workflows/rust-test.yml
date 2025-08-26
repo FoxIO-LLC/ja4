@@ -3,7 +3,7 @@
 #
 # [screencast]: https://www.youtube.com/watch?v=xUH-4y92jPg
 
-name: test
+name: Rust - Test
 
 permissions:
   contents: read
