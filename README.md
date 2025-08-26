@@ -76,13 +76,12 @@ This repo includes JA4+ in
 | [GreyNoise](https://www.greynoise.io/) | JA4+ |
 | [Hunt](https://hunt.io/) | JA4+ |
 | [Driftnet](https://driftnet.io/) | JA4+ |
-| [DarkSail](https://darksail.ai) | JA4+ |
 | [GoLang](https://github.com/driftnet-io/go-ja4x) | JA4X |
 | [nzyme](https://www.nzyme.org/) | JA4+ (under development) |
 | [Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released) | JA4+ (under development) |
 | [Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner) | JA4+ (under development) |
-| [NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module) | JA4+ (under development) |
-| [F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+ (via iRules) |
+| [NGINX](https://github.com/FoxIO-LLC/ja4-nginx-module) | JA4+ |
+| [F5 BIG-IP](https://github.com/f5devcentral/f5-ja4) | JA4+ |
 | [nfdump](https://github.com/phaag/nfdump) | JA4+ |
 | [ntop's ntopng](https://github.com/ntop/ntopng) | JA4+ |
 | [ntop's nDPI](https://github.com/ntop/nDPI) | JA4 |
@@ -91,7 +90,7 @@ This repo includes JA4+ in
 | [Censys](https://censys.com/) | JA4+ |
 | [Exploit.org's Netryx](https://github.com/OWASP/www-project-netryx) | JA4 and JA4H |
 | [Cloudflare](https://developers.cloudflare.com/bots/concepts/ja3-ja4-fingerprint/) | JA4 |
-| [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4 |
+| [Fastly](https://www.fastly.com/documentation/reference/vcl/variables/client-connection/tls-client-ja4/) | JA4+ (ask for it) |
 | [MISP](https://www.misp-project.org/) | JA4+ |
 | [OCSF](https://schema.ocsf.io/1.3.0-dev/objects/ja4_fingerprint?extensions=) | JA4+ |
 | [Vercel](https://vercel.com/docs/security/tls-fingerprints) | JA4 |
@@ -101,10 +100,10 @@ This repo includes JA4+ in
 | [ELLIO](https://ellio.tech/) | JA4+ |
 | [Webscout](https://webscout.io/) | JA4+ |
 | [Rama](https://github.com/plabayo/rama) | JA4 and JA4H |
-| [Vectra](https://www.vectra.ai/) | JA4+ (under development) |
+| [Vectra](https://www.vectra.ai/) | JA4+ |
 | [AWS WAF](https://aws.amazon.com/about-aws/whats-new/2025/03/aws-waf-ja4-fingerprinting-aggregation-ja3-ja4-fingerprints-rate-based-rules/) | JA4 |
 | [Tacticly](https://tactic.ly/) | JA4+ |
-| [Palo Alto Networks](https://www.paloaltonetworks.com/cortex/cortex-xpanse) | JA4+ (under development) |
+| [Palo Alto Networks](https://www.paloaltonetworks.com/cortex/cortex-xpanse) | JA4+ |
 | [ngrok](https://ngrok.com/docs/traffic-policy/variables/connection/#conntlsja4_fingerprint) | JA4 |
 | [Vertex Synapse](https://vertex.link/) | JA4 and JA4S |
 | [Google Cloud Armor](https://cloud.google.com/armor/docs/rules-language-reference#allow_or_deny_traffic_based_on_a_known_ja4_fingerprint) | JA4 |
@@ -113,6 +112,7 @@ This repo includes JA4+ in
 | [IntelliGenesis](https://intelligenesisllc.com/) | JA4+ |
 | [HAProxy](https://www.haproxy.org/) | [JA4](https://github.com/O-X-L/haproxy-ja4-fingerprint) and [JA4H](https://github.com/O-X-L/haproxy-ja4h-fingerprint) plugins by [OXL](https://www.o-x-l.com/) |
 | [SentinelOne](https://www.sentinelone.com/) | JA4 |
+| [Akamai](https://techdocs.akamai.com/application-security/reference/get-ja4-fingerprint-settings) | JA4 |
 
 with more to be announced...  
 
