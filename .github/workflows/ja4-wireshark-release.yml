@@ -1,0 +1,9 @@
+name: Wireshark - Release (old)
+
+on: [push, pull_request]
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ":"   # bash no-op
