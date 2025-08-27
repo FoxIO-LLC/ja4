@@ -113,6 +113,7 @@ This repo includes JA4+ in
 | [HAProxy](https://www.haproxy.org/) | [JA4](https://github.com/O-X-L/haproxy-ja4-fingerprint) and [JA4H](https://github.com/O-X-L/haproxy-ja4h-fingerprint) plugins by [OXL](https://www.o-x-l.com/) |
 | [SentinelOne](https://www.sentinelone.com/) | JA4 |
 | [Akamai](https://techdocs.akamai.com/application-security/reference/get-ja4-fingerprint-settings) | JA4 |
+| [Alibaba](https://www.alibabacloud.com/help/en/anti-ddos/anti-ddos-pro-and-premium/user-guide/fields-included-in-full-logs) | JA4 |
 
 with more to be announced...  
 
