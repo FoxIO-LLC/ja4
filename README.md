@@ -114,8 +114,9 @@ This repo includes JA4+ in
 | [SentinelOne](https://www.sentinelone.com/) | JA4 |
 | [Akamai](https://techdocs.akamai.com/application-security/reference/get-ja4-fingerprint-settings) | JA4 |
 | [Alibaba Cloud](https://www.alibabacloud.com/help/en/anti-ddos/anti-ddos-pro-and-premium/user-guide/fields-included-in-full-logs) | JA4 |
-| [Huawwei Cloud](https://support.huaweicloud.com/intl/en-us/usermanual-waf/waf_01_3157.html) | JA4 |
+| [Huawei Cloud](https://support.huaweicloud.com/intl/en-us/usermanual-waf/waf_01_3157.html) | JA4 |
 | [Google Cloud LBs](https://cloud.google.com/release-notes#July_28_2025) | JA4 |
+| [eSentire](https://www.esentire.com/) | JA4+ |
 
 with more to be announced...  
 
