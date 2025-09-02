@@ -1,17 +1,15 @@
 name: Rust - Release
 
 on:
+  push:
+    tags:
+      - rust-v[0-9]+.*
   workflow_dispatch:
     inputs:
       tag:
         description: 'Tag to build release binaries for'
         required: true
         type: string
-  push:
-    tags:
-      - v[0-9]+.*
-  release:
-    types: [created]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -58,7 +56,7 @@ jobs:
       shell: bash
       run: |
         is_release=false
-        if [[ $GITHUB_REF =~ ^refs/tags/v[0-9].* ]]; then
+        if [[ $GITHUB_REF =~ ^refs/tags/rust-v[0-9].* ]]; then
             is_release=true
         fi
         echo "is_release=$is_release" >> $GITHUB_OUTPUT
