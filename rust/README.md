@@ -23,6 +23,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
     - [`ja4x` output](#ja4x-output)
   - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Dependencies
@@ -185,6 +186,15 @@ Run automated tests with:
 
 ```sh
 cargo test
+```
+
+## Creating a Release
+
+To create a Rust release, push a tag starting with `rust-`, for example:
+
+```sh
+git tag rust-v0.18.5
+git push origin rust-v0.18.5
 ```
 
 ## License

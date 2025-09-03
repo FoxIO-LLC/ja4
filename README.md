@@ -223,16 +223,16 @@ JA4+ uses GitHub Actions to automate releases for its Rust, Python, Wireshark, a
 The following workflows are available:
 
 - **Rust Release:**  
-  Push a tag starting with `rust-v`, e.g., `rust-v0.18.5`, to trigger a release of the Rust binaries. The workflow will build and upload release assets automatically.
+  Push a tag starting with `rust-`, e.g., `rust-v0.18.5`, to trigger a release of the Rust binaries. The workflow will build and upload release assets automatically.
 
 - **Python Release:**  
-  Push a tag starting with `python-v`, e.g., `python-v0.1.0`, to trigger a release of the Python implementation. The workflow will create a tarball of the `python/` directory and publish it as a release asset.
+  Push a tag starting with `python-`, e.g., `python-v0.1.0`, to trigger a release of the Python implementation. The workflow will create a tarball of the `python/` directory and publish it as a release asset.
 
 - **Wireshark Plugin Release:**  
-  Push a tag starting with `wireshark-v`, e.g., `wireshark-v2025.09.03`, to trigger a release of the Wireshark plugin binaries for all supported platforms.
+  Push a tag starting with `wireshark-`, e.g., `wireshark-v2025.09.03`, to trigger a release of the Wireshark plugin binaries for all supported platforms.
 
 - **Zeek Release:**  
-  Push a tag that is a pure semantic version (e.g., `1.2.3`), with no prefix, to trigger a Zeek release. This will automatically create a release on [packages.zeek.org](https://packages.zeek.org/).
+  Push a tag that is a pure semantic version (e.g., `v1.2.3`), with no prefix, to trigger a Zeek release. This will automatically create a release on [packages.zeek.org](https://packages.zeek.org/).
 
 ### How to Create a Release
 
@@ -240,12 +240,12 @@ The following workflows are available:
 
 2. Create and push a tag for the component you want to release:
    - For Rust, Python, or Wireshark, use the appropriate prefix (e.g., `rust-v0.18.5`, `python-v0.1.0`, `wireshark-v2025.09.03`).
-   - For Zeek, use a pure semver tag (e.g., `1.2.3`).
+   - For Zeek, use a pure semver tag (e.g., `v1.2.3`).
 
    Example:
    ```sh
-   git tag 1.2.3
-   git push origin 1.2.3
+   git tag v1.2.3
+   git push origin v1.2.3
    ```
    (For Zeek)
 

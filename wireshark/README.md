@@ -31,6 +31,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
     - [Usage in TShark](#usage-in-tshark)
 - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Binaries
@@ -265,6 +266,15 @@ Example usage:
 cd wireshark/test
 ./generate-output-files.sh
 pytest
+```
+
+## Creating a Release
+
+To create a Wireshark plugin release, push a tag starting with `wireshark-`, for example:
+
+```sh
+git tag wireshark-v2025.09.03
+git push origin wireshark-v2025.09.03
 ```
 
 ## License

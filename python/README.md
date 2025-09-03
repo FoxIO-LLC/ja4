@@ -25,6 +25,7 @@ For more details on JA4+ and its implementations in other open-source tools (Rus
     - [JSON Output Format](#json-output-format)
   - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Dependencies
@@ -230,6 +231,15 @@ For details on generating an SSL key log file, see:
 ## Testing
 
 Sample PCAP files for testing `ja4.py` are available in the [`pcap`](../pcap/) directory. These files cover various network protocols and scenarios, including TLS, QUIC, HTTP, SSH, and edge cases. They can be used to verify expected output and assess fingerprinting accuracy.
+
+## Creating a Release
+
+To create a Python release, push a tag starting with `python-`, for example:
+
+```sh
+git tag python-v0.1.0
+git push origin python-v0.1.0
+```
 
 ## License
 
