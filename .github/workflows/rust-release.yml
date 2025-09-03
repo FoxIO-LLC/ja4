@@ -30,6 +30,7 @@ jobs:
           changelog: rust/CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
           allow-missing-changelog: true
+          prefix: rust-
 
   build-and-upload:
     name: ${{ matrix.job.target }}
