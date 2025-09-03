@@ -39,7 +39,13 @@ Download the latest JA4+ Wireshark plugin binaries from the [Releases](https://g
 
 ### Release Assets
 
-Plugin binaries are provided as dynamic libraries named according to the target platform. For example, `ja4.so.linux` for Linux or `ja4.dll` for Windows. Choose the appropriate file for your system.
+Release assets are named as follows:
+
+- `ja4.so.linux` (Linux)
+- `ja4.so.macos` (macOS)
+- `ja4.dll` (Windows)
+
+These files are attached to a release named like `wireshark-vX.Y.Z`. Choose the appropriate file for your system.
 
 ### Previous Wireshark Versions
 

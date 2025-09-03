@@ -15,6 +15,7 @@ For more details on JA4+ and its implementations in other open-source tools (Rus
     - [Linux](#linux-1)
     - [macOS](#macos-1)
     - [Windows](#windows-1)
+- [Release Assets](#release-assets)
 - [Running JA4+](#running-ja4)
   - [Usage](#usage)
     - [Command-line Arguments](#command-line-arguments)
@@ -72,6 +73,14 @@ sudo apt install python3
 #### Windows
 
 [Download](https://www.python.org/downloads/windows/) and install Python 3 using the Windows installer.
+
+## Release Assets
+
+Release assets for the Python implementation are named as follows:
+
+- `ja4-python-vX.Y.Z.tar.gz`
+
+This archive contains the full `python/` directory and is attached to a release named like `python-vX.Y.Z`.
 
 ## Running JA4+
 

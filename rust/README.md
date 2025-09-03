@@ -60,13 +60,11 @@ Download the latest JA4 binaries from the [Releases](https://github.com/FoxIO-LL
 
 ### Release Assets
 
-JA4 binaries are provided as compressed archives named according to the target platform, following a pattern like:
+Release assets are named as follows:
 
-```txt
-ja4-vX.Y.Z-<architecture>-<platform>.tar.gz
-```
+- `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz` (e.g., `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux, `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64)
 
-For example, `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux or `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64. Choose the appropriate file for your system.
+These files are attached to a release named like `rust-vX.Y.Z`. Choose the appropriate file for your system.
 
 ## Building
 

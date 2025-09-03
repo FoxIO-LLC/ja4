@@ -152,13 +152,17 @@ JA4 binaries are built from the [Rust implementation](rust/README.md) of the sui
 
 ### Release Assets
 
-JA4 binaries are provided as compressed archives named according to the target platform, following a pattern like:
 
-```txt
-ja4-vX.Y.Z-<architecture>-<platform>.tar.gz
-```
+Release assets are named according to the component and platform:
 
-For example, `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux or `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64. Choose the appropriate file for your system.
+- **Rust:**
+  - `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz` (e.g., `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz`)
+- **Python:**
+  - `ja4-python-vX.Y.Z.tar.gz` (contains the full `python/` directory)
+- **Wireshark:**
+  - `ja4.so.linux`, `ja4.so.macos`, `ja4.dll` (attached to a release named like `wireshark-vX.Y.Z`)
+
+Choose the appropriate file for your system and component.
 
 ### Installing tshark
 
@@ -209,7 +213,14 @@ A sample [ja4plus-mapping.csv](./ja4plus-mapping.csv) is also available for quic
 
 ## Release Process
 
-JA4+ uses GitHub Actions to automate releases for its Rust, Python, Wireshark, and Zeek components. Releases are created by pushing a tag with a specific prefix to the repository, except for Zeek, which uses a pure semantic version (semver) tag. The following workflows are available:
+
+JA4+ uses GitHub Actions to automate releases for its Rust, Python, Wireshark, and Zeek components. Releases are created by pushing a tag with a specific prefix to the repository, except for Zeek, which uses a pure semantic version (semver) tag. Release assets are named as follows:
+
+- **Rust:** `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz`
+- **Python:** `ja4-python-vX.Y.Z.tar.gz`
+- **Wireshark:** `ja4.so.linux`, `ja4.so.macos`, `ja4.dll` (in a release named like `wireshark-vX.Y.Z`)
+
+The following workflows are available:
 
 - **Rust Release:**  
   Push a tag starting with `rust-v`, e.g., `rust-v0.18.5`, to trigger a release of the Rust binaries. The workflow will build and upload release assets automatically.
