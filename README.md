@@ -32,6 +32,8 @@ If you love JA4+, consider getting a t-shirt or hoodie:
     - [Windows](#windows)
   - [Running JA4+](#running-ja4)
 - [Database](#database)
+- [Release Process](#release-process)
+  - [How to Create a Release](#how-to-create-a-release)
 - [JA4+ Details](#ja4-details)
 - [Licensing](#licensing)
 - [Q\&A](#qa)
@@ -154,13 +156,17 @@ JA4 binaries are built from the [Rust implementation](rust/README.md) of the sui
 
 ### Release Assets
 
-JA4 binaries are provided as compressed archives named according to the target platform, following a pattern like:
 
-```txt
-ja4-vX.Y.Z-<architecture>-<platform>.tar.gz
-```
+Release assets are named according to the component and platform:
 
-For example, `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux or `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64. Choose the appropriate file for your system.
+- **Rust:**
+  - `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz` (e.g., `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz`)
+- **Python:**
+  - `ja4-python-vX.Y.Z.tar.gz` (contains the full `python/` directory)
+- **Wireshark:**
+  - `ja4.so.linux`, `ja4.so.macos`, `ja4.dll` (attached to a release named like `wireshark-vX.Y.Z`)
+
+Choose the appropriate file for your system and component.
 
 ### Installing tshark
 
@@ -208,6 +214,52 @@ The official JA4+ database of fingerprints, associated applications and recommen
 This database is under very active development. Expect orders of magnitude more fingerprint combinations and data over the next few months.
 
 A sample [ja4plus-mapping.csv](./ja4plus-mapping.csv) is also available for quick reference.
+
+## Release Process
+
+
+JA4+ uses GitHub Actions to automate releases for its Rust, Python, Wireshark, and Zeek components. Releases are created by pushing a tag with a specific prefix to the repository, except for Zeek, which uses a pure semantic version (semver) tag. Release assets are named as follows:
+
+- **Rust:** `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz`
+- **Python:** `ja4-python-vX.Y.Z.tar.gz`
+- **Wireshark:** `ja4.so.linux`, `ja4.so.macos`, `ja4.dll` (in a release named like `wireshark-vX.Y.Z`)
+
+The following workflows are available:
+
+- **Rust Release:**  
+  Push a tag starting with `rust-`, e.g., `rust-v0.18.5`, to trigger a release of the Rust binaries. The workflow will build and upload release assets automatically.
+
+- **Python Release:**  
+  Push a tag starting with `python-`, e.g., `python-v0.1.0`, to trigger a release of the Python implementation. The workflow will create a tarball of the `python/` directory and publish it as a release asset.
+
+- **Wireshark Plugin Release:**  
+  Push a tag starting with `wireshark-`, e.g., `wireshark-v2025.09.03`, to trigger a release of the Wireshark plugin binaries for all supported platforms.
+
+- **Zeek Release:**  
+  Push a tag that is a pure semantic version (e.g., `v1.2.3`), with no prefix, to trigger a Zeek release. This will automatically create a release on [packages.zeek.org](https://packages.zeek.org/).
+
+### How to Create a Release
+
+1. Ensure your changes are merged into the `main` branch.
+
+2. Create and push a tag for the component you want to release:
+   - For Rust, Python, or Wireshark, use the appropriate prefix (e.g., `rust-v0.18.5`, `python-v0.1.0`, `wireshark-v2025.09.03`).
+   - For Zeek, use a pure semver tag (e.g., `v1.2.3`).
+
+   Example:
+   ```sh
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+   (For Zeek)
+
+   Or, for Rust:
+   ```sh
+   git tag rust-v0.18.5
+   git push origin rust-v0.18.5
+   ```
+
+3. The corresponding GitHub Actions workflow will run and publish the release assets automatically. For Zeek, the release will appear on [packages.zeek.org](https://packages.zeek.org/).
 
 ## JA4+ Details
 

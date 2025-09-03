@@ -23,6 +23,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
     - [`ja4x` output](#ja4x-output)
   - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Dependencies
@@ -60,13 +61,11 @@ Download the latest JA4 binaries from the [Releases](https://github.com/FoxIO-LL
 
 ### Release Assets
 
-JA4 binaries are provided as compressed archives named according to the target platform, following a pattern like:
+Release assets are named as follows:
 
-```txt
-ja4-vX.Y.Z-<architecture>-<platform>.tar.gz
-```
+- `ja4-vX.Y.Z-<architecture>-<platform>.tar.gz` (e.g., `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux, `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64)
 
-For example, `ja4-v0.18.5-x86_64-unknown-linux-musl.tar.gz` for Linux or `ja4-v0.18.5-aarch64-apple-darwin.tar.gz` for macOS ARM64. Choose the appropriate file for your system.
+These files are attached to a release named like `rust-vX.Y.Z`. Choose the appropriate file for your system.
 
 ## Building
 
@@ -187,6 +186,15 @@ Run automated tests with:
 
 ```sh
 cargo test
+```
+
+## Creating a Release
+
+To create a Rust release, push a tag starting with `rust-`, for example:
+
+```sh
+git tag rust-v0.18.5
+git push origin rust-v0.18.5
 ```
 
 ## License

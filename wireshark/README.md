@@ -31,6 +31,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
     - [Usage in TShark](#usage-in-tshark)
 - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Binaries
@@ -39,7 +40,13 @@ Download the latest JA4+ Wireshark plugin binaries from the [Releases](https://g
 
 ### Release Assets
 
-Plugin binaries are provided as dynamic libraries named according to the target platform. For example, `ja4.so.linux` for Linux or `ja4.dll` for Windows. Choose the appropriate file for your system.
+Release assets are named as follows:
+
+- `ja4.so.linux` (Linux)
+- `ja4.so.macos` (macOS)
+- `ja4.dll` (Windows)
+
+These files are attached to a release named like `wireshark-vX.Y.Z`. Choose the appropriate file for your system.
 
 ### Previous Wireshark Versions
 
@@ -259,6 +266,15 @@ Example usage:
 cd wireshark/test
 ./generate-output-files.sh
 pytest
+```
+
+## Creating a Release
+
+To create a Wireshark plugin release, push a tag starting with `wireshark-`, for example:
+
+```sh
+git tag wireshark-v2025.09.03
+git push origin wireshark-v2025.09.03
 ```
 
 ## License

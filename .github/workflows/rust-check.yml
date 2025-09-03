@@ -11,8 +11,12 @@ permissions:
 on:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/rust-check.yml'
+      - 'rust/**'
   pull_request:
     paths:
+      - '.github/workflows/rust-check.yml'
       - 'rust/**'
 
 concurrency:

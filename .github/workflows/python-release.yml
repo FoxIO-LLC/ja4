@@ -1,0 +1,22 @@
+name: Python - Release
+
+on:
+  push:
+    tags:
+      - python-v[0-9]+.*
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      DISTDIR: ja4-${{ github.ref_name }}
+      DISTFILE: ja4-${{ github.ref_name }}.tar.gz
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: create archive
+      run: tar -czf "$DISTFILE" --transform="s,^python,${DISTDIR}," python
+    - name: create release
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh release create ${{ github.ref_name }} $DISTFILE

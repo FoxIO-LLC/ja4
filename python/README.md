@@ -15,6 +15,7 @@ For more details on JA4+ and its implementations in other open-source tools (Rus
     - [Linux](#linux-1)
     - [macOS](#macos-1)
     - [Windows](#windows-1)
+- [Release Assets](#release-assets)
 - [Running JA4+](#running-ja4)
   - [Usage](#usage)
     - [Command-line Arguments](#command-line-arguments)
@@ -24,6 +25,7 @@ For more details on JA4+ and its implementations in other open-source tools (Rus
     - [JSON Output Format](#json-output-format)
   - [Using a Key File for TLS Decryption](#using-a-key-file-for-tls-decryption)
 - [Testing](#testing)
+- [Creating a Release](#creating-a-release)
 - [License](#license)
 
 ## Dependencies
@@ -72,6 +74,14 @@ sudo apt install python3
 #### Windows
 
 [Download](https://www.python.org/downloads/windows/) and install Python 3 using the Windows installer.
+
+## Release Assets
+
+Release assets for the Python implementation are named as follows:
+
+- `ja4-python-vX.Y.Z.tar.gz`
+
+This archive contains the full `python/` directory and is attached to a release named like `python-vX.Y.Z`.
 
 ## Running JA4+
 
@@ -221,6 +231,15 @@ For details on generating an SSL key log file, see:
 ## Testing
 
 Sample PCAP files for testing `ja4.py` are available in the [`pcap`](../pcap/) directory. These files cover various network protocols and scenarios, including TLS, QUIC, HTTP, SSH, and edge cases. They can be used to verify expected output and assess fingerprinting accuracy.
+
+## Creating a Release
+
+To create a Python release, push a tag starting with `python-`, for example:
+
+```sh
+git tag python-v0.1.0
+git push origin python-v0.1.0
+```
 
 ## License
 
