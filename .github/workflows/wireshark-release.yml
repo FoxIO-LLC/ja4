@@ -99,6 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ wireshark-linux, wireshark-macos, wireshark-windows ]
     steps:
+    - uses: actions/checkout@v4
     - name: download-artifacts
       uses: actions/download-artifact@v4
       with:
