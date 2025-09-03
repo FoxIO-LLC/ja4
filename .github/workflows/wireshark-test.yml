@@ -2,13 +2,14 @@ name: Wireshark - Test
 
 on:
   push:
+    branches: [main]
     paths:
-      - .github/workflows/wireshark-test.yml
-      - wireshark/**
+      - '.github/workflows/wireshark-test.yml'
+      - 'wireshark/**'
   pull_request:
     paths:
-      - .github/workflows/wireshark-test.yml
-      - wireshark/**
+      - '.github/workflows/wireshark-test.yml'
+      - 'wireshark/**'
 
 jobs:
   run-wireshark-tests:

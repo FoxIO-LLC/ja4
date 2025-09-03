@@ -11,7 +11,13 @@ permissions:
 on:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/rust-test.yml'
+      - 'rust/**'
   pull_request:
+    paths:
+      - '.github/workflows/rust-test.yml'
+      - 'rust/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
