@@ -1517,7 +1517,7 @@ void proto_register_ja4(void) {
          {"JA4LS Delta", "ja4.ja4ls_delta", FT_DOUBLE, BASE_NONE, NULL, 0x0, NULL, HFILL}               },
         {&hf_ja4ssh,            {"JA4SSH", "ja4.ja4ssh", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}  },
         {&hf_ja4t,              {"JA4T", "ja4.ja4t", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      },
-        {&hf_ja4ts,             {"JA4T-S", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   },
+        {&hf_ja4ts,             {"JA4TS", "ja4.ja4ts", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}   },
         {&hf_ja4d,              {"JA4D", "ja4.ja4d", FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL}      }
     };
 
