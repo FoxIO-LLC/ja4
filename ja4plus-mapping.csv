@@ -45,7 +45,7 @@ Cobalt Strike v4.9.1 beacon,,,Windows 10,t12d210800_76e208dd3e22_16bbda4055b2,t1
 ,,Ubiquiti Camera,,,,,,,28960_2-4-8-1-3_1460_6_1-2-4-8-16,
 ,,Rachio IoT,,,,,,,7168_2-3-0_1460_0_0-0-0-0-0-0-0-0-0-0,
 ,,Phillips Hue Bridge,,,,,,,29200_2-1-1-4-1-3_1460_3_1-2-4-8-17,
-,GoLang "net" package,,,t13d191000_9dc949149365_e7c285222651,,,,,,
+,GoLang net package,,,t13d191000_9dc949149365_e7c285222651,,,,,,
 ,GoLang webhooks,,,t13d1412h2_e33ad33b3d25_6b314db333b6,,,,,,
 ,GoLang,,,t12d160700_8cdfa2d4673b_18dd7303c4a5,,,,,,
 ,GoLang,,,t13d141000_cbb2034c60b8_e7c285222651,,,,,,
