@@ -109,7 +109,10 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         }
         c$fp$ja4l$first_client_data = get_current_packet_timestamp(); 
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
-        c$fp$ja4l$ja4l_c += cat(double_to_count( (c$fp$ja4l$first_client_data - c$fp$ja4l$server_hello) / 2.0));
+        local __dt_c2 = (c$fp$ja4l$first_client_data - c$fp$ja4l$server_hello) / 2.0;
+        if ( __dt_c2 < 0.0 )
+            __dt_c2 = 0.0;
+        c$fp$ja4l$ja4l_c += cat(double_to_count(__dt_c2));
     } else if (threshold != 1) {
         return; 
     } else {
