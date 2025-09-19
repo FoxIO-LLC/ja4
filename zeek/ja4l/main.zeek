@@ -93,7 +93,9 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
     local rp = get_current_packet_header();
     if (is_orig && threshold == 2) {
         c$fp$ja4l$ack = get_current_packet_timestamp();
-        c$fp$ja4l$ja4l_c = cat(double_to_count( (c$fp$ja4l$ack - c$fp$ja4l$synack) / 2.0));
+        local __dt_c = (c$fp$ja4l$ack - c$fp$ja4l$synack) / 2.0;
+        if ( __dt_c < 0.0 ) __dt_c = 0.0;
+        $fp$ja4l$ja4l_c = cat(double_to_count(__dt_c));
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_c += cat(c$fp$ja4l$ttl_c);
         c$fp$ja4l$uid = c$uid;
@@ -123,7 +125,9 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         } else {
             return;   #breaks the chain
         }
-        c$fp$ja4l$ja4l_s = cat(double_to_count((c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0 ));
+        local __dt_s = (c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0;
+        if ( __dt_s < 0.0 ) __dt_s = 0.0;
+        c$fp$ja4l$ja4l_s = cat(double_to_count(__dt_s));
         c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
 
