@@ -1594,8 +1594,11 @@ static tap_packet_status tap_all(
     tap_flags_t flags _U_
 ) {
     g_warning("JA4H tap display count: %d", tap_display_count++);
-    display_hashes_from_packet_table(*(int *)tapdata, edt->tree, edt->tvb, pinfo->num);
-    return TAP_PACKET_REDRAW;
+    int added = display_hashes_from_packet_table(*(int *)tapdata, edt->tree, edt->tvb, pinfo->num);
+    if (added > 0) {
+        return TAP_PACKET_REDRAW;
+    }
+    return TAP_PACKET_DONT_REDRAW;;
 }
 
 typedef struct ja4_tap_s {
