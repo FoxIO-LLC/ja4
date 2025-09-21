@@ -359,17 +359,6 @@ void update_tree_item_with_table(
         pi->num_of_hashes++;
         pi->insert_at = (char *)insert_at;
     }
-
-    // Also add to tree immediately for display
-    // proto_item *ja4_ti;
-    // if (*ja4_tree == NULL) {
-    //     proto_tree *tree_location = locate_tree(tree, insert_at);
-    //     if (tree_location == NULL)
-    //         return;
-    //     ja4_ti = proto_tree_add_item(tree_location, proto_ja4, tvb, 0, -1, ENC_NA);
-    //     *ja4_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
-    // }
-    // proto_tree_add_string(*ja4_tree, field, NULL, 0, 0, str);
 }
 
 void mark_complete(int frame_number) {
@@ -385,9 +374,29 @@ static int
 display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, int frame_number) {
     pkt_info_t *pi = packet_table_lookup(frame_number);
     if ((pi->complete) && (pi->insert_at)) {
-        proto_item *ja4_ti =
-            proto_tree_add_item(locate_tree(tree, pi->insert_at), proto_ja4, tvb, 0, -1, ENC_NA);
-        proto_tree *sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
+        proto_tree *tree_location = locate_tree(tree, pi->insert_at);
+        if (tree_location == NULL)
+            return 0;
+
+        proto_tree *sub_tree = NULL;
+        proto_tree *child = tree_location->first_child;
+        while (child) {
+            if (child->finfo->hfinfo &&
+                (strcmp(child->finfo->hfinfo->abbrev, "ja4") == 0 ||
+                 strncmp(child->finfo->hfinfo->abbrev, "ja4.", 4) == 0)) {
+                // Found an existing JA4 subtree
+                ws_warning("Found existing JA4 subtree for frame %u tree=%p", frame_number, tree);
+                sub_tree = child;
+                break;
+            }
+            child = child->next;
+        }
+        if (sub_tree == NULL) {
+            ws_warning("Adding JA4 subtree for frame %u tree=%p", frame_number, tree);
+            proto_item *ja4_ti = proto_tree_add_item(tree_location, proto_ja4, tvb, 0, -1, ENC_NA);
+            sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
+        }
+        
         for (int i = 0; i < pi->num_of_hashes; i++) {
             packet_hash_t *hash = (packet_hash_t *)wmem_array_index(pi->pkt_hashes, i);
             if ((hash->hf_field == hash_val) || (hash_val == 999)) {
