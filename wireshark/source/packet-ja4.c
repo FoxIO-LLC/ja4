@@ -55,10 +55,6 @@ static inline const guint8 *field_bytes(fvalue_t const *fv) {
 #endif
 }
 
-static int insert_count = 0;
-static int tap_display_count = 0;
-static int dissector_display_count = 0;
-
 char *bytes_to_string(fvalue_t *fv) {
     return fvalue_to_string_repr(wmem_packet_scope(), fv, FTREPR_DISPLAY, 0);
 }
@@ -328,7 +324,6 @@ void update_tree_item(
         recorded_hash->hf_type = proto_registrar_get_ftype(field);
         if (recorded_hash->hf_type == FT_STRING) {
             recorded_hash->hf_value = wmem_strbuf_new(wmem_file_scope(), (const char *)data);
-            ws_warning("Storing hash %s for field %d for frame %d\n", wmem_strbuf_get_str(recorded_hash->hf_value), field, frame_number);
         } else if (recorded_hash->hf_type == FT_DOUBLE) {
             double *val_ptr = wmem_new(wmem_file_scope(), double);
             *val_ptr = *(const double *)data;
@@ -337,8 +332,6 @@ void update_tree_item(
             // Unsupported type
             recorded_hash->hf_value = wmem_strbuf_new(wmem_file_scope(), "");
         }
-        ws_warning("Storing hash %p for field %d for frame %d\n", recorded_hash->hf_value, field, frame_number);
-        ws_warning("JA4: dissect frame %u tree=%p", frame_number, tree);
         wmem_array_append(pi->pkt_hashes, recorded_hash, 1);
         pi->num_of_hashes++;
         pi->insert_at = (char *)insert_at;
@@ -369,14 +362,12 @@ display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, 
                 (strcmp(child->finfo->hfinfo->abbrev, "ja4") == 0 ||
                  strncmp(child->finfo->hfinfo->abbrev, "ja4.", 4) == 0)) {
                 // Found an existing JA4 subtree
-                ws_warning("Found existing JA4 subtree for frame %u tree=%p", frame_number, tree);
                 sub_tree = child;
                 break;
             }
             child = child->next;
         }
         if (sub_tree == NULL) {
-            ws_warning("Adding JA4 subtree for frame %u tree=%p", frame_number, tree);
             proto_item *ja4_ti = proto_tree_add_item(tree_location, proto_ja4, tvb, 0, -1, ENC_NA);
             sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
         }
@@ -389,7 +380,6 @@ display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, 
                 } else {
                     proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, wmem_strbuf_get_str((wmem_strbuf_t *)hash->hf_value));
                 }
-                ws_warning("JA4: dissect frame %u tree=%p", frame_number, tree);
             }
         }
         return pi->num_of_hashes;
@@ -833,7 +823,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     if (tree == NULL)
         return tvb_captured_length(tvb);
 
-    g_warning("JA4H dissector display count: %d", dissector_display_count++);
     int hashes = display_hashes_from_packet_table(999, tree, tvb, pinfo->num);
     if (hashes > 0)
         return tvb_captured_length(tvb);
@@ -1292,6 +1281,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
                                     double delta = (double)latency2.nsecs / (double)latency.nsecs;
                                     delta = round(delta * 10.0) / 10.0;
+                                    ws_warning("Delta: %f", delta);
                                     update_tree_item(
                                         pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls_delta,
                                         &delta, "tcp"
@@ -1555,7 +1545,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         if (ja4h_data.http2 == true) {
             http_proto = "http2";
         }
-        g_warning("JA4H insert count: %d", insert_count++);
         update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(pinfo->pool, &ja4h_data), http_proto);
         update_tree_item(
             pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(pinfo->pool, &ja4h_data), http_proto
@@ -1586,7 +1575,6 @@ static tap_packet_status tap_all(
     void *tapdata _U_, packet_info *pinfo, epan_dissect_t *edt, const void *data _U_,
     tap_flags_t flags _U_
 ) {
-    g_warning("JA4H tap display count: %d", tap_display_count++);
     int added = display_hashes_from_packet_table(*(int *)tapdata, edt->tree, edt->tvb, pinfo->num);
     if (added > 0) {
         return TAP_PACKET_REDRAW;
@@ -1647,8 +1635,6 @@ static void init_globals(void) {
         int id = proto_registrar_get_id_byname(interesting_hfids[i]);
         if (id != -1) {
             g_array_append_val(wanted_hfids, id);
-        } else {
-            g_warning("JA4: Unknown field: %s", interesting_hfids[i]);
         }
     }
 
@@ -1671,10 +1657,6 @@ static void init_globals(void) {
             if (ret == NULL) {
                 g_ptr_array_add(active_taps, ja4_taps[i].hfid);
             } else {
-                g_warning(
-                    "JA4 failed to register tap on \"%s\" with filter \"%s\": %s",
-                    ja4_taps[i].filter, ja4_taps[i].tap, ret->str
-                );
                 g_string_free(ret, TRUE);
             }
         }
