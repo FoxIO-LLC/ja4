@@ -263,7 +263,8 @@ typedef struct {
 
 typedef struct {
     int hf_field;
-    wmem_strbuf_t *hf_value;
+    enum ftenum hf_type;
+    void *hf_value;
 } packet_hash_t;
 
 typedef struct {
@@ -344,16 +345,27 @@ void update_tree_item(
 
 // Replace the existing update_tree_item with the packet table version
 void update_tree_item_with_table(
-    int frame_number, tvbuff_t *tvb, proto_tree *tree, proto_tree **ja4_tree, int field,
-    const char *str, const char *insert_at
+    int frame_number, tvbuff_t *tvb _U_, proto_tree *tree, proto_tree **ja4_tree _U_, int field,
+    const void *data, const char *insert_at
 ) {
     // Store in packet table for column display
     pkt_info_t *pi = packet_table_lookup(frame_number);
     if (!pi->complete) {
         packet_hash_t *recorded_hash = wmem_new0(wmem_file_scope(), packet_hash_t);
         recorded_hash->hf_field = field;
-        recorded_hash->hf_value = wmem_strbuf_new(wmem_file_scope(), (char *)str);
-        ws_warning("Storing hash %s for field %d for frame %d\n", str, field, frame_number);
+        recorded_hash->hf_type = proto_registrar_get_ftype(field);
+        if (recorded_hash->hf_type == FT_STRING) {
+            recorded_hash->hf_value = wmem_strbuf_new(wmem_file_scope(), (const char *)data);
+            ws_warning("Storing hash %s for field %d for frame %d\n", wmem_strbuf_get_str(recorded_hash->hf_value), field, frame_number);
+        } else if (recorded_hash->hf_type == FT_DOUBLE) {
+            double *val_ptr = wmem_new(wmem_file_scope(), double);
+            *val_ptr = *(const double *)data;
+            recorded_hash->hf_value = val_ptr;
+        } else {
+            // Unsupported type
+            recorded_hash->hf_value = wmem_strbuf_new(wmem_file_scope(), "");
+        }
+        ws_warning("Storing hash %p for field %d for frame %d\n", recorded_hash->hf_value, field, frame_number);
         ws_warning("JA4: dissect frame %u tree=%p", frame_number, tree);
         wmem_array_append(pi->pkt_hashes, recorded_hash, 1);
         pi->num_of_hashes++;
@@ -400,11 +412,11 @@ display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, 
         for (int i = 0; i < pi->num_of_hashes; i++) {
             packet_hash_t *hash = (packet_hash_t *)wmem_array_index(pi->pkt_hashes, i);
             if ((hash->hf_field == hash_val) || (hash_val == 999)) {
-                proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, wmem_strbuf_get_str(hash->hf_value));
-                ws_warning(
-                    "Displaying hash %s for field %d for frame %d\n",
-                    wmem_strbuf_get_str(hash->hf_value), hash->hf_field, frame_number
-                );
+                if (hash->hf_type == FT_DOUBLE) {
+                    proto_tree_add_double(sub_tree, hash->hf_field, NULL, 0, 0, *(double *)hash->hf_value);
+                } else {
+                    proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, wmem_strbuf_get_str((wmem_strbuf_t *)hash->hf_value));
+                }
                 ws_warning("JA4: dissect frame %u tree=%p", frame_number, tree);
             }
         }
