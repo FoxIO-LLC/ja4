@@ -1281,7 +1281,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
                                     double delta = (double)latency2.nsecs / (double)latency.nsecs;
                                     delta = round(delta * 10.0) / 10.0;
-                                    ws_warning("Delta: %f", delta);
                                     update_tree_item(
                                         pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls_delta,
                                         &delta, "tcp"
@@ -1617,7 +1616,9 @@ static ja4_tap_t const ja4_taps[] = {
     {"http2", &hf_ja4h_raw,          NULL                                      },
     {"http2", &hf_ja4h_raw_original, NULL                                      },
     {"tcp",   &hf_ja4l,              "tcp.flags == 0x018"                      },
+    {"tcp",   &hf_ja4l_delta,        "tcp.flags == 0x018"                      },
     {"tcp",   &hf_ja4ls,             "tcp.flags == 0x018"                      },
+    {"tcp",   &hf_ja4ls_delta,       "tcp.flags == 0x018"                      },
     {"tcp",   &hf_ja4ssh,            "ssh.direction"                           },
     {"tcp",   &hf_ja4t,              "tcp.flags == 0x002"                      },
     {"tcp",   &hf_ja4ts,             "tcp.flags == 0x012 || tcp.flags == 0x004"},
