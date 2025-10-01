@@ -1607,12 +1607,12 @@ static ja4_tap_t const ja4_taps[] = {
     {"frame",  &hf_ja4h_raw,          NULL                                      },
     {"frame",  &hf_ja4h_raw_original, NULL                                      },
     {"frame",   &hf_ja4l,              NULL                      },
-    {"tcp",   &hf_ja4l_delta,        "tcp.flags == 0x018"                      },
+    {"frame",   &hf_ja4l_delta,        NULL                      },
     {"frame",   &hf_ja4ls,           NULL                      },
-    {"tcp",   &hf_ja4ls_delta,       "tcp.flags == 0x018"                      },
+    {"frame",   &hf_ja4ls_delta,       NULL                     },
     {"frame",   &hf_ja4ssh,            NULL                           },
-    {"tcp",   &hf_ja4t,              "tcp.flags == 0x002"                      },
-    {"tcp",   &hf_ja4ts,             "tcp.flags == 0x012 || tcp.flags == 0x004"},
+    {"frame",   &hf_ja4t,              NULL                      },
+    {"frame",   &hf_ja4ts,             NULL},
     {"frame", &hf_ja4d,             NULL                                      },
 
     {NULL,    NULL,                  NULL                                      }  // keep this at the end
