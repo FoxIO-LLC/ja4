@@ -1597,11 +1597,8 @@ typedef struct ja4_tap_s {
 #endif
 
 static ja4_tap_t const ja4_taps[] = {
-    {TLS_TAP, &hf_ja4s,              "tls.handshake.type == 2"                 },
-    {TLS_TAP, &hf_ja4s_raw,          "tls.handshake.type == 2"                 },
-
-    {"dtls",  &hf_ja4s,              "dtls.handshake.type == 2"                },
-    {"dtls",  &hf_ja4s_raw,          "dtls.handshake.type == 2"                },
+    {"frame", &hf_ja4s,              NULL                 },
+    {"frame", &hf_ja4s_raw,          NULL                 },
 
     {TLS_TAP, &hf_ja4x,              "tls.handshake.type == 11"                },
     {TLS_TAP, &hf_ja4x_raw,          "tls.handshake.type == 11"                },
@@ -1615,14 +1612,14 @@ static ja4_tap_t const ja4_taps[] = {
     {"http2", &hf_ja4h,              NULL                                      },
     {"http2", &hf_ja4h_raw,          NULL                                      },
     {"http2", &hf_ja4h_raw_original, NULL                                      },
-    {"tcp",   &hf_ja4l,              "tcp.flags == 0x018"                      },
+    {"frame",   &hf_ja4l,              NULL                      },
     {"tcp",   &hf_ja4l_delta,        "tcp.flags == 0x018"                      },
-    {"tcp",   &hf_ja4ls,             "tcp.flags == 0x018"                      },
+    {"frame",   &hf_ja4ls,           NULL                      },
     {"tcp",   &hf_ja4ls_delta,       "tcp.flags == 0x018"                      },
-    {"tcp",   &hf_ja4ssh,            "ssh.direction"                           },
+    {"frame",   &hf_ja4ssh,            NULL                           },
     {"tcp",   &hf_ja4t,              "tcp.flags == 0x002"                      },
     {"tcp",   &hf_ja4ts,             "tcp.flags == 0x012 || tcp.flags == 0x004"},
-    {"dhcp",  &hf_ja4d,              NULL                                      },
+    {"frame", &hf_ja4d,             NULL                                      },
 
     {NULL,    NULL,                  NULL                                      }  // keep this at the end
 };
@@ -1652,7 +1649,7 @@ static void init_globals(void) {
         active_taps = g_ptr_array_sized_new(array_length(ja4_taps));
         for (i = 0; ja4_taps[i].hfid != NULL; i++) {
             ret = register_tap_listener(
-                ja4_taps[i].tap, ja4_taps[i].hfid, ja4_taps[i].filter, TL_REQUIRES_PROTO_TREE, NULL,
+                "frame", ja4_taps[i].hfid, NULL, TL_REQUIRES_PROTO_TREE, NULL,
                 tap_all, NULL, NULL
             );
             if (ret == NULL) {
