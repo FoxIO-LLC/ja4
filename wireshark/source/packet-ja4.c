@@ -1597,25 +1597,29 @@ typedef struct ja4_tap_s {
 #endif
 
 static ja4_tap_t const ja4_taps[] = {
-    {"frame", &hf_ja4s,              NULL                 },
-    {"frame", &hf_ja4s_raw,          NULL                 },
+    {"frame", &hf_ja4s,               NULL},
+    {"frame", &hf_ja4s_raw,           NULL},
 
-    {"frame", &hf_ja4x,              NULL                },
-    {"frame", &hf_ja4x_raw,          NULL                },
+    {"frame", &hf_ja4x,               NULL},
+    {"frame", &hf_ja4x_raw,           NULL},
 
-    {"frame",  &hf_ja4h,              NULL                                      },
-    {"frame",  &hf_ja4h_raw,          NULL                                      },
-    {"frame",  &hf_ja4h_raw_original, NULL                                      },
-    {"frame",   &hf_ja4l,              NULL                      },
-    {"frame",   &hf_ja4l_delta,        NULL                      },
-    {"frame",   &hf_ja4ls,           NULL                      },
-    {"frame",   &hf_ja4ls_delta,       NULL                     },
-    {"frame",   &hf_ja4ssh,            NULL                           },
-    {"frame",   &hf_ja4t,              NULL                      },
-    {"frame",   &hf_ja4ts,             NULL},
-    {"frame", &hf_ja4d,             NULL                                      },
+    {"frame", &hf_ja4h,               NULL},
+    {"frame", &hf_ja4h_raw,           NULL},
+    {"frame", &hf_ja4h_raw_original,  NULL},
 
-    {NULL,    NULL,                  NULL                                      }  // keep this at the end
+    {"frame", &hf_ja4l,               NULL},
+    {"frame", &hf_ja4l_delta,         NULL},
+    {"frame", &hf_ja4ls,              NULL},
+    {"frame", &hf_ja4ls_delta,        NULL},
+
+    {"frame", &hf_ja4ssh,             NULL},
+
+    {"frame", &hf_ja4t,               NULL},
+    {"frame", &hf_ja4ts,              NULL},
+
+    {"frame", &hf_ja4d,               NULL},
+
+    {NULL,    NULL,                   NULL} // keep this at the end
 };
 
 // Add missing declaration so init/cleanup can reference it
