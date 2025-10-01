@@ -119,6 +119,7 @@ This repo includes JA4+ in
 | [Huawei Cloud](https://support.huaweicloud.com/intl/en-us/usermanual-waf/waf_01_3157.html) | JA4 |
 | [Google Cloud LBs](https://cloud.google.com/release-notes#July_28_2025) | JA4 |
 | [eSentire](https://www.esentire.com/) | JA4+ |
+| [Microsoft Azure Front Door CDN](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol) | JA4 |
 
 with more to be announced...  
 
