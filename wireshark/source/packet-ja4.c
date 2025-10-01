@@ -1600,18 +1600,12 @@ static ja4_tap_t const ja4_taps[] = {
     {"frame", &hf_ja4s,              NULL                 },
     {"frame", &hf_ja4s_raw,          NULL                 },
 
-    {TLS_TAP, &hf_ja4x,              "tls.handshake.type == 11"                },
-    {TLS_TAP, &hf_ja4x_raw,          "tls.handshake.type == 11"                },
+    {"frame", &hf_ja4x,              NULL                },
+    {"frame", &hf_ja4x_raw,          NULL                },
 
-    {"dtls",  &hf_ja4x,              "dtls.handshake.type == 11"               },
-    {"dtls",  &hf_ja4x_raw,          "dtls.handshake.type == 11"               },
-
-    {"http",  &hf_ja4h,              NULL                                      },
-    {"http",  &hf_ja4h_raw,          NULL                                      },
-    {"http",  &hf_ja4h_raw_original, NULL                                      },
-    {"http2", &hf_ja4h,              NULL                                      },
-    {"http2", &hf_ja4h_raw,          NULL                                      },
-    {"http2", &hf_ja4h_raw_original, NULL                                      },
+    {"frame",  &hf_ja4h,              NULL                                      },
+    {"frame",  &hf_ja4h_raw,          NULL                                      },
+    {"frame",  &hf_ja4h_raw_original, NULL                                      },
     {"frame",   &hf_ja4l,              NULL                      },
     {"tcp",   &hf_ja4l_delta,        "tcp.flags == 0x018"                      },
     {"frame",   &hf_ja4ls,           NULL                      },
