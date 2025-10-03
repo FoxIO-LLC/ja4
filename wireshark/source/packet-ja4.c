@@ -311,11 +311,7 @@ pkt_info_t *packet_table_lookup(int frame_number) {
     return data;
 }
 
-// Replace the existing update_tree_item with the packet table version
-void update_tree_item(
-    int frame_number, tvbuff_t *tvb _U_, proto_tree *tree _U_, proto_tree **ja4_tree _U_, int field,
-    const void *data, const char *insert_at
-) {
+void update_tree_item(int frame_number, int field, const void *data, const char *insert_at) {
     // Store in packet table for column display
     pkt_info_t *pi = packet_table_lookup(frame_number);
     if (!pi->complete) {
@@ -790,7 +786,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     guint32 handshake_type = 0;
     gboolean alpn_visited = false;
     gboolean dhcpv6_option_type_1_exists = false;
-    proto_tree *ja4_tree = NULL;
 
     // For JA4C/S, record signature algorithms only when extension type == 13
     int record_signatures = 0;
@@ -883,12 +878,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 if (handshake_type == 2) {
                     set_ja4_ciphers(tree, &ja4_data);
                     set_ja4s_extensions(tree, &ja4_data);
-                    update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(pinfo->pool, &ja4_data), proto
-                    );
-                    update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(pinfo->pool, &ja4_data), proto
-                    );
+                    update_tree_item(pinfo->num, hf_ja4s, ja4s(pinfo->pool, &ja4_data), proto);
+                    update_tree_item(pinfo->num, hf_ja4s_raw, ja4s_r(pinfo->pool, &ja4_data), proto);
                 }
 
                 // Again for DTLS, we break
@@ -1242,20 +1233,14 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     wmem_strbuf_append_printf(
                                         display, "%d_%d_tcp", latency.nsecs / 2 / 1000, conn->server_ttl
                                     );
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls,
-                                        wmem_strbuf_get_str(display), "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     wmem_strbuf_append_printf(
                                         display2, "%d_%d_tcp", latency.nsecs / 2 / 1000,
                                         conn->client_ttl
                                     );
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4l,
-                                        wmem_strbuf_get_str(display2), "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
                                     mark_complete(pinfo->num);
                                 }
                             }
@@ -1272,17 +1257,11 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                         display, "%d_%d_%d", latency.nsecs / 2 / 1000, conn->server_ttl,
                                         latency2.nsecs / 2 / 1000
                                     );
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls,
-                                        wmem_strbuf_get_str(display), "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
                                     double delta = (double)latency2.nsecs / (double)latency.nsecs;
                                     delta = round(delta * 10.0) / 10.0;
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls_delta,
-                                        &delta, "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4ls_delta, &delta, "tcp");
 
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
@@ -1290,17 +1269,11 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                         display2, "%d_%d_%d", latency.nsecs / 2 / 1000,
                                         conn->client_ttl, latency2.nsecs / 2 / 1000
                                     );
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4l,
-                                        wmem_strbuf_get_str(display2), "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
 
                                     double delta2 = (double)latency2.nsecs / (double)latency.nsecs;
                                     delta2 = round(delta2 * 10.0) / 10.0;
-                                    update_tree_item(
-                                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4l_delta,
-                                        &delta2, "tcp"
-                                    );
+                                    update_tree_item(pinfo->num, hf_ja4l_delta, &delta2, "tcp");
                                     mark_complete(pinfo->num);
                                 }
                             }
@@ -1311,9 +1284,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 // Fix to add JA4SSH when a connection terminates
                 if ((fvalue_get_uinteger(get_value_ptr(field)) == 0x011) &&
                     ((srcport == 22) || (dstport == 22))) {
-                    update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(pinfo->pool, conn), "tcp"
-                    );
+                    update_tree_item(pinfo->num, hf_ja4ssh, ja4ssh(pinfo->pool, conn), "tcp");
                     mark_complete(pinfo->num);
                 }
             }
@@ -1354,19 +1325,13 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                         wmem_strbuf_append_printf(
                             display, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->server_ttl
                         );
-                        update_tree_item(
-                            pinfo->num, tvb, tree, &ja4_tree, hf_ja4ls,
-                            wmem_strbuf_get_str(display), "quic"
-                        );
+                        update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "quic");
 
                         nstime_delta(&latency, &conn->timestamp_D, &conn->timestamp_C);
                         wmem_strbuf_append_printf(
                             display2, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->client_ttl
                         );
-                        update_tree_item(
-                            pinfo->num, tvb, tree, &ja4_tree, hf_ja4l,
-                            wmem_strbuf_get_str(display2), "quic"
-                        );
+                        update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "quic");
                         mark_complete(pinfo->num);
                     }
                 }
@@ -1398,9 +1363,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                     : update_mode(tcp_len, conn->client_mode);
 
                 if ((conn->pkts % SAMPLE_COUNT) == 0) {
-                    update_tree_item(
-                        pinfo->num, tvb, tree, &ja4_tree, hf_ja4ssh, ja4ssh(pinfo->pool, conn), "ssh"
-                    );
+                    update_tree_item(pinfo->num, hf_ja4ssh, ja4ssh(pinfo->pool, conn), "ssh");
                     mark_complete(pinfo->num);
 
                     // reset conn parameters for the next ssh iteration
@@ -1467,7 +1430,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     }
 
     if (syn == 1) {
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4t, ja4t(pinfo->pool, &ja4t_data, NULL), "tcp");
+        update_tree_item(pinfo->num, hf_ja4t, ja4t(pinfo->pool, &ja4t_data, NULL), "tcp");
         mark_complete(pinfo->num);
     }
     if (syn == 2) {
@@ -1478,7 +1441,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         if (conn->tcp_options == NULL)
             conn->tcp_options =
                 wmem_strbuf_dup(wmem_file_scope(), ja4t_data.tcp_options);
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(pinfo->pool, &ja4t_data, conn), "tcp");
+        update_tree_item(pinfo->num, hf_ja4ts, ja4t(pinfo->pool, &ja4t_data, conn), "tcp");
         mark_complete(pinfo->num);
     }
 
@@ -1491,15 +1454,15 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             wmem_strbuf_append(
                 ja4t_data.tcp_options, wmem_strbuf_get_str(conn->tcp_options)
             );
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4ts, ja4t(pinfo->pool, &ja4t_data, conn), "tcp");
+        update_tree_item(pinfo->num, hf_ja4ts, ja4t(pinfo->pool, &ja4t_data, conn), "tcp");
         mark_complete(pinfo->num);
     }
 
     if (handshake_type == 2) {
         set_ja4_ciphers(tree, &ja4_data);
         set_ja4s_extensions(tree, &ja4_data);
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s, ja4s(pinfo->pool, &ja4_data), proto);
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4s_raw, ja4s_r(pinfo->pool, &ja4_data), proto);
+        update_tree_item(pinfo->num, hf_ja4s, ja4s(pinfo->pool, &ja4_data), proto);
+        update_tree_item(pinfo->num, hf_ja4s_raw, ja4s_r(pinfo->pool, &ja4_data), proto);
         mark_complete(pinfo->num);
     }
 
@@ -1511,11 +1474,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 wmem_strbuf_get_str(current_cert->oids[1]),
                 wmem_strbuf_get_str(current_cert->oids[2])
             );
-            update_tree_item(
-                pinfo->num, tvb, tree, &ja4_tree, hf_ja4x_raw,
-                wmem_strbuf_get_str(current_cert->raw), proto
-            );
-            update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4x, ja4x(pinfo->pool, current_cert), proto);
+            update_tree_item(pinfo->num, hf_ja4x_raw, wmem_strbuf_get_str(current_cert->raw), proto);
+            update_tree_item(pinfo->num, hf_ja4x, ja4x(pinfo->pool, current_cert), proto);
         }
         mark_complete(pinfo->num);
     }
@@ -1542,13 +1502,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         if (ja4h_data.http2 == true) {
             http_proto = "http2";
         }
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4h, ja4h(pinfo->pool, &ja4h_data), http_proto);
-        update_tree_item(
-            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw, ja4h_r(pinfo->pool, &ja4h_data), http_proto
-        );
-        update_tree_item(
-            pinfo->num, tvb, tree, &ja4_tree, hf_ja4h_raw_original, ja4h_ro(pinfo->pool, &ja4h_data), http_proto
-        );
+        update_tree_item(pinfo->num, hf_ja4h, ja4h(pinfo->pool, &ja4h_data), http_proto);
+        update_tree_item(pinfo->num, hf_ja4h_raw, ja4h_r(pinfo->pool, &ja4h_data), http_proto);
+        update_tree_item(pinfo->num, hf_ja4h_raw_original, ja4h_ro(pinfo->pool, &ja4h_data), http_proto);
         mark_complete(pinfo->num);
     }
 
@@ -1561,7 +1517,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             dhcp_proto = "dhcpv6";
         }
 
-        update_tree_item(pinfo->num, tvb, tree, &ja4_tree, hf_ja4d, ja4d(pinfo->pool, &ja4d_data), dhcp_proto);
+        update_tree_item(pinfo->num, hf_ja4d, ja4d(pinfo->pool, &ja4d_data), dhcp_proto);
         mark_complete(pinfo->num);
     }
 
