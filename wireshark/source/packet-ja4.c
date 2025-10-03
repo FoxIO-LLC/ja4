@@ -313,7 +313,7 @@ pkt_info_t *packet_table_lookup(int frame_number) {
 
 // Replace the existing update_tree_item with the packet table version
 void update_tree_item(
-    int frame_number, tvbuff_t *tvb _U_, proto_tree *tree, proto_tree **ja4_tree _U_, int field,
+    int frame_number, tvbuff_t *tvb _U_, proto_tree *tree _U_, proto_tree **ja4_tree _U_, int field,
     const void *data, const char *insert_at
 ) {
     // Store in packet table for column display
@@ -1576,9 +1576,6 @@ static tap_packet_status tap_all(
     return TAP_PACKET_DONT_REDRAW;;
 }
 
-
-// Add missing declaration so init/cleanup can reference it
-static GPtrArray *active_taps = NULL;
 static int frame_tapdata = -1;
 
 static void init_globals(void) {
@@ -1597,10 +1594,11 @@ static void init_globals(void) {
     packet_table = wmem_map_new_autoreset(wmem_epan_scope(), wmem_file_scope(), g_direct_hash, g_direct_equal);
 
     if (proto_is_protocol_enabled(find_protocol_by_id(proto_ja4))) {
-        GString *ret;
-        size_t i;
-
-        ret = register_tap_listener("frame", &frame_tapdata, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+        GString *ret = register_tap_listener("frame", &frame_tapdata, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
+        if (ret != NULL) {
+            g_warning("JA4: Unable to register tap listener: %s\n", ret->str);
+            g_string_free(ret, TRUE);
+        }
     }
 }
 
