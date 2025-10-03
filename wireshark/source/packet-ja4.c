@@ -348,7 +348,7 @@ void mark_complete(int frame_number) {
 // Tshark OTOH takes both values from the JA4 tree as well as from here to show them
 // when using the -T fields option
 static int
-display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, int frame_number) {
+display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_number) {
     pkt_info_t *pi = packet_table_lookup(frame_number);
     if ((pi->complete) && (pi->insert_at)) {
         proto_tree *tree_location = locate_tree(tree, pi->insert_at);
@@ -374,12 +374,10 @@ display_hashes_from_packet_table(int hash_val, proto_tree *tree, tvbuff_t *tvb, 
         
         for (int i = 0; i < pi->num_of_hashes; i++) {
             packet_hash_t *hash = (packet_hash_t *)wmem_array_index(pi->pkt_hashes, i);
-            if ((hash->hf_field == hash_val) || (hash_val == 999)) {
-                if (hash->hf_type == FT_DOUBLE) {
-                    proto_tree_add_double(sub_tree, hash->hf_field, NULL, 0, 0, *(double *)hash->hf_value);
-                } else {
-                    proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, wmem_strbuf_get_str((wmem_strbuf_t *)hash->hf_value));
-                }
+            if (hash->hf_type == FT_DOUBLE) {
+                proto_tree_add_double(sub_tree, hash->hf_field, NULL, 0, 0, *(double *)hash->hf_value);
+            } else {
+                proto_tree_add_string(sub_tree, hash->hf_field, NULL, 0, 0, wmem_strbuf_get_str((wmem_strbuf_t *)hash->hf_value));
             }
         }
         return pi->num_of_hashes;
@@ -823,7 +821,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
     if (tree == NULL)
         return tvb_captured_length(tvb);
 
-    int hashes = display_hashes_from_packet_table(999, tree, tvb, pinfo->num);
+    int hashes = display_hashes_from_packet_table(tree, tvb, pinfo->num);
     if (hashes > 0)
         return tvb_captured_length(tvb);
 
@@ -1574,56 +1572,14 @@ static tap_packet_status tap_all(
     void *tapdata _U_, packet_info *pinfo, epan_dissect_t *edt, const void *data _U_,
     tap_flags_t flags _U_
 ) {
-    int added = display_hashes_from_packet_table(*(int *)tapdata, edt->tree, edt->tvb, pinfo->num);
-    if (added > 0) {
-        return TAP_PACKET_REDRAW;
-    }
+    display_hashes_from_packet_table(edt->tree, edt->tvb, pinfo->num);
     return TAP_PACKET_DONT_REDRAW;;
 }
 
-typedef struct ja4_tap_s {
-    const char *tap;
-    int *hfid; // tapdata
-    const char *filter;
-} ja4_tap_t;
-
-/* Wireshark ≤4.2 calls the TLS tap "tls",
- * after that it's "tls_follow"
- */
-#if ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 2))
-#define TLS_TAP "tls_follow"
-#else
-#define TLS_TAP "tls"
-#endif
-
-static ja4_tap_t const ja4_taps[] = {
-    {"frame", &hf_ja4s,               NULL},
-    {"frame", &hf_ja4s_raw,           NULL},
-
-    {"frame", &hf_ja4x,               NULL},
-    {"frame", &hf_ja4x_raw,           NULL},
-
-    {"frame", &hf_ja4h,               NULL},
-    {"frame", &hf_ja4h_raw,           NULL},
-    {"frame", &hf_ja4h_raw_original,  NULL},
-
-    {"frame", &hf_ja4l,               NULL},
-    {"frame", &hf_ja4l_delta,         NULL},
-    {"frame", &hf_ja4ls,              NULL},
-    {"frame", &hf_ja4ls_delta,        NULL},
-
-    {"frame", &hf_ja4ssh,             NULL},
-
-    {"frame", &hf_ja4t,               NULL},
-    {"frame", &hf_ja4ts,              NULL},
-
-    {"frame", &hf_ja4d,               NULL},
-
-    {NULL,    NULL,                   NULL} // keep this at the end
-};
 
 // Add missing declaration so init/cleanup can reference it
 static GPtrArray *active_taps = NULL;
+static int frame_tapdata = -1;
 
 static void init_globals(void) {
     GArray *wanted_hfids = g_array_new(FALSE, FALSE, (guint)sizeof(int));
@@ -1644,36 +1600,14 @@ static void init_globals(void) {
         GString *ret;
         size_t i;
 
-        active_taps = g_ptr_array_sized_new(array_length(ja4_taps));
-        for (i = 0; ja4_taps[i].hfid != NULL; i++) {
-            ret = register_tap_listener(
-                "frame", ja4_taps[i].hfid, NULL, TL_REQUIRES_PROTO_TREE, NULL,
-                tap_all, NULL, NULL
-            );
-            if (ret == NULL) {
-                g_ptr_array_add(active_taps, ja4_taps[i].hfid);
-            } else {
-                g_string_free(ret, TRUE);
-            }
-        }
+        ret = register_tap_listener("frame", &frame_tapdata, NULL, TL_REQUIRES_PROTO_TREE, NULL, tap_all, NULL, NULL);
     }
 }
 
 static void cleanup_globals(void) {
     set_postdissector_wanted_hfids(ja4_handle, NULL);
 
-    if (active_taps != NULL) {
-        /* Note that multiple taps are registered with the same tapdata
-         * (which is simply the hfid). As long as we remove it the same
-         * number of times it was added then we should be ok.
-         */
-        for (size_t i = 0; i < active_taps->len; i++) {
-            int *hfid = g_ptr_array_index(active_taps, i);
-            remove_tap_listener(hfid);
-        }
-        g_ptr_array_free(active_taps, TRUE);
-        active_taps = NULL;
-    }
+    remove_tap_listener(&frame_tapdata);
 }
 
 void proto_reg_handoff_ja4(void) {
