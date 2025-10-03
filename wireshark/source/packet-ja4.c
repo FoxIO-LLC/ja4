@@ -354,9 +354,8 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
         proto_tree *sub_tree = NULL;
         proto_tree *child = tree_location->first_child;
         while (child) {
-            if (child->finfo->hfinfo &&
-                (strcmp(child->finfo->hfinfo->abbrev, "ja4") == 0 ||
-                 strncmp(child->finfo->hfinfo->abbrev, "ja4.", 4) == 0)) {
+            if (child->finfo->hfinfo && (strcmp(child->finfo->hfinfo->abbrev, "ja4") == 0 ||
+                                         strncmp(child->finfo->hfinfo->abbrev, "ja4.", 4) == 0)) {
                 // Found an existing JA4 subtree
                 sub_tree = child;
                 break;
@@ -983,7 +982,6 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             }
 
             // Added for JA4H - HTTP1.0 and 1.1
-
             static const struct {
                 const char *method;
                 const char *code;
