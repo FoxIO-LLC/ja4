@@ -297,7 +297,7 @@ pkt_info_t *packet_table_lookup(int frame_number) {
     pkt_info_t *data = wmem_map_lookup(packet_table, GINT_TO_POINTER(frame_number));
     if (data == NULL) {
         data = wmem_new0(wmem_file_scope(), pkt_info_t);
-        data->pkt_hashes = wmem_array_new(wmem_file_scope(), 100);
+        data->pkt_hashes = wmem_array_new(wmem_file_scope(), sizeof(packet_hash_t));
         data->frame_number = frame_number;
         data->num_of_hashes = 0;
         data->complete = false;
