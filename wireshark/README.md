@@ -273,8 +273,8 @@ pytest
 To create a Wireshark plugin release, push a tag starting with `wireshark-`, for example:
 
 ```sh
-git tag wireshark-v2025.09.03
-git push origin wireshark-v2025.09.03
+git tag wireshark-v0.1.1
+git push origin wireshark-v0.1.1
 ```
 
 ## License
