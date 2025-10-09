@@ -363,6 +363,10 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
             sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
         }
         
+        if (sub_tree == NULL || sub_tree->finfo->tree_type == -1) {
+            return 0;
+        }
+
         for (int i = 0; i < pi->num_of_hashes; i++) {
             packet_hash_t *hash = (packet_hash_t *)wmem_array_index(pi->pkt_hashes, i);
             if (hash->hf_type == FT_DOUBLE) {
