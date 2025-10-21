@@ -2,7 +2,7 @@
 <img src="ja4+_transparent_logo.png" alt="logo" width="250"/>
 </p>
 
-# JA4+ Network Fingerprinting <!-- omit from toc -->
+# JA4+™ Network Fingerprinting <!-- omit from toc -->
 
 JA4+ is a suite of network fingerprinting methods by [FoxIO](https://foxio.io/) that are easy to use and easy to share. These methods are both human and machine readable to facilitate more effective threat-hunting and analysis. The use-cases for these fingerprints include scanning for threat actors, malware detection, session hijacking prevention, compliance automation, location tracking, DDoS detection, grouping of threat actors, reverse shell detection, and many more.
 
@@ -53,6 +53,8 @@ If you love JA4+, consider getting a t-shirt or hoodie:
 | JA4TCP | JA4T | TCP Client Fingerprinting |
 | JA4TCPServer | JA4TS | TCP Server Response Fingerprinting |
 | [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan) |
+| JA4DHCP | JA4D | DHCP Fingerprinting |
+| JA4DHCPv6 | JA4D6 | DHCPv6 Fingerprinting |
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
@@ -139,8 +141,10 @@ with more to be announced...
 | LummaC2 | ```JA4H=po11nn050000_d253db9d024b``` |
 | Evilginx | ```JA4=t13d191000_9dc949149365_e7c285222651``` |
 | Reverse SSH Shell | ```JA4SSH=c76s76_c71s59_c0s70``` |
-| Windows 10 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
+| Windows 11 | ```JA4T=64240_2-1-3-1-1-4_1460_8``` |
 | Epson Printer | ```JA4TScan=28960_2-4-8-1-3_1460_3_1-4-8-16``` |
+| Windows 11 | ```JA4D=disco0000in_61-12-60-55_1-3-6-15-31-33-43-44-46-47-119-121-249-252``` |
+| Sony Receiver | ```JA4D6=solct0010nn_8-1-3-6_24-23``` |
 
 For more examples, see [ja4plus-mapping.csv](./ja4plus-mapping.csv)  
 For a complete database, see [ja4db.com](https://ja4db.com/)
@@ -324,4 +328,5 @@ And engineers working at GreyNoise, Hunt, Google, ExtraHop, F5, Driftnet and oth
 
 Contact John Althouse at john@foxio.io for licensing and questions.
 
-<sub><sup>Copyright (c) 2025, FoxIO</sup></sub>
+<sub>JA4 and JA4+ are trademarks of FoxIO, Inc.  
+Copyright (c) 2025, FoxIO</sup>
