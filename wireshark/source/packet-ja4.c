@@ -349,7 +349,7 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
 
         proto_tree *sub_tree = NULL;
         proto_tree *child = tree_location->first_child;
-        while (child) {
+        while (child != NULL && child->finfo != NULL) {
             if (child->finfo->hfinfo && (strcmp(child->finfo->hfinfo->abbrev, "ja4") == 0 ||
                                          strncmp(child->finfo->hfinfo->abbrev, "ja4.", 4) == 0)) {
                 // Found an existing JA4 subtree
@@ -362,8 +362,8 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
             proto_item *ja4_ti = proto_tree_add_item(tree_location, proto_ja4, tvb, 0, -1, ENC_NA);
             sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
         }
-        
-        if (sub_tree == NULL || sub_tree->finfo->tree_type == -1) {
+
+        if (sub_tree == NULL || sub_tree->finfo == NULL || sub_tree->finfo->tree_type == -1) {
             return 0;
         }
 
