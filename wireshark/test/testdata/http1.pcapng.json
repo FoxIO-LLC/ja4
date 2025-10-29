@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -22,7 +21,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -43,7 +41,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -64,7 +61,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -85,7 +81,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -106,7 +101,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -127,7 +121,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -148,7 +141,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -169,7 +161,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -190,7 +181,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -211,7 +201,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -232,7 +221,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -253,7 +241,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -274,7 +261,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -295,7 +281,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -316,7 +301,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -337,7 +321,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -358,7 +341,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -379,7 +361,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -400,7 +381,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -421,7 +401,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -442,7 +421,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -463,7 +441,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -484,7 +461,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -505,7 +481,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -526,7 +501,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -547,7 +521,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -568,7 +541,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -589,7 +561,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -610,7 +581,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -631,7 +601,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -652,7 +621,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -673,7 +641,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -694,7 +661,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -715,7 +681,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -736,7 +701,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -757,7 +721,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -778,7 +741,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -799,7 +761,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -820,7 +781,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -841,7 +801,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -862,7 +821,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -883,7 +841,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -904,7 +861,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -925,7 +881,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -946,7 +901,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -967,7 +921,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -988,7 +941,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1009,7 +961,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1030,7 +981,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1051,7 +1001,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1072,7 +1021,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1093,7 +1041,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1114,7 +1061,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1135,7 +1081,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -1156,7 +1101,6 @@
   },
   {
     "_index": "packets-2023-06-07",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -16,7 +15,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -31,7 +29,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -57,7 +54,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -81,7 +77,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -96,7 +91,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -111,7 +105,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -129,7 +122,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -149,7 +141,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -173,7 +164,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -188,7 +178,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -203,7 +192,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -221,7 +209,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -243,7 +230,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -267,7 +253,6 @@
   },
   {
     "_index": "packets-2023-08-09",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
