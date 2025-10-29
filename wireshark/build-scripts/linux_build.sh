@@ -7,19 +7,19 @@
 
 VER=$1
 
-if [ -x $VER ]
-then echo "Enter a wireshark version (supported versions) => 4.0.3, 4.0.6, 4.0.10, 4.2.0"; exit
+if [ -z $VER ]
+then echo "Enter a wireshark version (e.g. wireshark-4.4.0, v4.6.0)"; exit
 fi
 
-if [ ! -d wireshark-$VER ]
+if [ ! -d $VER ]
 then
-	echo "fetching wireshark sources with tag => tags/wireshark-$VER"
-	git clone -o upstream --branch wireshark-$VER https://gitlab.com/wireshark/wireshark.git --depth=5000
-	mv wireshark wireshark-$VER
+	echo "fetching wireshark sources with tag => tags/$VER"
+	git clone -o upstream --branch $VER https://gitlab.com/wireshark/wireshark.git --depth=5000
+	mv wireshark $VER
 fi
 
-cd wireshark-$VER
-git checkout tags/wireshark-$VER
+cd $VER
+git checkout tags/$VER
 rm -rf ./plugins/epan/ja4
 cp -r ../../source ./plugins/epan/ja4
 mv CMakeListsCustom.txt.example CMakeListsCustom.txt
