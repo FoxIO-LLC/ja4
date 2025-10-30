@@ -52,7 +52,7 @@ jobs:
       uses: actions/checkout@v4
       with:
           repository: wireshark/wireshark
-          ref: release-4.4
+          ref: v4.6.0
           path: wireshark/build-scripts/wireshark
     - name: add ja4 plugin
       run: copy -r wireshark/source wireshark/build-scripts/wireshark/plugins/epan/ja4
