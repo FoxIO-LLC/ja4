@@ -17,6 +17,7 @@ jobs:
 
       - name: Install required packages
         run: |
+          sudo add-apt-repository ppa:wireshark-dev/stable
           sudo apt update
           sudo apt upgrade -y
           sudo apt -y install \
