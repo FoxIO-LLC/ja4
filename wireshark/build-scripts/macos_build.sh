@@ -21,6 +21,7 @@ if [ ! -d $VER ]
 
     # Prep for macos using wireshark's prep script
     ./tools/macos-setup-brew.sh
+    brew install speexdsp
     brew install qt5
   else
     cd $VER
