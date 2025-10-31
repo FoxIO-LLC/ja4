@@ -22,10 +22,13 @@ export {
     resp_pack_len: vector of count &default = vector();
     orig_ack: count &default = 0;
     resp_ack: count &default = 0;
-    
+    ja4ssh_fingerprint_count: count &default = 0;
   };
 
   option ja4_ssh_packet_count = 200;
+
+  # Maximum number of fingerprints to produce, 0 means no maximum.
+  option ja4_ssh_max_fingerprints: count = 0;
 
   # Logging boilerplate
   redef enum Log::ID += { LOG };
@@ -47,7 +50,7 @@ event zeek_init() &priority=5 {
 
 function get_mode(vec: vector of count): count {
   local freqs: table[count] of count = table();
-   
+
   for (idx in vec) {
     local v = vec[idx];
     if(v in freqs) {
@@ -70,29 +73,30 @@ function get_mode(vec: vector of count): count {
 }
 
 function do_ja4ssh(c: connection) {
-  c$fp$ja4ssh$ja4ssh = fmt("c%ds%d_c%ds%d_c%ds%d", 
+  ++c$fp$ja4ssh$ja4ssh_fingerprint_count;
+  c$fp$ja4ssh$ja4ssh = fmt("c%ds%d_c%ds%d_c%ds%d",
       get_mode(c$fp$ja4ssh$orig_pack_len),
       get_mode(c$fp$ja4ssh$resp_pack_len),
-        |c$fp$ja4ssh$orig_pack_len|, 
-        |c$fp$ja4ssh$resp_pack_len|, 
-        c$fp$ja4ssh$orig_ack, 
+        |c$fp$ja4ssh$orig_pack_len|,
+        |c$fp$ja4ssh$resp_pack_len|,
+        c$fp$ja4ssh$orig_ack,
         c$fp$ja4ssh$resp_ack);
 
       Log::write(FINGERPRINT::JA4SSH::LOG, c$fp$ja4ssh);
       c$fp$ja4ssh$resp_pack_len = vector();
-      c$fp$ja4ssh$orig_pack_len = vector();  
+      c$fp$ja4ssh$orig_pack_len = vector();
       c$fp$ja4ssh$orig_ack = 0;
       c$fp$ja4ssh$resp_ack = 0;
 }
 
 event new_connection(c: connection) {
-    
+
     if(!c?$fp) { c$fp = []; }
 
      # filter incomplete\out of order connections
     local rp = get_current_packet_header();
     if (!rp?$tcp || rp$tcp$flags != TH_SYN) {
-        return;  
+        return;
     }
 
     ConnThreshold::set_packets_threshold(c,1,F);  # start watching responses
@@ -100,6 +104,9 @@ event new_connection(c: connection) {
 }
 
 event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, is_orig: bool) {
+    if (ja4_ssh_max_fingerprints != 0 && c$fp$ja4ssh$ja4ssh_fingerprint_count == ja4_ssh_max_fingerprints) {
+        return;
+    }
     if (!c$fp$ja4ssh$is_ssh && threshold > 5) {   # TODO: does this need to be configurable?
         return;
     }
@@ -108,7 +115,7 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
       return;  # not us
     }
     if (is_orig) {
-        ConnThreshold::set_packets_threshold(c,threshold + 1,T); 
+        ConnThreshold::set_packets_threshold(c,threshold + 1,T);
 
         if (rp$tcp$dl == 0) {
           ++c$fp$ja4ssh$orig_ack;
@@ -116,7 +123,7 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
           c$fp$ja4ssh$orig_pack_len += rp$tcp$dl;
         }
     } else {
-        ConnThreshold::set_packets_threshold(c,threshold + 1,F); 
+        ConnThreshold::set_packets_threshold(c,threshold + 1,F);
 
         if (rp$tcp$dl == 0) {
           ++c$fp$ja4ssh$resp_ack;
@@ -145,7 +152,7 @@ event ssh_server_version(c: connection, version: string) {
 }
 
 event connection_state_remove(c: connection) {
-  if(c?$fp && c$fp?$ja4ssh && c$fp$ja4ssh$is_ssh) {
+  if(c?$fp && c$fp?$ja4ssh && c$fp$ja4ssh$is_ssh && (ja4_ssh_max_fingerprints == 0 || c$fp$ja4ssh$ja4ssh_fingerprint_count < ja4_ssh_max_fingerprints)) {
     do_ja4ssh(c);
   }
 }
