@@ -1,7 +1,26 @@
 [
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "5"
+        ],
+        "ja4.ja4h": [
+          "ms11nn040000_a3c882e23515_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ],
+        "ja4.ja4h_ro": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
     "_score": null,
     "_source": {
       "layers": {
@@ -16,7 +35,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -31,7 +49,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -49,7 +66,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -69,7 +85,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -93,7 +108,26 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "65"
+        ],
+        "ja4.ja4h": [
+          "ms11nn040000_a3c882e23515_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ],
+        "ja4.ja4h_ro": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
     "_score": null,
     "_source": {
       "layers": {
@@ -108,7 +142,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -123,7 +156,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -141,7 +173,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -161,7 +192,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -185,7 +215,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -200,7 +229,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -215,7 +243,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -233,7 +260,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -248,7 +274,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -263,7 +288,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -284,25 +308,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
-    "_score": null,
-    "_source": {
-      "layers": {
-        "frame.number": [
-          "116"
-        ],
-        "ja4.ja4l": [
-          "32_128_tcp"
-        ],
-        "ja4.ja4ls": [
-          "3915_57_tcp"
-        ]
-      }
-    }
-  },
-  {
-    "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -326,7 +331,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -341,7 +345,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -356,7 +359,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -382,7 +384,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -406,7 +407,26 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "172"
+        ],
+        "ja4.ja4h": [
+          "ms11nn040000_a3c882e23515_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ],
+        "ja4.ja4h_ro": [
+          "ms11nn040000_HOST,MAN,MX,ST__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2023-06-23",
     "_score": null,
     "_source": {
       "layers": {
@@ -421,7 +441,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -436,7 +455,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -462,7 +480,6 @@
   },
   {
     "_index": "packets-2023-06-23",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

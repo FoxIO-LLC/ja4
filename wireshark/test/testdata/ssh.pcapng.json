@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2023-07-06",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

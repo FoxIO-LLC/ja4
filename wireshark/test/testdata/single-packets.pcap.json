@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -22,7 +21,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -43,7 +41,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -64,7 +61,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -85,7 +81,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -106,7 +101,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -127,7 +121,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -148,7 +141,6 @@
   },
   {
     "_index": "packets-2018-07-25",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2003-06-11",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {
@@ -16,7 +15,6 @@
   },
   {
     "_index": "packets-2003-06-11",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

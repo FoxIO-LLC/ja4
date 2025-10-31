@@ -12,9 +12,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     - name: build
-      run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh 4.4.0
+      run:  cd wireshark/build-scripts && sudo apt update -y && sudo apt install ninja-build -y && sudo ./linux_build.sh v4.6.0
     - name: rename artifact
-      run: cp ./wireshark/build-scripts/wireshark-4.4.0/build/run/plugins/4.4/epan/ja4.so ja4.so.linux
+      run: cp ./wireshark/build-scripts/v4.6.0/build/run/plugins/4.6/epan/ja4.so ja4.so.linux
     - name: upload-linux-ja4
       uses: actions/upload-artifact@v4
       with:
@@ -27,9 +27,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     - name: build
-      run:  cd wireshark/build-scripts && ./macos_build.sh 4.4.0
+      run:  cd wireshark/build-scripts && ./macos_build.sh v4.6.0
     - name: rename artifact
-      run: cp ./wireshark/build-scripts/wireshark-4.4.0/build/run/Wireshark.app/Contents/PlugIns/wireshark/4-4/epan/ja4.so ja4.so.macos
+      run: cp ./wireshark/build-scripts/v4.6.0/build/run/Wireshark.app/Contents/PlugIns/wireshark/4-6/epan/ja4.so ja4.so.macos
     - name: upload-macos-ja4
       uses: actions/upload-artifact@v4
       with:
@@ -52,7 +52,7 @@ jobs:
       uses: actions/checkout@v4
       with:
           repository: wireshark/wireshark
-          ref: release-4.4
+          ref: v4.6.0
           path: wireshark/build-scripts/wireshark
     - name: add ja4 plugin
       run: copy -r wireshark/source wireshark/build-scripts/wireshark/plugins/epan/ja4
@@ -88,7 +88,7 @@ jobs:
       run: cmake --build . --config RelWithDebInfo
       working-directory: wireshark/build-scripts/wireshark/build
     - name: rename artifact
-      run: cp wireshark/build-scripts/wireshark/build/run/RelWithDebInfo/plugins/4.4/epan/ja4.dll ja4.dll
+      run: cp wireshark/build-scripts/wireshark/build/run/RelWithDebInfo/plugins/4.6/epan/ja4.dll ja4.dll
     - name: upload-windows-ja4
       uses: actions/upload-artifact@v4
       with:

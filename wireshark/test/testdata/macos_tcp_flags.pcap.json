@@ -1,7 +1,6 @@
 [
   {
     "_index": "packets-2022-10-28",
-    "_type": "doc",
     "_score": null,
     "_source": {
       "layers": {

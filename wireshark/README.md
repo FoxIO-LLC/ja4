@@ -54,13 +54,13 @@ You can also find binaries for the previous versions of Wireshark in the [binari
 
 ## Building
 
-Navigate to the `build-scripts` directory and run the script corresponding to your system. For example, `linux_build.sh` for Linux. The script will automatically clone Wireshark and build the plugin. The resulting binary can be found in `wireshark-4.4.0/build/run/plugins/4.4/epan/`. It will be named `ja4.so` on Linux or macOS and `ja4.dll` on Windows.
+Navigate to the `build-scripts` directory and run the script corresponding to your system. For example, `linux_build.sh` for Linux. The script will automatically clone Wireshark and build the plugin. The resulting binary can be found in `<relese-tag>/build/run/plugins/4.6/epan/`. It will be named `ja4.so` on Linux or macOS and `ja4.dll` on Windows.
 
 ## Installing JA4+ Plugin
 
 ### Installing Wireshark
 
-The plugin has been tested with Wireshark versions 4.4.0 and 4.2.0 on macOS and Windows, and version 4.0.6 on Linux.
+The plugin has been tested with Wireshark versions 4.6.0, 4.4.0 and, 4.2.0 on macOS and Windows, and version 4.0.6 on Linux.
 
 #### Linux
 
@@ -88,11 +88,11 @@ You can use the `tshark` CLI tool as well. Refer to [Installing tshark](../READM
 
 1. Move and rename `ja4.so` to the global Wireshark plugins directory:  
    ```bash
-   sudo mv ja4.so.linux /usr/lib/x86_64-linux-gnu/wireshark/plugins/4.4/epan/ja4.so
+   sudo mv ja4.so.linux /usr/lib/x86_64-linux-gnu/wireshark/plugins/4.6/epan/ja4.so
    ```
    or  
    ```bash
-   sudo mv ja4.so.linux /usr/lib/wireshark/plugins/4.4/epan/ja4.so
+   sudo mv ja4.so.linux /usr/lib/wireshark/plugins/4.6/epan/ja4.so
    ```
    *(The exact location depends on your system's distribution and Wireshark installation.)*
 2. Start Wireshark.
@@ -113,7 +113,7 @@ You can use the `tshark` CLI tool as well. Refer to [Installing tshark](../READM
 
 1. Copy `ja4.dll` to the global Wireshark plugins directory:  
    ```txt
-   C:\Program Files\Wireshark\plugins\4.4\epan\
+   C:\Program Files\Wireshark\plugins\4.6\epan\
    ```
 2. Start Wireshark.
 
