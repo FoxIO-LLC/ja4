@@ -55,24 +55,24 @@ static inline const uint8_t *field_bytes(fvalue_t const *fv) {
 #endif
 }
 
-static int proto_ja4;
-static int proto_http;
-static int ett_ja4;
-static int hf_ja4s_raw;
-static int hf_ja4s;
-static int hf_ja4x_raw;
-static int hf_ja4x;
-static int hf_ja4h;
-static int hf_ja4h_raw;
-static int hf_ja4h_raw_original;
-static int hf_ja4l;
-static int hf_ja4l_delta;
-static int hf_ja4ls;
-static int hf_ja4ls_delta;
-static int hf_ja4ssh;
-static int hf_ja4t;
-static int hf_ja4ts;
-static int hf_ja4d;
+static int proto_ja4 = -1;
+static int proto_http = -1;
+static int ett_ja4 = -1;
+static int hf_ja4s_raw = -1;
+static int hf_ja4s = -1;
+static int hf_ja4x_raw = -1;
+static int hf_ja4x = -1;
+static int hf_ja4h = -1;
+static int hf_ja4h_raw = -1;
+static int hf_ja4h_raw_original = -1;
+static int hf_ja4l = -1;
+static int hf_ja4l_delta = -1;
+static int hf_ja4ls = -1;
+static int hf_ja4ls_delta = -1;
+static int hf_ja4ssh = -1;
+static int hf_ja4t = -1;
+static int hf_ja4ts = -1;
+static int hf_ja4d = -1;
 
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy);
 
