@@ -22,4 +22,6 @@ export {
   option JA4TS_enabled: bool = T;
 
   option JA4X_enabled:   bool = F;
+
+  option JA4D_enabled:  bool = T;
 }
