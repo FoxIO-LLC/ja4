@@ -5,6 +5,8 @@
 # JA4+ by John Althouse
 # Zeek script by Jo Johnson
 # NOTE: JA4L can not work when traffic is out of order
+# Supress negative duration errors in local.zeek by setting
+# redef FINGERPRINT::JA4L::suppress_neg_ja4l_errors = T;
 
 module FINGERPRINT::JA4L;
 
@@ -45,6 +47,7 @@ export {
   global log_fingerprint_ja4l: event(rec: Info);
   global log_policy: Log::PolicyHook;
 
+  const suppress_neg_ja4l_errors: bool = F &redef;
 }
 
 redef record FINGERPRINT::Info += {
@@ -96,7 +99,14 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
     local rp = get_current_packet_header();
     if (is_orig && threshold == 2) {
         c$fp$ja4l$ack = get_current_packet_timestamp();
-        c$fp$ja4l$ja4l_c = cat(double_to_count( (c$fp$ja4l$ack - c$fp$ja4l$synack) / 2.0));
+        local dt = (c$fp$ja4l$ack - c$fp$ja4l$synack) / 2.0;
+        if (dt < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (ack - synack)/2=%f uid=%s id=%s",
+                                    dt, c$uid, c$id));
+            return;
+        }
+        c$fp$ja4l$ja4l_c = cat(double_to_count(dt));
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_c += cat(c$fp$ja4l$ttl_c);
         c$fp$ja4l$uid = c$uid;
@@ -104,15 +114,22 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         c$fp$ja4l$id = c$id;
     } else if (is_orig && c?$fp && c$fp$ja4l$server_hello != 0 && c$fp$ja4l$first_client_data == 0) {
         if (rp?$tcp && rp$tcp$dl == 0) {
-            # wait for actual  data
-            ConnThreshold::set_packets_threshold(c,threshold + 1,T);              
+            # wait for actual data
+            ConnThreshold::set_packets_threshold(c,threshold + 1,T);
             return;
         }
-        c$fp$ja4l$first_client_data = get_current_packet_timestamp(); 
+        c$fp$ja4l$first_client_data = get_current_packet_timestamp();
+        local dt2 = (c$fp$ja4l$first_client_data - c$fp$ja4l$server_hello) / 2.0;
+        if (dt2 < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (first_client_data - server_hello)/2=%f uid=%s id=%s",
+                                    dt2, c$uid, c$id));
+            return;
+        }
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
-        c$fp$ja4l$ja4l_c += cat(double_to_count( (c$fp$ja4l$first_client_data - c$fp$ja4l$server_hello) / 2.0));
+        c$fp$ja4l$ja4l_c += cat(double_to_count(dt2));
     } else if (threshold != 1) {
-        return; 
+        return;
     } else {
         c$fp$ja4l$synack = get_current_packet_timestamp();
         if(!rp?$tcp) {
@@ -126,11 +143,18 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         } else {
             return;   #breaks the chain
         }
-        c$fp$ja4l$ja4l_s = cat(double_to_count((c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0 ));
+        local dt3 = (c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0;
+        if (dt3 < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (synack - syn)/2=%f uid=%s id=%s",
+                                    dt3, c$uid, c$id));
+            return;
+        }
+        c$fp$ja4l$ja4l_s = cat(double_to_count(dt3));
         c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
 
-        ConnThreshold::set_packets_threshold(c,c$orig$num_pkts + 1,T);  
+        ConnThreshold::set_packets_threshold(c,c$orig$num_pkts + 1,T);
     }
 }
 
@@ -147,13 +171,20 @@ event ssl_server_hello(c: connection, version: count, record_version: count, pos
 {
     local rp = get_current_packet_header();
     if(!rp?$tcp) {
-            # UDP only works for QUIC that is handled separately
-            return;
-        }
+        # UDP only works for QUIC that is handled separately
+        return;
+    }
     if (c?$fp && c$fp$ja4l$server_hello == 0) {
         c$fp$ja4l$server_hello = get_current_packet_timestamp();
+        local dt4 = (c$fp$ja4l$server_hello - c$fp$ja4l$client_hello) / 2.0;
+        if (dt4 < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (server_hello - client_hello)/2=%f uid=%s id=%s",
+                                    dt4, c$uid, c$id));
+            return;
+        }
         c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
-        c$fp$ja4l$ja4l_s += cat(double_to_count((c$fp$ja4l$server_hello - c$fp$ja4l$client_hello) / 2.0 ));
+        c$fp$ja4l$ja4l_s += cat(double_to_count(dt4));
         # get F on next orig packet
         ConnThreshold::set_packets_threshold(c,c$orig$num_pkts + 1,T);
     }
@@ -183,7 +214,14 @@ event QUIC::initial_packet(c: connection, is_orig: bool, version: count, dcid: s
             return;  
         }
         c$fp$ja4l$server_init = get_current_packet_timestamp();
-        c$fp$ja4l$ja4l_s = cat(double_to_count( (c$fp$ja4l$server_init - c$fp$ja4l$client_init) / 2.0));
+        local dt5 = (c$fp$ja4l$server_init - c$fp$ja4l$client_init) / 2.0;
+        if (dt5 < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (server_init - client_init)/2=%f uid=%s id=%s",
+                                    dt5, c$uid, c$id));
+            return;
+        }
+        c$fp$ja4l$ja4l_s = cat(double_to_count(dt5));
         c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
         c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
@@ -192,22 +230,24 @@ event QUIC::initial_packet(c: connection, is_orig: bool, version: count, dcid: s
 }
 
 event QUIC::handshake_packet(c: connection, is_orig: bool, version: count, dcid: string, scid: string) {
-    if(!c?$fp || c$fp$ja4l$client_handshake != 0)  { 
-        # No init packet, or client handshake already seen and logged
-        return;
-    }
+    if(!c?$fp || c$fp$ja4l$client_handshake != 0) return;
     if (is_orig) {
         c$fp$ja4l$client_handshake = get_current_packet_timestamp();
-        c$fp$ja4l$ja4l_c = cat(double_to_count( (c$fp$ja4l$client_handshake - c$fp$ja4l$server_handshake) / 2.0));
+        local dt6 = (c$fp$ja4l$client_handshake - c$fp$ja4l$server_handshake) / 2.0;
+        if (dt6 < 0.0) {
+            if (!suppress_neg_ja4l_errors)
+                Reporter::error(fmt("JA4L negative duration: (client_handshake - server_handshake)/2=%f uid=%s id=%s",
+                                    dt6, c$uid, c$id));
+            return;
+        }
+        c$fp$ja4l$ja4l_c = cat(double_to_count(dt6));
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_c += cat(c$fp$ja4l$ttl_c);
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_c += "q";
     } else {
-            c$fp$ja4l$server_handshake = get_current_packet_timestamp();
-        
+        c$fp$ja4l$server_handshake = get_current_packet_timestamp();
     }
-
 }
 
 event connection_state_remove(c: connection) {
