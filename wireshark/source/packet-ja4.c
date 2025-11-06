@@ -149,10 +149,14 @@ static const char *interesting_hfids[] = {
     "quic.long.packet_type",
     "dhcp.option.dhcp",
     "dhcp.option.dhcp_max_message_size",
+    "dhcp.option.requested_ip_address",
+    "dhcp.fqdn.name",
     "dhcp.option.type",
     "dhcp.option.request_list_item",
     "dhcpv6.msgtype",
     "dhcpv6.duid.bytes",
+    "dhcpv6.iata",
+    "dhcpv6.client_domain",
     "dhcpv6.option.type",
     "dhcpv6.requested_option_code",
 };
@@ -201,8 +205,10 @@ typedef struct {
 
 typedef struct {
     char proto;
-    uint32_t type;
+    wmem_strbuf_t *type;
     wmem_strbuf_t *size;
+    char ip;
+    char fqdn;
     wmem_strbuf_t *options;
     wmem_strbuf_t *request_list;
 } ja4d_info_t;
@@ -683,17 +689,20 @@ static char *ja4t(wmem_allocator_t *scope, ja4t_info_t *data, conn_info_t *conn)
 
 static char *ja4d(wmem_allocator_t *scope, ja4d_info_t *data) {
     wmem_strbuf_t *display = wmem_strbuf_new(scope, "");
+    if (wmem_strbuf_get_len(data->type) == 0)
+        wmem_strbuf_append_printf(data->type, "00000");
     if (wmem_strbuf_get_len(data->size) == 0)
-        wmem_strbuf_append_printf(data->size, "00");
+        wmem_strbuf_append_printf(data->size, "0000");
     if (wmem_strbuf_get_len(data->options) == 0)
         wmem_strbuf_append_printf(data->options, "00");
     if (wmem_strbuf_get_len(data->request_list) == 0)
         wmem_strbuf_append_printf(data->request_list, "00");
     wmem_strbuf_append_printf(
-        display, "%c-%d-%s_%s_%s",
-        data->proto,
-        data->type,
+        display, "%s%s%c%c_%s_%s",
+        wmem_strbuf_get_str(data->type),
         wmem_strbuf_get_str(data->size),
+        data->ip,
+        data->fqdn,
         wmem_strbuf_get_str(data->options),
         wmem_strbuf_get_str(data->request_list)
     );
@@ -780,6 +789,83 @@ static void set_ja4_ciphers(proto_tree *tree, ja4_info_t *data) {
     }
 }
 
+static const char *get_dhcp_type_code(unsigned type) {
+    // Index is the DHCP type number (0 unused)
+    static const char *map[] = {
+        NULL,    // 0
+        "disco", // 1
+        "offer", // 2
+        "reqst", // 3
+        "decln", // 4
+        "dpack", // 5
+        "dpnak", // 6
+        "relse", // 7
+        "infor", // 8
+        "frenw", // 9
+        "lqery", // 10
+        "lunas", // 11
+        "lunkn", // 12
+        "lactv", // 13
+        "blklq", // 14
+        "lqdon", // 15
+        "actlq", // 16
+        "lqsta", // 17
+        "dhtls"  // 18
+    };
+    if (type < G_N_ELEMENTS(map)) {
+        return map[type];
+    }
+    return NULL;
+}
+
+static const char *get_dhcpv6_type_code(unsigned type) {
+    // Index is the DHCPv6 message type number (0 unused)
+    static const char *map[] = {
+        NULL,    // 0
+        "solct", // 1
+        "advrt", // 2
+        "reqst", // 3
+        "confm", // 4
+        "renew", // 5
+        "rebnd", // 6
+        "reply", // 7
+        "relse", // 8
+        "decln", // 9
+        "recon", // 10
+        "inreq", // 11
+        "rlayf", // 12
+        "rlayr", // 13
+        "query", // 14
+        "qrply", // 15
+        "qdone", // 16
+        "qdata", // 17
+        "rereq", // 18
+        "rrply", // 19
+        "v4qry", // 20
+        "v4res", // 21
+        "acqry", // 22
+        "sttls", // 23
+        "bdudp", // 24
+        "brply", // 25
+        "poreq", // 26
+        "pores", // 27
+        "urqst", // 28
+        "ureqa", // 29
+        "udone", // 30
+        "conne", // 31
+        "connr", // 32
+        "dconn", // 33
+        "state", // 34
+        "conta", // 35
+        "arinf", // 36
+        "arrep"  // 37
+    };
+    if (type < G_N_ELEMENTS(map)) {
+        return map[type];
+    }
+    return NULL;
+}
+
 static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *dummy _U_) {
     uint32_t handshake_type = 0;
     bool alpn_visited = false;
@@ -844,8 +930,10 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
     ja4d_info_t ja4d_data;
     ja4d_data.proto = 0;
-    ja4d_data.type = 0;
+    ja4d_data.type = wmem_strbuf_new(pinfo->pool, "");
     ja4d_data.size = wmem_strbuf_new(pinfo->pool, "");
+    ja4d_data.ip = 'n';
+    ja4d_data.fqdn = 'n';
     ja4d_data.options = wmem_strbuf_new(pinfo->pool, "");
     ja4d_data.request_list = wmem_strbuf_new(pinfo->pool, "");
 
@@ -1380,12 +1468,30 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             // DHCPv4
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.dhcp") == 0) {
                 ja4d_data.proto = '4';
-                ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
+                unsigned dhcp_type = fvalue_get_uinteger(get_value_ptr(field));
+                const char *type_code = get_dhcp_type_code(dhcp_type);
+                if (type_code != NULL) {
+                    wmem_strbuf_append(ja4d_data.type, type_code);
+                } else {
+                    wmem_strbuf_append_printf(ja4d_data.type, "%05u", dhcp_type);
+                }
             }
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.dhcp_max_message_size") == 0) {
-                wmem_strbuf_append_printf(
-                    ja4d_data.size, "%d", fvalue_get_uinteger(get_value_ptr(field))
-                );
+                if (fvalue_get_uinteger(get_value_ptr(field)) < 9999) {
+                    wmem_strbuf_append_printf(
+                        ja4d_data.size, "%04d", fvalue_get_uinteger(get_value_ptr(field))
+                    );
+                } else {
+                    wmem_strbuf_append_printf(
+                        ja4d_data.size, "9999"
+                    );
+                }
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcp.option.requested_ip_address") == 0) {
+                ja4d_data.ip = 'i';
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcp.fqdn.name") == 0) {
+                ja4d_data.fqdn = 'd';
             }
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.type") == 0) {
                 unsigned val = fvalue_get_uinteger(get_value_ptr(field));
@@ -1402,14 +1508,32 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             // DHCPv6
             if (strcmp(field->hfinfo->abbrev, "dhcpv6.msgtype") == 0) {
                 ja4d_data.proto = '6';
-                ja4d_data.type = fvalue_get_uinteger(get_value_ptr(field));
+                unsigned dhcpv6_type = fvalue_get_uinteger(get_value_ptr(field));
+                const char *type_code = get_dhcpv6_type_code(dhcpv6_type);
+                if (type_code != NULL) {
+                    wmem_strbuf_append(ja4d_data.type, type_code);
+                } else {
+                    wmem_strbuf_append_printf(ja4d_data.type, "%05u", dhcpv6_type);
+                }
             }
             if (strcmp(field->hfinfo->abbrev, "dhcpv6.duid.bytes") == 0 &&
                 wmem_strbuf_get_len(ja4d_data.size) == 0 &&
                 dhcpv6_option_type_1_exists == true) {
-                wmem_strbuf_append_printf(
-                    ja4d_data.size, "%d", field->length
-                );
+                if (field->length < 9999) {
+                    wmem_strbuf_append_printf(
+                        ja4d_data.size, "%04d", field->length
+                    );
+                } else {
+                    wmem_strbuf_append_printf(
+                        ja4d_data.size, "9999"
+                    );
+                }
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.iata") == 0) {
+                ja4d_data.ip = 'i';
+            }
+            if (strcmp(field->hfinfo->abbrev, "dhcpv6.client_domain") == 0) {
+                ja4d_data.fqdn = 'd';
             }
             if (strcmp(field->hfinfo->abbrev, "dhcpv6.option.type") == 0) {
                 unsigned val = fvalue_get_uinteger(get_value_ptr(field));
@@ -1535,7 +1659,7 @@ static int frame_tapdata;
 
 static void init_globals(void) {
     GArray *wanted_hfids = g_array_new(false, false, (unsigned)sizeof(int));
-    for (int i = 0; i < array_length(interesting_hfids); i++) {
+    for (size_t i = 0; i < array_length(interesting_hfids); i++) {
         int id = proto_registrar_get_id_byname(interesting_hfids[i]);
         if (id != -1) {
             g_array_append_val(wanted_hfids, id);
