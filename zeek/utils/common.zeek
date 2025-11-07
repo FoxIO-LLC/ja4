@@ -3,7 +3,7 @@ module FINGERPRINT;
 export {
     # Format a vector of count type to a string type
     global vector_of_count_to_str: function (input: vector of count, format_str: string &default="%04x", 
-        dlimit: string &default=","): string;
+        dlimit: string &default=",",  skip: set[count] &default=set()): string;
 
     # Format a vector of string type to a string type
     global vector_of_str_to_str: function (input: vector of string, format_str: string &default="%s", 
@@ -19,10 +19,13 @@ export {
 
 # Format a vector of count type to a string type
 function vector_of_count_to_str(input: vector of count, format_str: string &default="%04x", 
-    dlimit: string &default=","): string {
+    dlimit: string &default=",", skip: set[count] &default=set()): string {
     local output = "";
     for (idx in input) {
         local val = input[idx];
+        if (val in skip) {
+            next;
+        }
         output += fmt(format_str, val);
         if (idx < |input|-1) {
         output += dlimit;
