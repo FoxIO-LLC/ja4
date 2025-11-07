@@ -17,6 +17,8 @@ export {
 
     # The ssh fingerprint
     ja4d: string &log &default="";
+    client_mac: string &log &default="";
+    requested_ip: addr &log &optional;
     vendor_class_id: string &log &default="";
     hostname: string &log &default="";
   };
@@ -101,6 +103,12 @@ function do_ja4d(c: connection, msg: DHCP::Msg, options: DHCP::Options) {
   if (options?$vendor_class) {
     ja4d$vendor_class_id = options$vendor_class;
   }
+  if (options?$addr_request) {
+    ja4d$requested_ip = options$addr_request;
+  }
+  if (msg?$chaddr) {
+    ja4d$client_mac = msg$chaddr;
+  }
 
   ja4d$ja4d += get_dhcp_message_type(msg) + get_max_message_size(options);
   ja4d$ja4d += get_request_ip(options)+get_FQDN(options);
@@ -108,9 +116,6 @@ function do_ja4d(c: connection, msg: DHCP::Msg, options: DHCP::Options) {
   ja4d$ja4d += get_option_list(options);
   ja4d$ja4d += FINGERPRINT::delimiter;
   ja4d$ja4d += get_parameter_list(options);
-
-
-#  print(options);
   
   Log::write(FINGERPRINT::JA4D::LOG, ja4d);
 }
