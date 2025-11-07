@@ -18,7 +18,7 @@ export {
     # The ssh fingerprint
     ja4d: string &log &default="";
     vendor_class_id: string &log &default="";
-    hostname: string &log &optional &default="";
+    hostname: string &log &default="";
   };
 
 
