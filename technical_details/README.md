@@ -41,5 +41,5 @@ Please contact john@foxio.io for in-depth implementation details and programming
 
 See [Licensing](../README.md#licensing) in the repo root. We are committed to work with vendors and open source projects to help implement JA4+ into those tools. Please contact john@foxio.io with any questions.
 
-Copyright (c) 2025, FoxIO
+Copyright (c) 2025, FoxIO  
 JA4 and JA4+ are trademarks of FoxIO, Inc.
