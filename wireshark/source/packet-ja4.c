@@ -1495,7 +1495,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             }
             if (strcmp(field->hfinfo->abbrev, "dhcp.option.type") == 0) {
                 unsigned val = fvalue_get_uinteger(get_value_ptr(field));
-                if (val != 0 && val != 53) {
+                if (val != 0 && val != 53 && val != 50 && val != 81) {
                     wmem_strbuf_append_printf(ja4d_data.options, "%d-", val);
                 }
             }
