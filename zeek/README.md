@@ -11,7 +11,9 @@ JA4LS &rarr; `conn.log`
 JA4T &rarr; `conn.log`  
 JA4TS &rarr; `conn.log`  
 JA4SSH &rarr; `ja4ssh.log`  
-JA4X &rarr; `x509.log` (still in development)  
+JA4D &rarr; `ja4d.log`  
+JA4D6 &rarr; `ja4d.log` (awaiting Zeek DHCPv6 suppport)  
+JA4X &rarr; `x509.log` (awaiting Zeek object support)  
 
 See [JA4+ and implementations into other open source tools](../README.md) for more detail on JA4+ and implementations into other open source tools.
 
