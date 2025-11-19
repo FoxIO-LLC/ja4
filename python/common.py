@@ -124,8 +124,8 @@ def get_supported_version(v):
 ## computes t2 - t1
 ## returns diff in seconds
 def epoch_diff(t1, t2):
-    dt1 = datetime.fromtimestamp(float(t1))
-    dt2 = datetime.fromtimestamp(float(t2))
+    dt1 = datetime.fromisoformat(t1.replace("Z", "+00:00"))
+    dt2 = datetime.fromisoformat(t2.replace("Z", "+00:00"))
     return int((dt2-dt1).microseconds/2)
     
 
