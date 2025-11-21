@@ -120,14 +120,31 @@ def get_supported_version(v):
     return versions[-1]
 
 
+def parse_timestamp(timestamp):
+    """
+    Parse a timestamp supporting multiple formats.
+
+    Parameters:
+        timestamp: Unix timestamp (float/int) or ISO 8601 string
+
+    Returns:
+        datetime object
+    """
+    if isinstance(timestamp, str):
+        # ISO 8601 format, remove trailing 'Z'
+        return datetime.fromisoformat(timestamp.rstrip('Z'))
+    else:
+        # Unix timestamp
+        return datetime.fromtimestamp(float(timestamp))
+
 ## Time diff of epoch times / 2
 ## computes t2 - t1
 ## returns diff in seconds
 def epoch_diff(t1, t2):
-    dt1 = datetime.fromtimestamp(float(t1))
-    dt2 = datetime.fromtimestamp(float(t2))
+    dt1 = parse_timestamp(t1)
+    dt2 = parse_timestamp(t2)
     return int((dt2-dt1).microseconds/2)
-    
+
 
 # Scan for tls
 def scan_tls(layer):
