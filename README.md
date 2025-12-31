@@ -124,6 +124,7 @@ This repo includes JA4+ in
 | [Microsoft Azure Front Door CDN](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol) | JA4 |
 | [Moat](https://github.com/arxignis/moat) by [Arxignis](https://arxignis.com) | JA4+ |
 | [Zscaler](https://www.zscaler.com/blogs/product-insights/zscaler-endpoint-context-endpoint-cloud-visibility-and-enforcement-secops) | JA4 |
+| [ExtraHop](https://www.extrahop.com/) | JA4+ |
 
 with more to be announced...  
 
