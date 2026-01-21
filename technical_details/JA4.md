@@ -83,7 +83,7 @@ Same as counting ciphers. Ignore GREASE. Include SNI and ALPN.
 
 ### ALPN Extension Value
 
-The first and last ASCII alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.
+The first and last ASCII alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
 List of possible ALPN Values (scroll down): https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
 
 In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. If the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
