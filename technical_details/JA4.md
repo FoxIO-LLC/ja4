@@ -83,7 +83,7 @@ Same as counting ciphers. Ignore GREASE. Include SNI and ALPN.
 
 ### ALPN Extension Value
 
-The first and last alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
+The first and last ASCII alphanumeric characters of the ALPN (Application-Layer Protocol Negotiation) first value.  
 List of possible ALPN Values (scroll down): https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
 
 In the above example, the first ALPN value is h2 so the first and last characters to use in the fingerprint are “h2”. If the first ALPN listed was http/1.1 then the first and last characters to use in the fingerprint would be “h1”.
@@ -92,11 +92,14 @@ In Wireshark this field is located under tls.handshake.extensions_alpn_str
 
 If there is no ALPN extension, no ALPN values, or the first ALPN value is empty, then we print "00" as the value in the fingerprint. If the first ALPN value is only a single character, then that character is treated as both the first and last character.
 
-If the first or last byte of the first ALPN is non-alphanumeric (meaning not `0x30-0x39`, `0x41-0x5A`, or `0x61-0x7A`), then we print the first and last characters of the hex representation of the first ALPN instead. For example:
+If the first or last byte of the first ALPN is not an ASCII alphanumeric character (meaning not `0x30-0x39`, `0x41-0x5A`, or `0x61-0x7A`), then we print the first and last characters of the hex representation of the first ALPN instead. For example:
 
 * `0xAB` would be printed as "ab"
+* `0x20` would be printed as "20"
 * `0xAB 0xCD` would be printed as "ad"
+* `0x20 0x61` would be printed as "21"
 * `0x30 0xAB` would be printed as "3b"
+* `0x61 0x20` would be printed as "60"
 * `0x30 0x31 0xAB 0xCD` would be printed as "3d"
 * `0x30 0xAB 0xCD 0x31` would be printed as "01"
 
