@@ -125,6 +125,7 @@ This repo includes JA4+ in
 | [Moat](https://github.com/arxignis/moat) by [Arxignis](https://arxignis.com) | JA4+ |
 | [Zscaler](https://www.zscaler.com/blogs/product-insights/zscaler-endpoint-context-endpoint-cloud-visibility-and-enforcement-secops) | JA4 |
 | [ExtraHop](https://www.extrahop.com/) | JA4+ |
+| [Validin](https://www.validin.com/) | JA4+ |
 
 with more to be announced...  
 
