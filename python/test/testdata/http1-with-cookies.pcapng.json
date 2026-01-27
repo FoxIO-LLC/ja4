@@ -1,0 +1,21 @@
+[
+    {
+        "stream": 0,
+        "src": "127.0.0.1",
+        "dst": "127.0.0.1",
+        "srcport": "61256",
+        "dstport": "8000",
+        "JA4H": "ge11cr04da00_8ddaef5d77af_280f366eaa04_c2fb0fe53442"
+    },
+    {
+        "stream": 0,
+        "src": "127.0.0.1",
+        "dst": "127.0.0.1",
+        "srcport": "61256",
+        "dstport": "8000",
+        "client_ttl": "64",
+        "server_ttl": "64",
+        "JA4L-S": "64_64",
+        "JA4L-C": "20_64"
+    }
+]

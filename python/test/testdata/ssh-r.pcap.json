@@ -1,0 +1,64 @@
+[
+    {
+        "stream": 1,
+        "src": "192.168.1.197",
+        "dst": "44.212.59.210",
+        "srcport": "46394",
+        "dstport": "22",
+        "client_ttl": "64",
+        "server_ttl": "116",
+        "JA4L-S": "4171_116",
+        "JA4L-C": "2058_64",
+        "ssh_extras": {
+            "hassh": "ec9ea89c70f5fc71cf61061bff5e4740",
+            "hassh_server": "2307c390c7c9aba5b4c9519e72347f34",
+            "ssh_protocol_client": "SSH-2.0-OpenSSH_7.4",
+            "ssh_protocol_server": "SSH-2.0-OpenSSH_8.7",
+            "encryption_algorithm": "aes256-gcm@openssh.com"
+        },
+        "JA4SSH.1": "c64s64_c6s5_c0s0"
+    },
+    {
+        "stream": 2,
+        "src": "192.168.1.197",
+        "dst": "44.212.59.210",
+        "srcport": "46396",
+        "dstport": "22",
+        "client_ttl": "64",
+        "server_ttl": "116",
+        "JA4L-S": "3169_116",
+        "JA4L-C": "184_64",
+        "ssh_extras": {
+            "hassh": "ec9ea89c70f5fc71cf61061bff5e4740",
+            "hassh_server": "2307c390c7c9aba5b4c9519e72347f34",
+            "ssh_protocol_client": "SSH-2.0-OpenSSH_7.4",
+            "ssh_protocol_server": "SSH-2.0-OpenSSH_8.7",
+            "encryption_algorithm": "aes256-gcm@openssh.com"
+        },
+        "JA4SSH.1": "c64s64_c104s96_c0s0",
+        "JA4SSH.2": "c76s76_c108s92_c0s0",
+        "JA4SSH.3": "c76s76_c106s94_c0s0",
+        "JA4SSH.4": "c76s76_c111s89_c0s0",
+        "JA4SSH.5": "c76s76_c66s65_c0s0"
+    },
+    {
+        "stream": 0,
+        "src": "192.168.1.169",
+        "dst": "192.168.1.197",
+        "srcport": "64980",
+        "dstport": "22",
+        "client_ttl": "128",
+        "server_ttl": "64",
+        "JA4L-S": "32_64",
+        "JA4L-C": "4991_128",
+        "ssh_extras": {
+            "hassh": "e77c2db7432e8cfbc42a96909a84fc8e",
+            "hassh_server": "6832f1ce43d4397c2c0a3e2f8c94334e",
+            "ssh_protocol_client": "SSH-2.0-PuTTY_Release_0.74",
+            "ssh_protocol_server": "SSH-2.0-OpenSSH_7.4",
+            "encryption_algorithm": "chacha20-poly1305@openssh.com"
+        },
+        "JA4SSH.1": "c64s64_c107s93_c0s0",
+        "JA4SSH.2": "c64s64_c0s0_c0s0"
+    }
+]
