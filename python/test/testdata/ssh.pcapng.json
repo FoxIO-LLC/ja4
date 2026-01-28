@@ -1,0 +1,17 @@
+[
+    {
+        "stream": 0,
+        "src": "172.16.225.48",
+        "dst": "54.160.114.75",
+        "srcport": "57377",
+        "dstport": "22",
+        "ssh_extras": {
+            "hassh": "06046964c022c6407d15a27b12a6a4fb",
+            "hassh_server": "699519fdcc30cbcd093d5cd01e4b1d56",
+            "ssh_protocol_client": "SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.5",
+            "ssh_protocol_server": "SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.1",
+            "encryption_algorithm": "chacha20-poly1305@openssh.com"
+        },
+        "JA4SSH.1": "c36s36_c76s124_c0s0"
+    }
+]

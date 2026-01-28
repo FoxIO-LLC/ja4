@@ -1,0 +1,20 @@
+[
+    {
+        "stream": 0,
+        "src": "3ffe:507:0:1:200:86ff:fe05:80da",
+        "dst": "3ffe:501:410:0:2c0:dfff:fe47:33e",
+        "srcport": "1022",
+        "dstport": "22",
+        "client_ttl": "64",
+        "server_ttl": "61",
+        "JA4L-S": "28494_61",
+        "JA4L-C": "39940_64",
+        "ssh_extras": {
+            "hassh": "",
+            "hassh_server": "",
+            "ssh_protocol_client": "SSH-1.5-1.2.26",
+            "ssh_protocol_server": "SSH-1.5-1.2.26",
+            "encryption_algorithm": ""
+        }
+    }
+]

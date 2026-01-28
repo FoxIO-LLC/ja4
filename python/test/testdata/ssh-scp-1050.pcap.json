@@ -1,0 +1,24 @@
+[
+    {
+        "stream": 0,
+        "src": "192.168.1.169",
+        "dst": "192.168.1.197",
+        "srcport": "49237",
+        "dstport": "22",
+        "client_ttl": "128",
+        "server_ttl": "64",
+        "JA4L-S": "38_64",
+        "JA4L-C": "6615_128",
+        "ssh_extras": {
+            "hassh": "eb6d4c713c7dcaba7cfd070b095213a9",
+            "hassh_server": "6832f1ce43d4397c2c0a3e2f8c94334e",
+            "ssh_protocol_client": "SSH-2.0-WinSCP_release_5.17.10",
+            "ssh_protocol_server": "SSH-2.0-OpenSSH_7.4",
+            "encryption_algorithm": "chacha20-poly1305@openssh.com"
+        },
+        "JA4SSH.1": "c112s1460_c52s148_c0s0",
+        "JA4SSH.2": "c112s1460_c13s187_c0s0",
+        "JA4SSH.3": "c112s1460_c0s200_c0s0",
+        "JA4SSH.4": "c112s1460_c0s200_c0s0"
+    }
+]

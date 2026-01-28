@@ -1,0 +1,20 @@
+[
+    {
+        "stream": 0,
+        "src": "172.27.1.66",
+        "dst": "66.59.109.137",
+        "srcport": "40264",
+        "dstport": "22",
+        "client_ttl": "255",
+        "server_ttl": "236",
+        "JA4L-S": "22952_236",
+        "JA4L-C": "26150_255",
+        "ssh_extras": {
+            "hassh": "5ef6678a6b060094834599ca16581b05",
+            "hassh_server": "6e3242d64766f4154c11858bbd654415",
+            "ssh_protocol_client": "SSH-2.0-OpenSSH_3.6.1p1",
+            "ssh_protocol_server": "SSH-1.99-OpenSSH_3.1p1",
+            "encryption_algorithm": "aes128-cbc"
+        }
+    }
+]
