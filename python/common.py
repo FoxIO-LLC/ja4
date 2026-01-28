@@ -25,6 +25,42 @@ GREASE_TABLE = {'0x0a0a': True, '0x1a1a': True, '0x2a2a': True, '0x3a3a': True,
                 '0x8a8a': True, '0x9a9a': True, '0xaaaa': True, '0xbaba': True,
                 '0xcaca': True, '0xdada': True, '0xeaea': True, '0xfafa': True}
 
+def _parse_tls_int(value):
+    if isinstance(value, int):
+        return value
+    s = str(value).strip().lower()
+    if s.startswith('0x'):
+        return int(s, 16)
+    if any(ch in 'abcdef' for ch in s):
+        return int(s, 16)
+    return int(s)
+
+def normalize_tls_list(values, width=4, prefix='0x'):
+    if values is None:
+        return []
+    if not isinstance(values, list):
+        values = [values]
+    return [ f"{prefix}{_parse_tls_int(v):0{width}x}" for v in values ]
+
+def normalize_tls_value(value, width=4, prefix='0x'):
+    values = normalize_tls_list(value, width, prefix)
+    return values[0] if values else None
+
+def normalize_tls_fields(packet, extensions_prefix='0x'):
+    if not packet:
+        return packet
+    if 'extensions' in packet:
+        packet['extensions'] = normalize_tls_list(packet['extensions'], prefix=extensions_prefix)
+    if 'ciphers' in packet:
+        packet['ciphers'] = normalize_tls_list(packet['ciphers'])
+    if 'supported_versions' in packet:
+        packet['supported_versions'] = normalize_tls_list(packet['supported_versions'])
+    if 'version' in packet:
+        packet['version'] = normalize_tls_value(packet['version'])
+    if 'signature_algorithms' in packet:
+        packet['signature_algorithms'] = normalize_tls_list(packet['signature_algorithms'])
+    return packet
+
 def delete_keys(keys, x):
     for key in keys:
         if key in x:
@@ -172,5 +208,5 @@ def get_signature_algorithms(packet):
         except Exception as e:
             pass
         packet['signature_algorithms'] = packet['signature_algorithms'][alg_lengths[idx]:]
-    return [ x for x in packet['signature_algorithms'] if x not in GREASE_TABLE ]
+    return [ x for x in packet.get('signature_algorithms', []) if x not in GREASE_TABLE ]
         
