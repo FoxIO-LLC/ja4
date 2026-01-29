@@ -3,6 +3,8 @@
 # Patent Pending
 # JA4SSH is licenced under the FoxIO License 1.1. For full license text, see the repo root.
 
+from collections import Counter
+
 ja4sh_stats = {
     'client_payloads': [],
     'server_payloads': [],
@@ -11,6 +13,45 @@ ja4sh_stats = {
     'client_acks': 0,
     'server_acks': 0
 }
+
+def _first(value):
+    return value[0] if isinstance(value, list) else value
+
+def _parse_int(value):
+    if value is None:
+        return None
+    try:
+        return int(str(value), 0)
+    except Exception:
+        try:
+            return int(str(value))
+        except Exception:
+            return None
+
+def _int_field(x, key):
+    return _parse_int(_first(x.get(key)))
+
+def _direction_from_value(value):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        s = value.strip().lower()
+        if s in ('1', 'true', 'server', 'srv', 'to_server', 's'):
+            return 'server'
+        if s in ('0', 'false', 'client', 'cli', 'to_client', 'c'):
+            return 'client'
+        return None
+    try:
+        return 'server' if int(value) == 1 else 'client'
+    except Exception:
+        return None
+
+def _mode_from_lengths(values):
+    if not values:
+        return 0
+    counts = Counter(values)
+    max_count = max(counts.values())
+    return min(k for k, v in counts.items() if v == max_count)
 
 def tuple_string (x):
     return f"{x['stream']}: [{x['src']}:{x['srcport']} - {x['dst']}:{x['dstport']}]"
@@ -46,23 +87,36 @@ def update_ssh_entry(entry, x, ssh_sample_count, debug_stream=None):
     if entry['count'] == 0 and len(entry['stats']) == 0:
         entry['stats'].append(dict(ja4sh_stats))
 
-    # Only count SSH PSHACK packets
-    if 'ssh' in x['protos']:
+    has_ssh_extras = any(
+        key in x
+        for key in ('ssh_protocol', 'hassh', 'hassh_server', 'algo_client', 'algo_server')
+    )
+    has_ssh = ('ssh' in x['protos']) or ('direction' in x) or has_ssh_extras
+    tcp_len = _int_field(x, 'len')
+
+    # Count SSH packets
+    if has_ssh:
         entry['count'] += 1
 
     e = entry['stats'][-1]
-    direction = 'client' if entry['src'] == x['src'] else 'server'
+    direction = _direction_from_value(_first(x.get('direction')))
+    if direction is None:
+        direction = 'client' if entry['src'] == x['src'] else 'server'
 
-    if 'ssh' in x['protos']:
-        e[f'{direction}_payloads'].append(x['len'])
+    if has_ssh and tcp_len is not None:
+        e[f'{direction}_payloads'].append(tcp_len)
         e[f'{direction}_packets'] += 1
 
-    # Update ACK count based on direction and Bare Acks
-    if 'ssh' not in x['protos'] and x['flags'] == '0x0010':
-        e[f'{direction}_acks'] += 1
+    # Update ACK count based on direction and bare ACKs (no payload)
+    flags = _int_field(x, 'flags')
+    if (not has_ssh) and flags == 0x0010 and tcp_len == 0:
+        if _int_field(x, 'dstport') == 22:
+            e['client_acks'] += 1
+        elif _int_field(x, 'srcport') == 22:
+            e['server_acks'] += 1
 
     # Added extra output parameters
-    if 'ssh' in x['protos']:
+    if has_ssh:
         process_extra_parameters(entry, x, direction)
 
     if x['stream'] == debug_stream:
@@ -89,8 +143,8 @@ def to_ja4ssh(x):
     idx = len(x['stats'])
     e = x['stats'][idx-1]
     if e['client_payloads'] or e['server_payloads']:
-        mode_client = max(e['client_payloads'], key=e['client_payloads'].count) if e['client_payloads'] else 0
-        mode_server = max(e['server_payloads'], key=e['server_payloads'].count) if e['server_payloads'] else 0
+        mode_client = _mode_from_lengths(e['client_payloads'])
+        mode_server = _mode_from_lengths(e['server_payloads'])
         client_packets = e['client_packets']
         server_packets = e['server_packets']
         client_acks = e['client_acks']

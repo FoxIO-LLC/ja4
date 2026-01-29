@@ -16,7 +16,7 @@
             "ssh_protocol_server": "SSH-2.0-OpenSSH_8.7",
             "encryption_algorithm": "aes256-gcm@openssh.com"
         },
-        "JA4SSH.1": "c64s64_c6s5_c0s0"
+        "JA4SSH.1": "c64s64_c6s5_c4s5"
     },
     {
         "stream": 2,
@@ -35,11 +35,11 @@
             "ssh_protocol_server": "SSH-2.0-OpenSSH_8.7",
             "encryption_algorithm": "aes256-gcm@openssh.com"
         },
-        "JA4SSH.1": "c64s64_c104s96_c0s0",
-        "JA4SSH.2": "c76s76_c108s92_c0s0",
-        "JA4SSH.3": "c76s76_c106s94_c0s0",
-        "JA4SSH.4": "c76s76_c111s89_c0s0",
-        "JA4SSH.5": "c76s76_c66s65_c0s0"
+        "JA4SSH.1": "c64s64_c104s96_c19s82",
+        "JA4SSH.2": "c76s76_c108s92_c0s105",
+        "JA4SSH.3": "c76s76_c106s94_c0s107",
+        "JA4SSH.4": "c76s76_c111s89_c0s102",
+        "JA4SSH.5": "c76s76_c66s65_c9s51"
     },
     {
         "stream": 0,
@@ -58,7 +58,7 @@
             "ssh_protocol_server": "SSH-2.0-OpenSSH_7.4",
             "encryption_algorithm": "chacha20-poly1305@openssh.com"
         },
-        "JA4SSH.1": "c64s64_c107s93_c0s0",
-        "JA4SSH.2": "c64s64_c0s0_c0s0"
+        "JA4SSH.1": "c64s64_c107s93_c74s10",
+        "JA4SSH.2": "c64s64_c0s0_c0s1"
     }
 ]

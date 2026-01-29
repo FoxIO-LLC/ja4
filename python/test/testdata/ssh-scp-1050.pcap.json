@@ -16,9 +16,9 @@
             "ssh_protocol_server": "SSH-2.0-OpenSSH_7.4",
             "encryption_algorithm": "chacha20-poly1305@openssh.com"
         },
-        "JA4SSH.1": "c112s1460_c52s148_c0s0",
-        "JA4SSH.2": "c112s1460_c13s187_c0s0",
-        "JA4SSH.3": "c112s1460_c0s200_c0s0",
-        "JA4SSH.4": "c112s1460_c0s200_c0s0"
+        "JA4SSH.1": "c112s1460_c52s148_c41s4",
+        "JA4SSH.2": "c112s1460_c13s187_c35s0",
+        "JA4SSH.3": "c112s1460_c0s200_c36s0",
+        "JA4SSH.4": "c112s1460_c0s200_c23s0"
     }
 ]
