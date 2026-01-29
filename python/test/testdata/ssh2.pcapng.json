@@ -148,8 +148,8 @@
             "ssh_protocol_server": "SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.1",
             "encryption_algorithm": "chacha20-poly1305@openssh.com"
         },
-        "JA4SSH.1": "c36s36_c76s124_c0s0",
-        "JA4SSH.2": "c36s36_c0s0_c0s0"
+        "JA4SSH.1": "c36s36_c76s124_c74s5",
+        "JA4SSH.2": "c36s36_c0s0_c2s0"
     },
     {
         "stream": 15,
