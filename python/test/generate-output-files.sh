@@ -20,5 +20,5 @@ fi
 for pcap in "${PCAP_FILES[@]}"; do
     base=$(basename "$pcap")
     out="$OUT_DIR/${base}.json"
-    python3 "$JA4_SCRIPT" "$pcap" -J -f "$out"
+    python3 "$JA4_SCRIPT" "$pcap" -J -r -o -f "$out"
 done

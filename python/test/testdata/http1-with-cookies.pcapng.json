@@ -5,7 +5,8 @@
         "dst": "127.0.0.1",
         "srcport": "61256",
         "dstport": "8000",
-        "JA4H": "ge11cr04da00_8ddaef5d77af_280f366eaa04_c2fb0fe53442"
+        "JA4H": "ge11cr04da00_8ddaef5d77af_280f366eaa04_c2fb0fe53442",
+        "JA4H_ro": "ge11cr04da00_Host,User-Agent,Accept,Accept-Language_yummy_cookie,tasty_cookie_yummy_cookie=choco,tasty_cookie=strawberry"
     },
     {
         "stream": 0,
