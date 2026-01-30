@@ -5,7 +5,8 @@
         "dst": "192.168.1.1",
         "srcport": "48456",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 1,
@@ -13,7 +14,8 @@
         "dst": "192.168.1.1",
         "srcport": "45042",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 2,
@@ -21,7 +23,8 @@
         "dst": "192.168.1.1",
         "srcport": "48458",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 3,
@@ -29,7 +32,8 @@
         "dst": "192.168.1.1",
         "srcport": "45044",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 4,
@@ -37,7 +41,8 @@
         "dst": "142.251.16.94",
         "srcport": "56404",
         "dstport": "80",
-        "JA4H": "he11nn05enus_6f8992deff94_000000000000_000000000000"
+        "JA4H": "he11nn05enus_6f8992deff94_000000000000_000000000000",
+        "JA4H_ro": "he11nn05enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language_"
     },
     {
         "stream": 5,
@@ -45,7 +50,8 @@
         "dst": "192.168.1.1",
         "srcport": "48460",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 6,
@@ -53,7 +59,8 @@
         "dst": "192.168.1.1",
         "srcport": "45046",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 7,
@@ -61,7 +68,8 @@
         "dst": "192.168.1.1",
         "srcport": "48462",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 8,
@@ -69,7 +77,8 @@
         "dst": "192.168.1.1",
         "srcport": "45048",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 9,
@@ -77,7 +86,8 @@
         "dst": "192.168.1.1",
         "srcport": "48464",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 10,
@@ -85,7 +95,8 @@
         "dst": "192.168.1.1",
         "srcport": "45050",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 11,
@@ -93,7 +104,8 @@
         "dst": "192.168.1.1",
         "srcport": "48466",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 12,
@@ -101,7 +113,8 @@
         "dst": "192.168.1.1",
         "srcport": "48468",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 13,
@@ -109,7 +122,8 @@
         "dst": "192.168.1.1",
         "srcport": "45052",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 14,
@@ -117,7 +131,8 @@
         "dst": "192.168.1.1",
         "srcport": "48470",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 15,
@@ -125,7 +140,8 @@
         "dst": "192.168.1.1",
         "srcport": "45054",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 16,
@@ -133,7 +149,8 @@
         "dst": "192.168.1.1",
         "srcport": "48472",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 4,
@@ -141,7 +158,8 @@
         "dst": "192.168.1.147",
         "srcport": "80",
         "dstport": "56404",
-        "JA4H": "he11nn05enus_6f8992deff94_000000000000_000000000000"
+        "JA4H": "he11nn05enus_6f8992deff94_000000000000_000000000000",
+        "JA4H_ro": "he11nn05enus_Host,Connection,User-Agent,Accept-Encoding,Accept-Language_"
     },
     {
         "stream": 18,
@@ -149,7 +167,8 @@
         "dst": "192.168.1.1",
         "srcport": "48476",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 19,
@@ -157,7 +176,8 @@
         "dst": "192.168.1.1",
         "srcport": "45056",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 20,
@@ -165,7 +185,8 @@
         "dst": "192.168.1.1",
         "srcport": "48478",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 21,
@@ -173,7 +194,8 @@
         "dst": "192.168.1.1",
         "srcport": "48480",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 22,
@@ -181,7 +203,8 @@
         "dst": "52.85.151.11",
         "srcport": "38660",
         "dstport": "80",
-        "JA4H": "ge11nn040000_ad0fd3707af2_000000000000_000000000000"
+        "JA4H": "ge11nn040000_ad0fd3707af2_000000000000_000000000000",
+        "JA4H_ro": "ge11nn040000_Host,User-Agent,Accept,Range_"
     },
     {
         "stream": 23,
@@ -189,7 +212,8 @@
         "dst": "142.251.167.94",
         "srcport": "41355",
         "dstport": "80",
-        "JA4H": "ge11nn040000_4f6f4aad0c1e_000000000000_000000000000"
+        "JA4H": "ge11nn040000_4f6f4aad0c1e_000000000000_000000000000",
+        "JA4H_ro": "ge11nn040000_User-Agent,Host,Connection,Accept-Encoding_"
     },
     {
         "stream": 24,
@@ -197,7 +221,8 @@
         "dst": "104.86.99.193",
         "srcport": "39698",
         "dstport": "80",
-        "JA4H": "he11nn040000_4f6f4aad0c1e_000000000000_000000000000"
+        "JA4H": "he11nn040000_4f6f4aad0c1e_000000000000_000000000000",
+        "JA4H_ro": "he11nn040000_User-Agent,Host,Connection,Accept-Encoding_"
     },
     {
         "stream": 25,
@@ -205,7 +230,8 @@
         "dst": "192.168.1.1",
         "srcport": "44238",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 26,
@@ -213,7 +239,8 @@
         "dst": "192.168.1.1",
         "srcport": "44239",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 27,
@@ -221,7 +248,8 @@
         "dst": "192.168.1.1",
         "srcport": "44240",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 28,
@@ -229,7 +257,8 @@
         "dst": "192.168.1.1",
         "srcport": "44241",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 29,
@@ -237,7 +266,8 @@
         "dst": "192.168.1.1",
         "srcport": "44242",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 30,
@@ -245,7 +275,8 @@
         "dst": "192.168.1.1",
         "srcport": "44243",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 31,
@@ -253,7 +284,8 @@
         "dst": "192.168.1.1",
         "srcport": "44244",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 32,
@@ -261,7 +293,8 @@
         "dst": "192.168.1.1",
         "srcport": "44245",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 33,
@@ -269,7 +302,8 @@
         "dst": "192.168.1.1",
         "srcport": "44250",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 34,
@@ -277,7 +311,8 @@
         "dst": "192.168.1.1",
         "srcport": "44251",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 35,
@@ -285,7 +320,8 @@
         "dst": "192.168.1.1",
         "srcport": "44252",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 36,
@@ -293,7 +329,8 @@
         "dst": "192.168.1.1",
         "srcport": "44253",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 37,
@@ -301,7 +338,8 @@
         "dst": "192.168.1.1",
         "srcport": "44254",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 38,
@@ -309,7 +347,8 @@
         "dst": "192.168.1.1",
         "srcport": "44255",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 39,
@@ -317,7 +356,8 @@
         "dst": "192.168.1.1",
         "srcport": "44256",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 40,
@@ -325,7 +365,8 @@
         "dst": "192.168.1.1",
         "srcport": "44257",
         "dstport": "41547",
-        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000"
+        "JA4H": "ge11nn050000_e1365771aae9_000000000000_000000000000",
+        "JA4H_ro": "ge11nn050000_Host,Date,User-Agent,X-AV-Physical-Unit-Info,X-AV-Client-Info_"
     },
     {
         "stream": 41,
@@ -333,7 +374,8 @@
         "dst": "192.168.1.1",
         "srcport": "45058",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 42,
@@ -341,7 +383,8 @@
         "dst": "192.168.1.1",
         "srcport": "48482",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 43,
@@ -349,7 +392,8 @@
         "dst": "192.168.1.1",
         "srcport": "48484",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 44,
@@ -357,7 +401,8 @@
         "dst": "192.168.1.1",
         "srcport": "48486",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 45,
@@ -365,7 +410,8 @@
         "dst": "192.168.1.1",
         "srcport": "45060",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 46,
@@ -373,7 +419,8 @@
         "dst": "104.18.20.64",
         "srcport": "40978",
         "dstport": "80",
-        "JA4H": "ge11nn040000_532a1ee47909_000000000000_000000000000"
+        "JA4H": "ge11nn040000_532a1ee47909_000000000000_000000000000",
+        "JA4H_ro": "ge11nn040000_Host,User-Agent,Connection,Accept-Encoding_"
     },
     {
         "stream": 47,
@@ -381,7 +428,8 @@
         "dst": "192.168.1.1",
         "srcport": "60164",
         "dstport": "41547",
-        "JA4H": "ge11nn030000_f8649f6808db_000000000000_000000000000"
+        "JA4H": "ge11nn030000_f8649f6808db_000000000000_000000000000",
+        "JA4H_ro": "ge11nn030000_Host,Connection,User-Agent_"
     },
     {
         "stream": 48,
@@ -389,7 +437,8 @@
         "dst": "192.168.1.1",
         "srcport": "60180",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     },
     {
         "stream": 49,
@@ -397,7 +446,8 @@
         "dst": "192.168.1.1",
         "srcport": "60186",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     },
     {
         "stream": 50,
@@ -405,7 +455,8 @@
         "dst": "192.168.1.1",
         "srcport": "60200",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     },
     {
         "stream": 51,
@@ -413,7 +464,8 @@
         "dst": "192.168.1.1",
         "srcport": "45062",
         "dstport": "8080",
-        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000"
+        "JA4H": "po11nn050000_530ceba2075f_000000000000_000000000000",
+        "JA4H_ro": "po11nn050000_Host,Accept,User-Agent,Content-Type,Content-Length_"
     },
     {
         "stream": 52,
@@ -421,7 +473,8 @@
         "dst": "192.168.1.1",
         "srcport": "60204",
         "dstport": "41547",
-        "JA4H": "ge11nn030000_f8649f6808db_000000000000_000000000000"
+        "JA4H": "ge11nn030000_f8649f6808db_000000000000_000000000000",
+        "JA4H_ro": "ge11nn030000_Host,Connection,User-Agent_"
     },
     {
         "stream": 53,
@@ -429,7 +482,8 @@
         "dst": "192.168.1.1",
         "srcport": "60220",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     },
     {
         "stream": 54,
@@ -437,7 +491,8 @@
         "dst": "192.168.1.1",
         "srcport": "60222",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     },
     {
         "stream": 55,
@@ -445,6 +500,7 @@
         "dst": "192.168.1.1",
         "srcport": "60230",
         "dstport": "41547",
-        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000"
+        "JA4H": "po11nn080000_6977d1188c03_000000000000_000000000000",
+        "JA4H_ro": "po11nn080000_Host,User-Agent,Content-Length,Content-Type,SOAPAction,Connection,Cache-Control,Pragma_"
     }
 ]

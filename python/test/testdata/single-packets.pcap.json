@@ -5,7 +5,8 @@
         "dst": "74.125.24.149",
         "srcport": "49677",
         "dstport": "80",
-        "JA4H": "ge11cr06enus_8c2f9ef95269_2a79f5d9f8b3_7b4d78c057bc"
+        "JA4H": "ge11cr06enus_8c2f9ef95269_2a79f5d9f8b3_7b4d78c057bc",
+        "JA4H_ro": "ge11cr06enus_Accept,Accept-Language,User-Agent,Accept-Encoding,Host,Connection_IDE_IDE=AHWqTUmq5vKag4U1NoZpmbEiY1PYuAYVT8bFXA1KRM6sqXH_QR5G3_2xSz7V6E3B"
     },
     {
         "stream": 1,
@@ -13,7 +14,8 @@
         "dst": "118.215.80.242",
         "srcport": "49654",
         "dstport": "80",
-        "JA4H": "ge11cr07enus_45c71a3fb6ea_a25bf252eb59_43a9e3e95c85"
+        "JA4H": "ge11cr07enus_45c71a3fb6ea_a25bf252eb59_43a9e3e95c85",
+        "JA4H_ro": "ge11cr07enus_Accept,X-Requested-With,Accept-Language,Accept-Encoding,User-Agent,Host,Connection__ga,_gid,_gat,AMCV_A70E15F354E99A260A4C98A4%40AdobeOrg,AMCVS_A70E15F354E99A260A4C98A4%40AdobeOrg,mbox,s_dfa,s_cc,s_ppvl,s_ppv,s_sq,segmentid,aam_uuid,app_promotion__ga=GA1.2.349209205.1532525440,_gid=GA1.2.1042544967.1532525440,_gat=1,AMCV_A70E15F354E99A260A4C98A4%40AdobeOrg=-330454231%7CMCIDTS%7C17738%7CMCMID%7C00834244270283740751404491874386840551%7CMCAAMLH-1533130240%7C3%7CMCAAMB-1533130240%7C6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y%7CMCOPTOUT-1532532640s%7CNONE%7CMCSYNCSOP%7C411-17745%7CMCAID%7CNONE%7CvVersion%7C3.1.2,AMCVS_A70E15F354E99A260A4C98A4%40AdobeOrg=1,mbox=session#f11f91da64134d8183e8dda4dc10aaf4#1532527370|PC#f11f91da64134d8183e8dda4dc10aaf4.22_23#1540301510|check#true#1532525570,s_dfa=shgshg-web-global,s_cc=true,s_ppvl=www.shangri-la.com%2C52%2C52%2C499%2C1350%2C498%2C1350%2C615%2C1%2CL,s_ppv=www.shangri-la.com%2C48%2C48%2C498%2C1350%2C498%2C1350%2C615%2C1%2CL,s_sq=%5B%5BB%5D%5D,segmentid=segment%3DC%2Csegment%3Dtesting,aam_uuid=01107346641427687611431242460084872101,app_promotion=1"
     },
     {
         "stream": 2,
@@ -21,7 +23,8 @@
         "dst": "13.115.50.210",
         "srcport": "49683",
         "dstport": "80",
-        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000"
+        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000",
+        "JA4H_ro": "ge11nr06enus_Accept,Accept-Language,User-Agent,Accept-Encoding,Host,Connection_"
     },
     {
         "stream": 3,
@@ -29,7 +32,8 @@
         "dst": "104.89.119.175",
         "srcport": "49708",
         "dstport": "80",
-        "JA4H": "po11cr09enus_130d8cd1913c_f81c0e5c6793_90689f748de6"
+        "JA4H": "po11cr09enus_130d8cd1913c_f81c0e5c6793_90689f748de6",
+        "JA4H_ro": "po11cr09enus_Accept,Accept-Language,User-Agent,Content-Type,Accept-Encoding,Host,Content-Length,Connection,Cache-Control_RT,ServerPool_RT=%1%enc%3Atg%2FlU7zufFPUle8wLxga3M9JuU9Wqi9L5JCsWOqGF5aUK4qCG413AHFq%2BvIG1jhcNox8JbUSTxk%3D,ServerPool=R"
     },
     {
         "stream": 4,
@@ -37,7 +41,8 @@
         "dst": "193.242.192.43",
         "srcport": "49735",
         "dstport": "80",
-        "JA4H": "ge11cr07enus_45c71a3fb6ea_9ee64e91aa30_109254663367"
+        "JA4H": "ge11cr07enus_45c71a3fb6ea_9ee64e91aa30_109254663367",
+        "JA4H_ro": "ge11cr07enus_Accept,X-Requested-With,Accept-Language,Accept-Encoding,User-Agent,Host,Connection_CFID,CFTOKEN,unescomap,_ga,_gid,_gat_CFID=77281563,CFTOKEN=64733241d30c35e0-304F31D8-AA72-F50C-3869AA2C5D0DFF17,unescomap=open,_ga=GA1.2.1751603294.1532525413,_gid=GA1.2.775336169.1532525413,_gat=1"
     },
     {
         "stream": 5,
@@ -45,7 +50,8 @@
         "dst": "74.125.24.100",
         "srcport": "49733",
         "dstport": "80",
-        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000"
+        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000",
+        "JA4H_ro": "ge11nr06enus_Accept,Accept-Language,User-Agent,Accept-Encoding,Host,Connection_"
     },
     {
         "stream": 6,
@@ -53,7 +59,8 @@
         "dst": "74.125.24.95",
         "srcport": "49743",
         "dstport": "80",
-        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000"
+        "JA4H": "ge11nr06enus_8c2f9ef95269_000000000000_000000000000",
+        "JA4H_ro": "ge11nr06enus_Accept,Accept-Language,User-Agent,Accept-Encoding,Host,Connection_"
     },
     {
         "stream": 7,
@@ -61,6 +68,7 @@
         "dst": "35.174.150.168",
         "srcport": "49738",
         "dstport": "80",
-        "JA4H": "ge11cr06enus_8c2f9ef95269_d23bf79698dc_c1eaa758c543"
+        "JA4H": "ge11cr06enus_8c2f9ef95269_d23bf79698dc_c1eaa758c543",
+        "JA4H_ro": "ge11cr06enus_Accept,Accept-Language,User-Agent,Accept-Encoding,Host,Connection_visitor_id413862,visitor_id413862-hash,pardot_visitor_id413862=286585660,visitor_id413862-hash=1f00bdb076b5fb707c70254849819ec1797d3e27cef91a61a9488cb7ca0ebf77f226caa4075591b2591bf9a1ccdf29432c67379b,pardot=tee2foreb3fefpgvk8u1056vt3"
     }
 ]

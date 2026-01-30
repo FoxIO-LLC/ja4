@@ -32,6 +32,8 @@ def test_ja4_output_matches_expected(pcap_file, tmp_path):
             str(JA4_SCRIPT),
             str(pcap_file),
             "-J",
+            "-r",
+            "-o",
             "-f",
             str(output_file),
         ],
