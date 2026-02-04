@@ -50,12 +50,12 @@ function vector_of_str_to_str(input: vector of string, format_str: string &defau
 
 # Sort a vector of count by the count values
 function order_vector_of_count(input: vector of count): vector of count {
-    local ordering: vector of count = order(input);
-    local outvec: vector of count = vector();
-    for (idx in ordering) {
-        local val = ordering[idx];
-        outvec += input[val];
-    }
+    local outvec = copy(input);
+    sort(outvec, function(a: count, b: count): int {
+        if ( a < b ) return -1;
+        if ( a > b ) return 1;
+        return 0;
+    });
     return outvec;
 }
 
