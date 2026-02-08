@@ -87,8 +87,16 @@ impl Stream {
             options.push(kind);
         }
 
-        let mut mss = None;
-        let mut window_scale = None;
+        let mss = tcp
+            .fields("tcp.options.mss_val")
+            .next()
+            .map(|md| md.value().parse::<u16>())
+            .transpose()?;
+        let window_scale = tcp
+            .fields("tcp.options.wscale.shift")
+            .next()
+            .map(|md| md.value().parse::<u8>())
+            .transpose()?;
 
         tracing::debug!(
             pkt = %pkt.num,
