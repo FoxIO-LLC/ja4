@@ -12,6 +12,7 @@ mod pcap;
 mod ssh;
 mod stream;
 mod time;
+mod tcp;
 mod tls;
 
 use std::{io::Write, path::PathBuf};

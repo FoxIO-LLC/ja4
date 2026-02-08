@@ -16,6 +16,7 @@ pub(crate) struct Conf {
     pub(crate) ssh: ConfSsh,
     pub(crate) time: ConfBasic,
     pub(crate) tls: ConfBasic,
+    pub(crate) tcp: ConfBasic,
 }
 
 #[derive(Debug, Deserialize)]
@@ -59,6 +60,7 @@ impl Conf {
             .set_default("ssh.enabled", true)?
             .set_default("ssh.sample_size", 200)?
             .set_default("time.enabled", true)?
+            .set_default("tcp.enabled", true)?
             .set_default("tls.enabled", true)?;
 
         if !config_file.exists() {
@@ -88,7 +90,7 @@ impl Conf {
 
         let conf = config.try_deserialize::<Conf>()?.prepare();
 
-        if conf.http.enabled || conf.time.enabled || conf.ssh.enabled || conf.tls.enabled {
+        if conf.http.enabled || conf.time.enabled || conf.ssh.enabled || conf.tcp.enabled || conf.tls.enabled {
             Ok(conf)
         } else {
             Err(crate::Error::VoidConf)
