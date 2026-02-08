@@ -15,7 +15,10 @@ mod tcp;
 mod time;
 mod tls;
 
-use std::{io::Write, path::PathBuf};
+use std::{path::PathBuf};
+use std::fs::File;
+use std::io;
+use std::io::{Write, BufWriter};
 
 use clap::Parser;
 use rtshark::RTSharkBuilder;
@@ -36,6 +39,9 @@ pub struct Cli {
     /// JSON output (default is YAML)
     #[arg(short, long)]
     json: bool,
+    /// Output file path (default: stdout)
+    #[arg(short = 'o', long)]
+    pub output: Option<PathBuf>,
     /// Include raw (unhashed) fingerprints in the output
     #[arg(short = 'r', long)]
     with_raw: bool,
@@ -66,7 +72,7 @@ pub struct Cli {
 
 impl Cli {
     /// Write JSON with JA4 fingerprints to the I/O stream.
-    pub fn run<W: Write>(self, writer: &mut W) -> Result<()> {
+    pub fn run(self) -> Result<()> {
         let conf = Conf::load()?;
         let Cli {
             json,
@@ -75,7 +81,24 @@ impl Cli {
             keylog_file,
             with_packet_numbers,
             pcap,
+            output,
         } = self;
+
+        let ext = if json { "json" } else { "yaml" };
+        let output = output.map(|mut path| {
+            if path.is_dir() {
+                return path.join(format!("ja4_output.{ext}"));
+            }
+
+            if path.extension().is_none() {
+                path.set_extension(ext);
+            }
+            path
+        });
+        let mut writer: Box<dyn Write> = match output {
+            Some(path) => Box::new(BufWriter::new(File::create(path)?)),
+            None => Box::new(io::stdout()),
+        };
 
         let Some(pcap_path) = pcap.to_str() else {
             return Err(Error::NonUtf8Path(pcap));
@@ -235,10 +258,11 @@ fn test_insta() {
                 keylog_file: None,
                 with_packet_numbers: false,
                 pcap: path.to_path_buf(),
+                output: None,
             };
 
             let mut output = Vec::<u8>::new();
-            cli.run(&mut output).unwrap();
+            cli.run().unwrap();
             let output = String::from_utf8(output).unwrap();
 
             insta::assert_snapshot!(output);
