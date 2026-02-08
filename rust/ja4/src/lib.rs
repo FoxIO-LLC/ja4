@@ -15,10 +15,10 @@ mod tcp;
 mod time;
 mod tls;
 
-use std::{path::PathBuf};
 use std::fs::File;
 use std::io;
-use std::io::{Write, BufWriter};
+use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 
 use clap::Parser;
 use rtshark::RTSharkBuilder;
