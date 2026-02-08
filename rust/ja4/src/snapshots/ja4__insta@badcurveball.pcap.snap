@@ -8,6 +8,7 @@ expression: output
   dst: 54.226.182.138
   src_port: 55318
   dst_port: 443
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1386_6
   tls_server_name: bad.curveballtest.com
   ja4: t13d1615h2_46e7e9700bed_45f260be83e2
   ja4s: t1205h1_c02b_845f7282a956

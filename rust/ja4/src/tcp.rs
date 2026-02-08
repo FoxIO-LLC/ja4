@@ -5,13 +5,13 @@
 // JA4+ (JA4S, JA4H, JA4L, JA4X, JA4SSH) are licenced under the FoxIO License 1.1.
 // For full license text, see the repo root.
 
-//! JA4T (TCP client), JA4TS (TCP server) fingerprinting
+//! JA4T (TCP client) fingerprinting
 
 use serde::Serialize;
 
 use crate::{FormatFlags, Packet, PacketNum, Result};
 
-/// TCP (JA4T) stream state.
+/// JA4T stream state.
 #[derive(Debug, Default)]
 pub(crate) struct Stream {
     client: Option<ClientStats>,

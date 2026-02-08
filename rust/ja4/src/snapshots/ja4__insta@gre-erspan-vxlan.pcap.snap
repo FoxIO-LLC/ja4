@@ -8,6 +8,7 @@ expression: output
   dst: 10.16.27.131
   src_port: 65174
   dst_port: 80
+  ja4t: 8192__0_0
   ja4l_c: 953_64
   ja4l_s: 997_64
 
