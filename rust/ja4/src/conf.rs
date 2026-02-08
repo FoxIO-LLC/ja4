@@ -90,7 +90,12 @@ impl Conf {
 
         let conf = config.try_deserialize::<Conf>()?.prepare();
 
-        if conf.http.enabled || conf.time.enabled || conf.ssh.enabled || conf.tcp.enabled || conf.tls.enabled {
+        if conf.http.enabled
+            || conf.time.enabled
+            || conf.ssh.enabled
+            || conf.tcp.enabled
+            || conf.tls.enabled
+        {
             Ok(conf)
         } else {
             Err(crate::Error::VoidConf)

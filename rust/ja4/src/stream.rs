@@ -10,9 +10,9 @@ use serde::Serialize;
 
 use crate::{
     conf::Conf,
-    http, ssh,
+    http, ssh, tcp,
     time::{self, TcpTimestamps, Timestamps, UdpTimestamps},
-    tcp, tls, FormatFlags, Packet, Result, Sender,
+    tls, FormatFlags, Packet, Result, Sender,
 };
 
 /// User-facing record containing data obtained from a TCP or UDP stream.

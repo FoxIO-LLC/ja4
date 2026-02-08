@@ -9,9 +9,7 @@
 
 use serde::Serialize;
 
-use crate::{
-    Packet, PacketNum, FormatFlags, Result,
-};
+use crate::{FormatFlags, Packet, PacketNum, Result};
 
 /// TCP (JA4T) stream state.
 #[derive(Debug, Default)]
@@ -57,12 +55,12 @@ impl Stream {
 
         // Check SYN and not ACK
         /*
-         const FIN: u16 = 0x01;
-         const SYN: u16 = 0x02;
-         const RST: u16 = 0x04;
-         const PSH: u16 = 0x08;
-         const ACK: u16 = 0x10;
-         const URG: u16 = 0x20;
+        const FIN: u16 = 0x01;
+        const SYN: u16 = 0x02;
+        const RST: u16 = 0x04;
+        const PSH: u16 = 0x08;
+        const ACK: u16 = 0x10;
+        const URG: u16 = 0x20;
          */
         const SYN: u16 = 0x02;
 
@@ -73,16 +71,12 @@ impl Stream {
         }
 
         // Extract window size (raw, before scaling)
-        let window_size: u16 = tcp
-            .first("tcp.window_size_value")?
-            .parse()?;
+        let window_size: u16 = tcp.first("tcp.window_size_value")?.parse()?;
 
         // Parse TCP options
         let mut options = Vec::new();
         for opt in tcp.fields("tcp.option_kind") {
-            let kind: u8 = opt
-                .value()
-                .parse()?;
+            let kind: u8 = opt.value().parse()?;
 
             options.push(kind);
         }
@@ -123,11 +117,7 @@ impl Stream {
         let client = self.client?;
 
         let raw = client.to_ja4t();
-        let ja4t = if flags.with_raw {
-            raw.clone()
-        } else {
-            raw
-        };
+        let ja4t = if flags.with_raw { raw.clone() } else { raw };
 
         Some(OutStream {
             ja4t,
