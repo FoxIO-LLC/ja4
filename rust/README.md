@@ -83,21 +83,6 @@ You can find the `ja4` and `ja4x` binaries in `target/release/`.
 
 ### Usage
 
-```sh
-./target/debug/ja4 ../pcap/tcp.pcap -j
-
-tshark -r ../pcap/tcp.pcap \
-  -Y "tcp.flags.syn==1 && tcp.flags.ack==0" \
-  -T fields \
-  -e frame.number \
-  -e ip.src -e ip.dst \
-  -e tcp.window_size_value \
-  -e tcp.options.mss_val \
-  -e tcp.options.wscale.shift \
-  -E header=y -E separator=, \
-  > syns.csv
-```
-
 #### Command-line Arguments for `ja4`
 
 ```txt
