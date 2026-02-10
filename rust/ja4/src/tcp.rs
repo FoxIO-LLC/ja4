@@ -11,6 +11,9 @@ use serde::Serialize;
 
 use crate::{FormatFlags, Packet, PacketNum, Result};
 
+const TCP_FLAG_SYN: u16 = 0x02;
+const TCP_FLAG_ACK: u16 = 0x10;
+
 /// JA4T stream state.
 #[derive(Debug, Default)]
 pub(crate) struct Stream {
@@ -53,20 +56,9 @@ impl Stream {
             return Ok(());
         };
 
-        // Check SYN and not ACK
-        /*
-        const FIN: u16 = 0x01;
-        const SYN: u16 = 0x02;
-        const RST: u16 = 0x04;
-        const PSH: u16 = 0x08;
-        const ACK: u16 = 0x10;
-        const URG: u16 = 0x20;
-         */
-        const SYN: u16 = 0x02;
-
         let raw = tcp.first("tcp.flags")?;
         let flags = u16::from_str_radix(raw.trim_start_matches("0x"), 16)?;
-        if flags != SYN {
+        if !is_initial_syn(flags) {
             return Ok(());
         }
 
@@ -148,4 +140,21 @@ impl ClientStats {
             self.window_scale.unwrap_or(0),
         )
     }
+}
+
+fn is_initial_syn(flags: u16) -> bool {
+    (flags & TCP_FLAG_SYN) != 0 && (flags & TCP_FLAG_ACK) == 0
+}
+
+#[test]
+fn test_is_initial_syn() {
+    // Plain SYN
+    assert!(is_initial_syn(0x02));
+    // SYN + ECN (ECE + CWR)
+    assert!(is_initial_syn(0xC2));
+
+    // SYN-ACK must be ignored
+    assert!(!is_initial_syn(0x12));
+    // ACK without SYN
+    assert!(!is_initial_syn(0x10));
 }
