@@ -8,6 +8,7 @@ expression: output
   dst: 10.0.0.2
   src_port: 61672
   dst_port: 22
+  ja4t: 14600_2-1-1-4-1-3_1460_9
   ja4l_c: 7_64
   ja4l_s: 462_60
   ja4ssh:
@@ -18,4 +19,3 @@ expression: output
     ssh_protocol_client: SSH-2.0-OpenSSH_5.3
     ssh_protocol_server: SSH-1.99-OpenSSH_3.9p1
     encryption_algorithm: aes128-cbc
-

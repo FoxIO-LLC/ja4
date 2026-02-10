@@ -8,6 +8,7 @@ expression: output
   dst: 2606:4700::6811:d209
   src_port: 64034
   dst_port: 443
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1346_6
   tls_server_name: www.cloudflare.com
   ja4: t12d4605h2_85626a9a5f7f_aaf95bb78ec9
   ja4s: t1204h2_cca9_1428ce7b4018
@@ -38,4 +39,3 @@ expression: output
       subjectCommonName: DigiCert ECC Extended Validation Server CA
   ja4l_c: 35_64
   ja4l_s: 18861_59
-

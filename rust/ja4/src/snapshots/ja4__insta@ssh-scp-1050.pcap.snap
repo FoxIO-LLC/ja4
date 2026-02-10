@@ -8,6 +8,7 @@ expression: output
   dst: 192.168.1.197
   src_port: 49237
   dst_port: 22
+  ja4t: 65535_2-1-3-1-1-4_1460_7
   ja4l_c: 179_128
   ja4l_s: 38_64
   ja4ssh:
@@ -22,4 +23,3 @@ expression: output
     ssh_protocol_client: SSH-2.0-WinSCP_release_5.17.10
     ssh_protocol_server: SSH-2.0-OpenSSH_7.4
     encryption_algorithm: chacha20-poly1305@openssh.com
-
