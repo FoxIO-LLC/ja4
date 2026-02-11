@@ -8,6 +8,7 @@ expression: output
   dst: 142.250.187.206
   src_port: 58847
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: youtube.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t130200_1301_234ea6891581
@@ -51,4 +52,3 @@ expression: output
   - ja4h: ge20cr22enus_265608141a12_10ff48fdaa11_ac323afc21f7
   - ja4h: ge20cr22enus_265608141a12_10ff48fdaa11_ac323afc21f7
   - ja4h: ge20cr22enus_265608141a12_10ff48fdaa11_ac323afc21f7
-

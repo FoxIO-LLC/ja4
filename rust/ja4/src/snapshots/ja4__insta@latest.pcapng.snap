@@ -8,6 +8,7 @@ expression: output
   dst: 34.212.93.65
   src_port: 52936
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: pdx-col.eum-appdynamics.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1206h2_c02f_3603f09c43ba
@@ -38,6 +39,7 @@ expression: output
   dst: 13.33.165.101
   src_port: 52937
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: discovery.cem.cloud.us
   ja4: t12d190800_d83cc789557e_7af1ed941c26
   ja4s: t120600_c02f_51ad275821ba
@@ -68,6 +70,7 @@ expression: output
   dst: 34.205.195.66
   src_port: 52938
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: app.slack.com
   ja4: t13d1516h2_8daaf6152771_9b887d9acb53
   ja4s: t130300_1301_6bbbaf601ed8
@@ -79,6 +82,7 @@ expression: output
   dst: 23.43.242.57
   src_port: 52939
   dst_port: 80
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   ja4l_c: 32_128
   ja4l_s: 3915_57
   http:
@@ -89,6 +93,7 @@ expression: output
   dst: 52.249.29.248
   src_port: 52940
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: ping-edge.smartscreen.microsoft.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t120300_c030_09f674154ab3
@@ -119,6 +124,7 @@ expression: output
   dst: 52.249.29.248
   src_port: 52941
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: data-edge.smartscreen.microsoft.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t120300_c030_09f674154ab3
@@ -143,4 +149,3 @@ expression: output
       subjectCommonName: Microsoft Azure TLS Issuing CA 05
   ja4l_c: 61_128
   ja4l_s: 53595_109
-

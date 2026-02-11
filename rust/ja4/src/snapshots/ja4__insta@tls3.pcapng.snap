@@ -8,6 +8,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63248
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t130200_1301_a56c5b993250
@@ -19,6 +20,7 @@ expression: output
   dst: 23.222.12.9
   src_port: 63249
   dst_port: 80
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   ja4l_c: 14_128
   ja4l_s: 3181_57
   http:
@@ -29,6 +31,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63250
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_9b887d9acb53
   ja4s: t130300_1301_0ee26285a86f
@@ -40,6 +43,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63251
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_9b887d9acb53
   ja4s: t130300_1301_0ee26285a86f
@@ -51,6 +55,7 @@ expression: output
   dst: 104.21.234.234
   src_port: 63252
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: rsms.me
   ja4: t13d1516h2_8daaf6152771_9b887d9acb53
   ja4s: t130300_1301_6bbbaf601ed8
@@ -62,6 +67,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63253
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t130200_1301_a56c5b993250
@@ -73,6 +79,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63254
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t130200_1301_a56c5b993250
@@ -84,6 +91,7 @@ expression: output
   dst: 54.190.49.36
   src_port: 63255
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: darksail.ai
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t130200_1301_a56c5b993250
@@ -153,4 +161,3 @@ expression: output
   ja4s: q130200_1301_234ea6891581
   ja4l_c: 45_128
   ja4l_s: 3298_58
-

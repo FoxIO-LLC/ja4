@@ -130,9 +130,16 @@ impl StreamExtras {
 
         #[cfg(debug_assertions)]
         if let Ok(dir) = ssh.find("ssh.direction") {
+            let dir = dir.display().to_string();
+            let dir = dir
+                .strip_prefix("Direction: ")
+                .unwrap_or(dir.as_str())
+                .trim()
+                .to_ascii_lowercase()
+                .replace(' ', "-");
             match sender {
-                Sender::Client => assert_eq!(dir.display(), "Direction: client-to-server"),
-                Sender::Server => assert_eq!(dir.display(), "Direction: server-to-client"),
+                Sender::Client => assert_eq!(dir, "client-to-server"),
+                Sender::Server => assert_eq!(dir, "server-to-client"),
             }
         }
 

@@ -11,10 +11,15 @@ mod http;
 mod pcap;
 mod ssh;
 mod stream;
+mod tcp;
 mod time;
 mod tls;
 
-use std::{io::Write, path::PathBuf};
+use std::{
+    fs::File,
+    io::{self, BufWriter, Write},
+    path::PathBuf,
+};
 
 use clap::Parser;
 use rtshark::RTSharkBuilder;
@@ -35,6 +40,9 @@ pub struct Cli {
     /// JSON output (default is YAML)
     #[arg(short, long)]
     json: bool,
+    /// Output file path (default: stdout)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
     /// Include raw (unhashed) fingerprints in the output
     #[arg(short = 'r', long)]
     with_raw: bool,
@@ -64,8 +72,29 @@ pub struct Cli {
 }
 
 impl Cli {
+    fn normalized_output_path(&self) -> Option<PathBuf> {
+        let ext = if self.json { "json" } else { "yaml" };
+        self.output.clone().map(|mut path| {
+            if path.is_dir() {
+                return path.join(format!("ja4_output.{ext}"));
+            }
+
+            if path.extension().is_none() {
+                path.set_extension(ext);
+            }
+            path
+        })
+    }
+
     /// Write JSON with JA4 fingerprints to the I/O stream.
-    pub fn run<W: Write>(self, writer: &mut W) -> Result<()> {
+    pub fn run(self) -> Result<()> {
+        match self.normalized_output_path() {
+            Some(path) => self.run_with_writer(BufWriter::new(File::create(path)?)),
+            None => self.run_with_writer(io::stdout()),
+        }
+    }
+
+    fn run_with_writer(self, mut writer: impl Write) -> Result<()> {
         let conf = Conf::load()?;
         let Cli {
             json,
@@ -74,6 +103,7 @@ impl Cli {
             keylog_file,
             with_packet_numbers,
             pcap,
+            output: _,
         } = self;
 
         let Some(pcap_path) = pcap.to_str() else {
@@ -114,7 +144,7 @@ impl Cli {
         // BrokenPipe error. Rust throws it when the stdout is piped to `head`.
         if json {
             for rec in streams.into_out(flags) {
-                serde_json::to_writer(&mut *writer, &rec)?;
+                serde_json::to_writer(&mut writer, &rec)?;
                 writeln!(writer)?;
             }
         } else {
@@ -234,10 +264,11 @@ fn test_insta() {
                 keylog_file: None,
                 with_packet_numbers: false,
                 pcap: path.to_path_buf(),
+                output: None,
             };
 
             let mut output = Vec::<u8>::new();
-            cli.run(&mut output).unwrap();
+            cli.run_with_writer(&mut output).unwrap();
             let output = String::from_utf8(output).unwrap();
 
             insta::assert_snapshot!(output);

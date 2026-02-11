@@ -2,12 +2,34 @@
 source: ja4/src/lib.rs
 expression: output
 ---
+- stream: 1
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57361
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 2
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57362
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 3
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57363
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
 - stream: 5
   transport: tcp
   src: 172.16.225.48
   dst: 146.112.255.155
   src_port: 57368
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: updates.opendns.com
   ja4: t12d190800_d83cc789557e_7af1ed941c26
   ja4s: t120400_c02f_4993ccf7354b
@@ -32,12 +54,20 @@ expression: output
       subjectCommonName: DigiCert TLS RSA SHA256 2020 CA1
   ja4l_c: 44_128
   ja4l_s: 12517_53
+- stream: 6
+  transport: tcp
+  src: 172.16.225.48
+  dst: 146.112.255.155
+  src_port: 57369
+  dst_port: 1
+  ja4t: 64240_2-1-3-1-1-4_1460_8
 - stream: 8
   transport: tcp
   src: 172.16.225.48
   dst: 34.248.242.11
   src_port: 57371
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: mcs2-cloudstation-eu-west-1.prod.hydra.sophos.com
   ja4: t12d1909h2_d83cc789557e_7af1ed941c26
   ja4s: t120500_c02f_6471ab80eb72
@@ -64,12 +94,20 @@ expression: output
       subjectOrganizationName: Sophos Ltd
   ja4l_c: 56_128
   ja4l_s: 55492_235
+- stream: 10
+  transport: tcp
+  src: 172.16.225.48
+  dst: 192.168.1.13
+  src_port: 57360
+  dst_port: 80
+  ja4t: 64240_2-1-3-1-1-4_1460_8
 - stream: 11
   transport: tcp
   src: 172.16.225.48
   dst: 52.178.17.3
   src_port: 57374
   dst_port: 443
+  ja4t: 65535_2-1-3-1-1-4_1460_8
   tls_server_name: self.events.data.microsoft.com
   ja4: t12d190800_d83cc789557e_7af1ed941c26
   ja4s: t120300_c030_09f674154ab3
@@ -100,6 +138,7 @@ expression: output
   dst: 204.79.197.220
   src_port: 57375
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: www.bing.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1205h2_c030_015e35fdd027
@@ -126,6 +165,7 @@ expression: output
   dst: 52.86.25.233
   src_port: 57376
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: 4.sophosxl.net
   ja4: t12d1909h2_d83cc789557e_7af1ed941c26
   ja4s: t120200_c02f_344b4dce5a52
@@ -169,6 +209,7 @@ expression: output
   dst: 54.160.114.75
   src_port: 57377
   dst_port: 22
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   ja4l_c: 77_128
   ja4l_s: 12897_50
   ja4ssh:
@@ -186,20 +227,64 @@ expression: output
   dst: 184.150.157.177
   src_port: 57380
   dst_port: 80
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   ja4l_c: 45_128
   ja4l_s: 6252_58
   http:
   - ja4h: ge11nn030000_9ab90a797ba7_000000000000_000000000000
+- stream: 18
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57388
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 19
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57389
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 20
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57390
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
 - stream: 22
   transport: tcp
   src: 172.16.225.48
   dst: 184.150.157.177
   src_port: 57396
   dst_port: 80
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   ja4l_c: 50_128
   ja4l_s: 4272_58
   http:
   - ja4h: ge11nn030000_9ab90a797ba7_000000000000_000000000000
+- stream: 24
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57402
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 25
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57403
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
+- stream: 26
+  transport: tcp
+  src: 172.16.225.48
+  dst: 10.244.39.47
+  src_port: 57404
+  dst_port: 5000
+  ja4t: 64240_2-1-3-1-1-4_1460_8
 - stream: 33
   transport: udp
   src: 172.16.225.48
@@ -220,4 +305,3 @@ expression: output
   ja4s: q130200_1301_234ea6891581
   ja4l_c: 169_128
   ja4l_s: 5389_57
-

@@ -113,6 +113,10 @@ Arguments:
 
 Options:
   -j, --json      JSON output (default is YAML)
+  -o, --output <FILE> Write output to FILE instead of stdout
+                      The file extension must match the output format:
+                        - .json, when --json is set
+                        - .yaml, for YAML output
   -r, --with-raw  Include raw (unhashed) fingerprints in the output
   -h, --help      Print help
   -V, --version   Print version

@@ -8,6 +8,7 @@ expression: output
   dst: 13.107.21.239
   src_port: 54524
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: edge.microsoft.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1206h2_c030_044dc9b3196d
@@ -38,6 +39,7 @@ expression: output
   dst: 68.67.160.117
   src_port: 54525
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: nym1-ib.adnxs.com
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1207h2_c02b_cf25e267ce22
@@ -70,6 +72,7 @@ expression: output
   dst: 103.42.133.15
   src_port: 54603
   dst_port: 443
+  ja4t: 64240_2-1-3-1-1-4_1460_8
   tls_server_name: lptag.liveperson.net
   ja4: t13d1516h2_8daaf6152771_e5627efa2ab1
   ja4s: t1205h2_c02f_845f7282a956

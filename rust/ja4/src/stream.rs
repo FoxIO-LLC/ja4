@@ -10,7 +10,7 @@ use serde::Serialize;
 
 use crate::{
     conf::Conf,
-    http, ssh,
+    http, ssh, tcp,
     time::{self, TcpTimestamps, Timestamps, UdpTimestamps},
     tls, FormatFlags, Packet, Result, Sender,
 };
@@ -29,6 +29,8 @@ pub(crate) struct OutRec {
 #[derive(Debug, Serialize)]
 struct OutStream {
     #[serde(flatten, skip_serializing_if = "Option::is_none")]
+    tcp: Option<tcp::OutStream>,
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
     tls: Option<tls::OutStream>,
     /// Light distance (latency) fingerprints.
     #[serde(flatten, skip_serializing_if = "Option::is_none")]
@@ -45,6 +47,7 @@ struct OutStream {
 
 #[derive(Debug, Default)]
 struct Stream<T> {
+    tcp: Option<tcp::Stream>,
     tls: Option<tls::Stream>,
     timestamps: Option<T>,
     http: http::Stream,
@@ -54,22 +57,25 @@ struct Stream<T> {
 impl<T: Timestamps> Stream<T> {
     fn into_out(self, flags: FormatFlags) -> Option<OutStream> {
         let Self {
+            tcp,
             tls,
             timestamps,
             http,
             ssh,
         } = self;
 
+        let tcp = tcp.and_then(|stats| stats.into_out(flags));
         let tls = tls.and_then(|stats| stats.into_out(flags));
         let ja4l = timestamps.and_then(|ts| ts.finish());
         let http = http.into_out(flags);
         let (ja4ssh, ssh_extras) = ssh.finish();
 
-        if tls.is_none() && ja4l.is_none() && http.is_none() && ja4ssh.is_empty() {
+        if tcp.is_none() && tls.is_none() && ja4l.is_none() && http.is_none() && ja4ssh.is_empty() {
             return None;
         }
 
         Some(OutStream {
+            tcp,
             tls,
             ja4l,
             http,
@@ -94,6 +100,17 @@ impl<T: Timestamps> AddressedStream<T> {
     }
 
     fn update(&mut self, pkt: &Packet, conf: &Conf, store_pkt_num: bool, guessed_sender: Sender) {
+        if conf.tcp.enabled {
+            if let Err(error) = self
+                .stream
+                .tcp
+                .get_or_insert_with(Default::default)
+                .update(pkt, store_pkt_num)
+            {
+                tracing::debug!(%pkt.num, %error, "failed to fingerprint TCP");
+            }
+        }
+
         if conf.tls.enabled {
             if let Err(error) = self
                 .stream

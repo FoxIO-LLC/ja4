@@ -3,7 +3,7 @@ members = ["ja4", "ja4x"]
 resolver = "2"
 
 [workspace.package]
-version = "0.18.5"
+version = "0.18.6"
 edition = "2021"
 license = "LicenseRef-FoxIO-Proprietary"
 repository = "https://github.com/FoxIO-LLC/ja4"

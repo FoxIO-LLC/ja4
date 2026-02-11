@@ -19,7 +19,7 @@ fn main() -> eyre::Result<()> {
         .init();
     color_eyre::install()?;
 
-    match ja4::Cli::parse().run(&mut io::stdout()) {
+    match ja4::Cli::parse().run() {
         Err(ja4::Error::Io(e)) if matches!(e.kind(), io::ErrorKind::BrokenPipe) => Ok(()),
         Err(e) => Err(e.into()),
         Ok(()) => Ok(()),
