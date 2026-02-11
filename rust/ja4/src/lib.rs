@@ -15,10 +15,11 @@ mod tcp;
 mod time;
 mod tls;
 
-use std::fs::File;
-use std::io;
-use std::io::{BufWriter, Write};
-use std::path::PathBuf;
+use std::{  
+    fs::File,  
+    io::{self, BufWriter, Write},  
+    path::PathBuf,  
+};
 
 use clap::Parser;
 use rtshark::RTSharkBuilder;
@@ -40,7 +41,7 @@ pub struct Cli {
     #[arg(short, long)]
     json: bool,
     /// Output file path (default: stdout)
-    #[arg(short = 'o', long)]
+    #[arg(short, long)]
     pub output: Option<PathBuf>,
     /// Include raw (unhashed) fingerprints in the output
     #[arg(short = 'r', long)]
