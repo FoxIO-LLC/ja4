@@ -126,6 +126,7 @@ This repo includes JA4+ in
 | [Zscaler](https://www.zscaler.com/blogs/product-insights/zscaler-endpoint-context-endpoint-cloud-visibility-and-enforcement-secops) | JA4 |
 | [ExtraHop](https://www.extrahop.com/) | JA4+ |
 | [Validin](https://www.validin.com/) | JA4+ |
+| [Auth0](https://auth0.com/changelog#40upcFBPuFxKG7nacgSlQc) | JA4 |
 
 with more to be announced...  
 
