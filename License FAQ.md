@@ -23,6 +23,8 @@ Open source licenses come in three main flavors:
 - __Weak Copyleft__. These include licenses like LGPL, Eclipse, CPL, CDDL, and Mozilla Public License. These can usually be combined with JA4+. LGPL has some special rules for linking; be sure you follow them.
 - __Strong Copyleft__. These include primarily GPL and AGPL. The rules for these licenses are more complex, see below.
 
+For combining JA4+ with permissive open source licenses, the FoxIO license _must_ be included and noted, either in the LICENSE file itself or in a NOTICE file. See [here](https://github.com/driftnet-io/go-ja4x) for a good example. In this example, the code around JA4X is MIT licensed but JA4X itself remains FoxIO Licensed which is noted in the README and LICENSE file and included in the NOTICE file.
+
 #### Combining JA4+ with GPL
 
 The rules about combining GPL software and JA4+ are driven by __the requirements of GPL__, not the FoxIO license. These rules for GPL were not created by FoxIO and cannot be changed by FoxIO. The rules of GPL are chosen by the authors of the GPL software, and are intended to limit the kinds of combined software you can redistribute. See the [GPL FAQ from the Free Software Foundation](https://www.gnu.org/licenses/old-licenses/gpl-2.0-faq.html) for more details. 
@@ -48,6 +50,8 @@ B[JA4+] --> |FoxIO License| C;
 You cannot change the licensing of either component when you distribute it. You must provide the user with license notices for each component. In this respect, the FoxIO license and open source licenses work the same way.
 
 When you are distributing source code, it is customary to make separate repositories for code under copyleft licenses like GPL and code under non-open source licenses. It is also customary to inform recipients of open source code of any potentially incompatible dependencies. However, these are best practices and not explicit requirements of the licenses.
+
+For a good example, see Arkime's JA4+ plugin [here](https://github.com/arkime/ja4) and how users can choose to install Arkime with the JA4+ plugin [here](https://arkime.com/settings#ja4plus) and [here](https://arkime.com/docker).
 
 ### What if I am an end user?
 
