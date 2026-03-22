@@ -122,7 +122,7 @@ This repo includes JA4+ in
 | [Google Cloud LBs](https://cloud.google.com/release-notes#July_28_2025) | JA4 |
 | [eSentire](https://www.esentire.com/) | JA4+ |
 | [Microsoft Azure Front Door CDN](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol) | JA4 |
-| [Moat](https://github.com/arxignis/moat) by [Arxignis](https://arxignis.com) | JA4+ |
+| [Synapse](https://github.com/gen0sec/synapse) by [Gen0Sec](https://gen0sec.com) | JA4X |
 | [Zscaler](https://www.zscaler.com/blogs/product-insights/zscaler-endpoint-context-endpoint-cloud-visibility-and-enforcement-secops) | JA4 |
 | [ExtraHop](https://www.extrahop.com/) | JA4+ |
 | [Validin](https://www.validin.com/) | JA4+ |
