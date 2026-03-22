@@ -16,11 +16,31 @@ def http_language(lang):
 
 def to_ja4h(x, debug_stream=-1):
     cookie = 'c' if 'cookies' in x else 'n'
-    header_fields = [y.lower().split(':')[0] for y in  x['headers'] ]
+    
+    # Ensure headers is a list (tshark may return a string for a single header)
+    if isinstance(x['headers'], str):
+        # Split by newlines and filter empty lines
+        x['headers'] = [h.strip() for h in x['headers'].split('\n') if h.strip()]
+    
+    header_fields = [y.lower().split(':')[0] for y in x['headers']]
     referer = 'r' if 'referer' in str(header_fields) else 'n'
 
     method = http_method(x['method'])
-    version = 11 if x['hl'] == 'http' else 20
+    
+    # Extract HTTP version from tshark data (HTTP/1.0, HTTP/1.1, etc.)
+    if x['hl'] == 'http2':
+        version = 20
+    elif 'version' in x:
+        # Parse version string like "HTTP/1.0" or "HTTP/1.1"
+        ver_str = x['version']
+        if '/' in ver_str:
+            ver_part = ver_str.split('/')[-1]  # "1.0" or "1.1"
+            version = ver_part.replace('.', '')  # "10" or "11"
+        else:
+            version = 11  # Default to 1.1
+    else:
+        version = 11  # Default to HTTP/1.1
+    
     unsorted_cookie_fields = []
     unsorted_cookie_values = []
 
@@ -36,17 +56,18 @@ def to_ja4h(x, debug_stream=-1):
 
     if 'cookies' in x:
         if isinstance(x['cookies'], list):
-            x['cookie_fields'] = [ y.split('=')[0].lstrip().rstrip() for y in x['cookies'] ]
-            x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'] ]
+            cookie_pairs = [(y.split('=', 1)[0].strip(), y.strip()) for y in x['cookies']]
         else:
-            x['cookie_fields'] = [ y.split('=')[0].lstrip().rstrip() for y in x['cookies'].split(';') ]
-            x['cookie_values'] = [ y.lstrip().rstrip() for y in x['cookies'].split(';') ]
-
-        unsorted_cookie_fields = x['cookie_fields'][:]
-        unsorted_cookie_values = x['cookie_values'][:]
-
-        x['cookie_fields'].sort()
-        x['cookie_values'].sort()
+            cookie_pairs = [(y.split('=', 1)[0].strip(), y.strip()) for y in x['cookies'].split(';')]
+        
+        # Store unsorted versions for _ro output
+        unsorted_cookie_fields = [pair[0] for pair in cookie_pairs]
+        unsorted_cookie_values = [pair[1] for pair in cookie_pairs]
+        
+        # Sort by cookie name, then build the sorted lists
+        sorted_pairs = sorted(cookie_pairs, key=lambda p: p[0])
+        x['cookie_fields'] = [pair[0] for pair in sorted_pairs]
+        x['cookie_values'] = [pair[1] for pair in sorted_pairs]
 
     cookies = sha_encode(x['cookie_fields']) if 'cookies' in x else '0'*12
     cookie_values = sha_encode(x['cookie_values']) if 'cookies' in x else '0'*12
