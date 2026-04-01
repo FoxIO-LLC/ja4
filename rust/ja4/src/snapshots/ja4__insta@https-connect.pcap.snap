@@ -1,0 +1,38 @@
+---
+source: ja4/src/lib.rs
+expression: output
+---
+- stream: 0
+  transport: tcp
+  src: 10.11.12.13
+  dst: 10.9.8.7
+  src_port: 54723
+  dst_port: 8080
+  ja4t: 29200_2-1-1-4-1-3_1460_7
+  ja4: t12i860500_e18388e7f3a3_a1e935682795
+  ja4s: t120200_c030_5fbb12310400
+  tls_certs:
+  - x509:
+    - ja4x: 7d5dbb3783b4_2bab15409345_5e17a2514980
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert SHA2 High Assurance Server CA
+      subjectCountryName: US
+      subjectStateOrProvinceName: California
+      subjectLocalityName: Irvine
+      subjectOrganizationName: CrowdStrike, Inc.
+      subjectCommonName: lfoup01-b.cloudsink.net
+    - ja4x: 7d5dbb3783b4_7d5dbb3783b4_9c5875a5c227
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectOrganizationalUnit: www.digicert.com
+      subjectCommonName: DigiCert SHA2 High Assurance Server CA
+  ja4l_c: 45_64
+  ja4l_s: 13532_57
+  http:
+  - ja4h: co10nn010000_b8bcd45ac095_000000000000_000000000000
