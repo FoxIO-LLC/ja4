@@ -66,6 +66,8 @@ function get_mode(vec: vector of count): count {
     if (freq > max) {
       max = freq;
       mode = idx;
+    } else if (freq == max && idx < mode) {
+      mode = idx;
     }
   }
 
