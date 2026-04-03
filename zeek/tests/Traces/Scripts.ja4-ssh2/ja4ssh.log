@@ -6,5 +6,5 @@
 #path	ja4ssh
 #fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	ja4ssh
 #types	time	string	addr	port	addr	port	string
-1688672868.776057	Chu4srlj1wba0b8Fk	172.16.225.48	57377	54.160.114.75	22	c36s36_c76s124_c74s6
+1688672868.776057	Chu4srlj1wba0b8Fk	172.16.225.48	57377	54.160.114.75	22	c36s36_c76s124_c74s5
 1688672868.776057	Chu4srlj1wba0b8Fk	172.16.225.48	57377	54.160.114.75	22	c36s52_c42s76_c51s2
