@@ -1,0 +1,22 @@
+[
+    {
+        "stream": 0,
+        "src": "::1",
+        "dst": "::1",
+        "srcport": "57722",
+        "dstport": "9200",
+        "JA4H": "ge10nn010000_b8bcd45ac095_000000000000_000000000000",
+        "JA4H_ro": "ge10nn010000_User-Agent_"
+    },
+    {
+        "stream": 0,
+        "src": "::1",
+        "dst": "::1",
+        "srcport": "57722",
+        "dstport": "9200",
+        "client_ttl": "64",
+        "server_ttl": "64",
+        "JA4L-S": "26_64",
+        "JA4L-C": "177863_64"
+    }
+]

@@ -1,0 +1,43 @@
+---
+source: ja4/src/lib.rs
+expression: output
+---
+- stream: 0
+  transport: tcp
+  src: 10.180.156.141
+  dst: 192.30.252.130
+  src_port: 62599
+  dst_port: 443
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1460_4
+  tls_server_name: www.github.com
+  ja4: t10d230100_6a57a6f57151_000000000000
+  ja4s: t100200_0005_696072bc484d
+  tls_certs:
+  - x509:
+    - ja4x: 7d5dbb3783b4_59b7510e6266_5e17a2514980
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV CA-1
+      subjectBusinessCategory: Private Organization
+      subjectMsJurisdictionCountry: US
+      subjectMsJurisdictionStateOrProvince: Delaware
+      subjectSerialNumber: '5157550'
+      subjectStreetAddress: 548 4th Street
+      subjectPostalCode: '94107'
+      subjectCountryName: US
+      subjectStateOrProvinceName: California
+      subjectLocalityName: San Francisco
+      subjectOrganizationName: GitHub, Inc.
+      subjectCommonName: github.com
+    - ja4x: 7d5dbb3783b4_7d5dbb3783b4_897f3043ab93
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectOrganizationalUnit: www.digicert.com
+      subjectCommonName: DigiCert High Assurance EV CA-1
+  ja4l_c: 33_64
+  ja4l_s: 17805_50

@@ -1,0 +1,103 @@
+---
+source: ja4/src/lib.rs
+expression: output
+---
+- stream: 0
+  transport: tcp
+  src: 10.180.156.185
+  dst: 10.180.156.249
+  src_port: 53554
+  dst_port: 1080
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1460_4
+  tls_server_name: www.example.com
+  ja4: t10d230100_6a57a6f57151_000000000000
+  ja4s: t100100_0005_bc98f8e001b5
+  tls_certs:
+  - x509:
+    - ja4x: 7d5dbb3783b4_2bab15409345_5e17a2514980
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance CA-3
+      subjectCountryName: US
+      subjectStateOrProvinceName: California
+      subjectLocalityName: Santa Monica
+      subjectOrganizationName: EdgeCast Networks, Inc.
+      subjectCommonName: gp1.wac.edgecastcdn.net
+    - ja4x: 7d5dbb3783b4_7d5dbb3783b4_c519788dcb01
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectOrganizationalUnit: www.digicert.com
+      subjectCommonName: DigiCert High Assurance CA-3
+  ja4l_c: 23_64
+  ja4l_s: 210_64
+- stream: 2
+  transport: tcp
+  src: 10.180.156.185
+  dst: 10.180.156.249
+  src_port: 53555
+  dst_port: 1080
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1460_4
+  tls_server_name: www.example.com
+  ja4: t10d230100_6a57a6f57151_000000000000
+  ja4s: t100100_0005_bc98f8e001b5
+  tls_certs:
+  - x509:
+    - ja4x: 7d5dbb3783b4_2bab15409345_5e17a2514980
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance CA-3
+      subjectCountryName: US
+      subjectStateOrProvinceName: California
+      subjectLocalityName: Santa Monica
+      subjectOrganizationName: EdgeCast Networks, Inc.
+      subjectCommonName: gp1.wac.edgecastcdn.net
+    - ja4x: 7d5dbb3783b4_7d5dbb3783b4_c519788dcb01
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectOrganizationalUnit: www.digicert.com
+      subjectCommonName: DigiCert High Assurance CA-3
+  ja4l_c: 22_64
+  ja4l_s: 280_64
+- stream: 4
+  transport: tcp
+  src: 10.180.156.185
+  dst: 10.180.156.249
+  src_port: 53556
+  dst_port: 1080
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1460_4
+  tls_server_name: www.example.com
+  ja4: t10d230100_6a57a6f57151_000000000000
+  ja4s: t100100_0005_bc98f8e001b5
+  tls_certs:
+  - x509:
+    - ja4x: 7d5dbb3783b4_2bab15409345_5e17a2514980
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance CA-3
+      subjectCountryName: US
+      subjectStateOrProvinceName: California
+      subjectLocalityName: Santa Monica
+      subjectOrganizationName: EdgeCast Networks, Inc.
+      subjectCommonName: gp1.wac.edgecastcdn.net
+    - ja4x: 7d5dbb3783b4_7d5dbb3783b4_c519788dcb01
+      issuerCountryName: US
+      issuerOrganizationName: DigiCert Inc
+      issuerOrganizationalUnit: www.digicert.com
+      issuerCommonName: DigiCert High Assurance EV Root CA
+      subjectCountryName: US
+      subjectOrganizationName: DigiCert Inc
+      subjectOrganizationalUnit: www.digicert.com
+      subjectCommonName: DigiCert High Assurance CA-3
+  ja4l_c: 15_64
+  ja4l_s: 233_64
