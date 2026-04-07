@@ -1,0 +1,36 @@
+name: Zeek Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'zeek/**'
+      - '.github/workflows/zeek-test.yml'
+  pull_request:
+    paths:
+      - 'zeek/**'
+      - '.github/workflows/zeek-test.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    container:
+      image: zeek/zeek:8.0.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y python3-pip git
+          # btest is distributed as a python package
+          pip3 install btest --break-system-packages
+
+      - name: Run btest
+        run: |
+          cd zeek/tests
+          btest -d Scripts/
