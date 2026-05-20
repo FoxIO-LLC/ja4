@@ -7,7 +7,7 @@
 # NOTE: JA4L can not work when traffic is out of order
 # Supress negative duration errors in local.zeek by setting
 # redef FINGERPRINT::JA4L::suppress_neg_ja4l_errors = T;
-# NOTE: Zeek JA4L does not attempt to handle duplicate packets.  
+# NOTE: Zeek JA4L does not attempt to handle duplicate packets.
 
 module FINGERPRINT::JA4L;
 
