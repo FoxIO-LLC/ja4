@@ -5,3 +5,4 @@ wireshark/build-scripts/wireshark-*
 .vscode/
 __pycache__/
 .pytest_cache/
+.btest.failed.dat

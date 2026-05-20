@@ -195,21 +195,37 @@ event connection_state_remove(c: connection) {
         if(c$fp$ja4t$syn_window_size > 0) {
             c$conn$ja4t =  fmt("%d", c$fp$ja4t$syn_window_size);
             c$conn$ja4t += FINGERPRINT::delimiter;
-            c$conn$ja4t += FINGERPRINT::vector_of_count_to_str(c$fp$ja4t$syn_opts$option_kinds, "%d", "-");
+            if(|c$fp$ja4t$syn_opts$option_kinds| > 0) {
+                c$conn$ja4t += FINGERPRINT::vector_of_count_to_str(c$fp$ja4t$syn_opts$option_kinds, "%d", "-");
+            } else {
+                c$conn$ja4t += "00";
+            }
             c$conn$ja4t += FINGERPRINT::delimiter;
-            c$conn$ja4t += fmt("%d", c$fp$ja4t$syn_opts$max_segment_size);
+            c$conn$ja4t += fmt("%02d", c$fp$ja4t$syn_opts$max_segment_size);
             c$conn$ja4t += FINGERPRINT::delimiter;
-            c$conn$ja4t += fmt("%d", c$fp$ja4t$syn_opts$window_scale);
+            if(c$fp$ja4t$syn_opts$window_scale == 0) {
+                c$conn$ja4t += "00";
+            } else {
+                c$conn$ja4t += fmt("%d", c$fp$ja4t$syn_opts$window_scale);
+            }
         }
         @if(FINGERPRINT::JA4TS_enabled) 
         if(c$fp$ja4t$synack_window_size > 0) {
             c$conn$ja4ts =  fmt("%d", c$fp$ja4t$synack_window_size);
             c$conn$ja4ts += FINGERPRINT::delimiter;
-            c$conn$ja4ts += FINGERPRINT::vector_of_count_to_str(c$fp$ja4t$synack_opts$option_kinds, "%d", "-");
+            if(|c$fp$ja4t$synack_opts$option_kinds| > 0) {
+                c$conn$ja4ts += FINGERPRINT::vector_of_count_to_str(c$fp$ja4t$synack_opts$option_kinds, "%d", "-");
+            } else {
+                c$conn$ja4ts += "00";
+            }
             c$conn$ja4ts += FINGERPRINT::delimiter;
-            c$conn$ja4ts += fmt("%d", c$fp$ja4t$synack_opts$max_segment_size);
+            c$conn$ja4ts += fmt("%02d", c$fp$ja4t$synack_opts$max_segment_size);
             c$conn$ja4ts += FINGERPRINT::delimiter;
-            c$conn$ja4ts += fmt("%d", c$fp$ja4t$synack_opts$window_scale);
+            if(c$fp$ja4t$synack_opts$window_scale == 0) {
+                c$conn$ja4ts += "00";
+            } else {
+                c$conn$ja4ts += fmt("%d", c$fp$ja4t$synack_opts$window_scale);
+            }
             if(|c$fp$ja4t$synack_delays| > 0) {
                 c$conn$ja4ts += FINGERPRINT::delimiter;
                 c$conn$ja4ts += FINGERPRINT::vector_of_count_to_str(c$fp$ja4t$synack_delays, "%d", "-");
