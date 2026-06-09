@@ -54,3 +54,55 @@ def test_tshark_output_matches_expected(pcap_file):
     expected_lines = get_expected_output(pcap_file)
 
     assert actual_lines == expected_lines, f"Mismatch for {pcap_file.name}"
+
+
+# Regression for FoxIO #269 / Wireshark #20600:
+# JA4+ leaf fields must be available to custom columns and -T fields
+# even when the ja4 protocol itself is not referenced.
+COLUMN_CASES = [
+    # (pcap, ja4 field, expected value on the first matching frame)
+    ("tls-alpn-h2.pcap",     "ja4.ja4s", "t1204h2_cca9_1428ce7b4018"),
+    ("tls-alpn-h2.pcap",     "ja4.ja4t", "65535_2-1-3-1-1-8-4-0-0_1346_6"),
+    ("CVE-2018-6794.pcap",   "ja4.ja4t", "8192_2-1-3-1-1-4_1460_8"),
+    ("http1-with-cookies.pcapng", "ja4.ja4h",
+     "ge11cr04da00_8ddaef5d77af_280f366eaa04_c2fb0fe53442"),
+]
+
+
+def _first_nonempty(lines):
+    for line in lines:
+        line = line.strip()
+        if line:
+            return line
+    return ""
+
+
+@pytest.mark.parametrize("pcap_name,field,expected", COLUMN_CASES)
+def test_ja4_custom_column_is_populated(pcap_name, field, expected):
+    """JA4+ custom columns must work without -Y ja4."""
+    pcap_file = PCAP_DIR / pcap_name
+    col_fmt = f'gui.column.format:"No.","%m","JA4","%Cus:{field}:0:R"'
+    result = subprocess.run(
+        ["tshark", "-r", str(pcap_file), "-o", col_fmt],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    assert result.returncode == 0, f"tshark failed: {result.stderr}"
+    assert expected in result.stdout, (
+        f"{field} missing from custom column for {pcap_name}.\n"
+        f"Output:\n{result.stdout}"
+    )
+
+
+@pytest.mark.parametrize("pcap_name,field,expected", COLUMN_CASES)
+def test_ja4_fields_extraction_without_protocol_filter(pcap_name, field, expected):
+    """-T fields must extract JA4+ leaf fields without -Y ja4."""
+    pcap_file = PCAP_DIR / pcap_name
+    result = subprocess.run(
+        ["tshark", "-r", str(pcap_file), "-T", "fields", "-e", field],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    assert result.returncode == 0, f"tshark failed: {result.stderr}"
+    assert _first_nonempty(result.stdout.splitlines()) == expected, (
+        f"{field} extraction wrong for {pcap_name}.\n"
+        f"Output:\n{result.stdout}"
+    )

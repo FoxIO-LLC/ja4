@@ -347,8 +347,11 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
     pkt_info_t *pi = packet_table_lookup(frame_number);
     if ((pi->complete) && (pi->insert_at)) {
         proto_tree *tree_location = locate_tree(tree, pi->insert_at);
-        if (tree_location == NULL)
-            return 0;
+        if (tree_location == NULL) {
+            // In non-visible trees the host protocol subtree may be absent/faked.
+            // Fall back to root so cached JA4 fields can still be replayed.
+            tree_location = tree;
+        }
 
         proto_tree *sub_tree = NULL;
         proto_tree *child = tree_location->first_child;
@@ -366,7 +369,9 @@ display_hashes_from_packet_table(proto_tree *tree, tvbuff_t *tvb, int frame_numb
             sub_tree = proto_item_add_subtree(ja4_ti, ett_ja4);
         }
 
-        if (sub_tree == NULL || sub_tree->finfo == NULL || sub_tree->finfo->tree_type == -1) {
+        // The JA4 wrapper may be faked in non-visible trees, but referenced
+        // leaf fields below it are still available for columns/field extraction.
+        if (sub_tree == NULL) {
             return 0;
         }
 
