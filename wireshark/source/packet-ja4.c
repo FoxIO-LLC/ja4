@@ -15,13 +15,10 @@
 
 #include <math.h>
 #include <wsutil/to_str.h>
+#include <wsutil/array.h>
 
 #define FIELD_VALUE_IS_PTR \
     ((WIRESHARK_VERSION_MAJOR > 4) || (WIRESHARK_VERSION_MAJOR == 4 && WIRESHARK_VERSION_MINOR > 1))
-
-#ifndef array_length
-#define array_length(x) (sizeof(x) / sizeof(x)[0])
-#endif
 
 #include <epan/epan_dissect.h>
 #include <epan/ftypes/ftypes.h>
@@ -1062,7 +1059,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 }
                 // BUG-FIX: Ja4x should use Hex codes instead of ascii
                 const uint8_t *bytes = field_bytes(get_value_ptr(field));
-                for (int j = 0; j < field->length; j++) {
+                for (unsigned j = 0; j < field->length; j++) {
                     wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
                 }
             }
@@ -1078,7 +1075,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 }
                 // BUG-FIX: Ja4x should use Hex codes instead of ascii
                 const uint8_t *bytes = field_bytes(get_value_ptr(field));
-                for (int j = 0; j < field->length; j++) {
+                for (unsigned j = 0; j < field->length; j++) {
                     wmem_strbuf_append_printf(current_cert->oids[oid_type], "%02x", bytes[j]);
                 }
             }
