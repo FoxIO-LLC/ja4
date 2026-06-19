@@ -8,7 +8,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
 
 - [Binaries](#binaries)
   - [Release Assets](#release-assets)
-  - [Previous Wireshark Versions](#previous-wireshark-versions)
+  - [Supported Wireshark Versions](#supported-wireshark-versions)
 - [Building](#building)
 - [Installing JA4+ Plugin](#installing-ja4-plugin)
   - [Installing Wireshark](#installing-wireshark)
@@ -48,19 +48,19 @@ Release assets are named as follows:
 
 These files are attached to a release named like `wireshark-vX.Y.Z`. Choose the appropriate file for your system.
 
-### Previous Wireshark Versions
+### Supported Wireshark Versions
 
-You can also find binaries for the previous versions of Wireshark in the [binaries](./binaries/) directory within the repository.
+Current JA4+ Wireshark plugin releases support Wireshark 4.4.0 or later.
 
 ## Building
 
-Navigate to the `build-scripts` directory and run the script corresponding to your system. For example, `linux_build.sh` for Linux. The script will automatically clone Wireshark and build the plugin. The resulting binary can be found in `<relese-tag>/build/run/plugins/4.6/epan/`. It will be named `ja4.so` on Linux or macOS and `ja4.dll` on Windows.
+Navigate to the `build-scripts` directory and run the script corresponding to your system. For example, `linux_build.sh` for Linux. The script will automatically clone Wireshark and build the plugin. The resulting binary can be found in `<release-tag>/build/run/plugins/<wireshark-version>/epan/`. It will be named `ja4.so` on Linux or macOS and `ja4.dll` on Windows.
 
 ## Installing JA4+ Plugin
 
 ### Installing Wireshark
 
-The plugin has been tested with Wireshark versions 4.6.0, 4.4.0 and, 4.2.0 on macOS and Windows, and version 4.0.6 on Linux.
+Install Wireshark 4.4.0 or later. The plugin has been tested with Wireshark versions 4.4.0 and 4.6.0.
 
 #### Linux
 
