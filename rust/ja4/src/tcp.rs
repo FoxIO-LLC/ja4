@@ -75,12 +75,12 @@ impl Stream {
 
         let mss = tcp
             .fields("tcp.options.mss_val")
-            .next()
+            .last()
             .map(|md| md.value().parse::<u16>())
             .transpose()?;
         let window_scale = tcp
             .fields("tcp.options.wscale.shift")
-            .next()
+            .last()
             .map(|md| md.value().parse::<u8>())
             .transpose()?;
 
@@ -133,14 +133,18 @@ impl ClientStats {
             }
             let _ = write!(opts, "{}", v);
         }
+        if opts.is_empty() {
+            opts.push_str("00");
+        }
 
-        format!(
-            "{}_{}_{}_{}",
-            self.window_size,
-            opts,
-            self.mss.unwrap_or(0),
-            self.window_scale.unwrap_or(0),
-        )
+        let mss = self.mss.unwrap_or(0);
+        let window_scale = self.window_scale.unwrap_or(0);
+
+        if window_scale == 0 {
+            format!("{}_{opts}_{mss:02}_{window_scale:02}", self.window_size)
+        } else {
+            format!("{}_{opts}_{mss:02}_{window_scale}", self.window_size)
+        }
     }
 }
 
@@ -159,4 +163,30 @@ fn test_is_initial_syn() {
     assert!(!is_initial_syn(0x12));
     // ACK without SYN
     assert!(!is_initial_syn(0x10));
+}
+
+#[test]
+fn test_ja4t_format_defaults() {
+    let client = ClientStats {
+        pkt_num: None,
+        window_size: 8192,
+        options: Vec::new(),
+        mss: None,
+        window_scale: None,
+    };
+
+    assert_eq!(client.to_ja4t(), "8192_00_00_00");
+}
+
+#[test]
+fn test_ja4t_format_zero_window_scale() {
+    let client = ClientStats {
+        pkt_num: None,
+        window_size: 5744,
+        options: vec![2, 4, 8, 1, 3],
+        mss: Some(1436),
+        window_scale: Some(0),
+    };
+
+    assert_eq!(client.to_ja4t(), "5744_2-4-8-1-3_1436_00");
 }
