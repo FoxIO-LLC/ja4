@@ -99,7 +99,14 @@ impl<T: Timestamps> AddressedStream<T> {
         }
     }
 
-    fn update(&mut self, pkt: &Packet, conf: &Conf, store_pkt_num: bool, guessed_sender: Sender) {
+    fn update(
+        &mut self,
+        pkt: &Packet,
+        conf: &Conf,
+        store_pkt_num: bool,
+        is_quic_context: bool,
+        guessed_sender: Sender,
+    ) {
         if conf.tcp.enabled {
             if let Err(error) = self
                 .stream
@@ -112,12 +119,11 @@ impl<T: Timestamps> AddressedStream<T> {
         }
 
         if conf.tls.enabled {
-            if let Err(error) = self
-                .stream
-                .tls
-                .get_or_insert_with(Default::default)
-                .update(pkt, store_pkt_num)
-            {
+            if let Err(error) = self.stream.tls.get_or_insert_with(Default::default).update(
+                pkt,
+                is_quic_context,
+                store_pkt_num,
+            ) {
                 tracing::debug!(%pkt.num, %error, "failed to fingerprint TLS");
             }
         }
@@ -172,6 +178,7 @@ impl Streams {
             stream_id,
             sockets,
         } = attrs;
+        let is_quic_context = transport == Transport::Udp && pkt.find_proto("quic").is_some();
 
         let sender_ip = sockets.src.clone();
 
@@ -199,6 +206,7 @@ impl Streams {
                     pkt,
                     conf,
                     store_pkt_num,
+                    is_quic_context,
                     guess_sender(&sender_ip, &stream.sockets),
                 );
             }
@@ -214,6 +222,7 @@ impl Streams {
                     pkt,
                     conf,
                     store_pkt_num,
+                    is_quic_context,
                     guess_sender(&sender_ip, &stream.sockets),
                 );
             }
