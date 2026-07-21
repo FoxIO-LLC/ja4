@@ -128,6 +128,7 @@ This repo includes JA4+ in
 | [Validin](https://www.validin.com/) | JA4+ |
 | [Auth0](https://auth0.com/changelog#40upcFBPuFxKG7nacgSlQc) | JA4 |
 | [Security Onion](https://blog.securityonion.net/2026/03/security-onion-300-now-available-with.html) | JA4+ |
+| [bunny.net](https://docs.bunny.net/cdn/security/ja4-fingerprinting) | JA4 |
 
 with more to be announced...  
 
