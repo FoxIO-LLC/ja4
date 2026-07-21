@@ -80,7 +80,8 @@ This repo includes JA4+ in
 | [GreyNoise](https://www.greynoise.io/) | JA4+ |
 | [Hunt](https://hunt.io/) | JA4+ |
 | [Driftnet](https://driftnet.io/) | JA4+ |
-| [GoLang](https://github.com/driftnet-io/go-ja4x) | JA4X |
+| [GoLang (1)](https://github.com/driftnet-io/go-ja4x) | JA4X |
+| [GoLang (2)](https://github.com/exaring/ja4plus) | JA4 |
 | [nzyme](https://www.nzyme.org/) | JA4+ (under development) |
 | [Netresec's CapLoader](https://www.netresec.com/?page=Blog&month=2023-11&post=CapLoader-1-9-6-Released) | JA4+ (under development) |
 | [Netresec's NetworkMiner](https://www.netresec.com/?page=NetworkMiner) | JA4+ (under development) |
