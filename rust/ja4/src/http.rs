@@ -76,19 +76,17 @@ impl HttpStats {
             .filter_map(|s| {
                 // SAFETY: `str::split` never returns an empty iterator, so it's safe to
                 // unwrap.
-                let s = s.split(':').next().unwrap().to_owned();
+                let name = s.split(':').next().unwrap();
                 // Field names are case-insensitive.
                 // See https://www.rfc-editor.org/rfc/rfc2616#section-4.2
-                match s.to_lowercase().as_str() {
-                    "cookie" => {
-                        has_cookie_header = true;
-                        None
-                    }
-                    "referer" => {
-                        has_referer_header = true;
-                        None
-                    }
-                    _ => Some(s),
+                if name.eq_ignore_ascii_case("cookie") {
+                    has_cookie_header = true;
+                    None
+                } else if name.eq_ignore_ascii_case("referer") {
+                    has_referer_header = true;
+                    None
+                } else {
+                    Some(name.to_owned())
                 }
             })
             .collect();
