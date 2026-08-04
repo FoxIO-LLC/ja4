@@ -32,5 +32,5 @@ jobs:
 
       - name: Run btest
         run: |
-          cd zeek/tests
-          btest -d Scripts/
+          cd zeek/testing
+          btest -d tests/
