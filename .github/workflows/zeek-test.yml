@@ -12,7 +12,6 @@ on:
       - 'zeek/**'
       - '.github/workflows/zeek-test.yml'
   workflow_dispatch:
-  repository_dispatch:
 
 jobs:
   test:
@@ -28,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y python3-pip git cmake build-essential
+          apt-get install -y python3-pip git cmake build-essential libssl-dev
           # btest is distributed as a python package
           pip3 install btest --break-system-packages
 
