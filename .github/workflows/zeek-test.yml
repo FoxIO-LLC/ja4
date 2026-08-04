@@ -11,6 +11,7 @@ on:
     paths:
       - 'zeek/**'
       - '.github/workflows/zeek-test.yml'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -26,9 +27,16 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y python3-pip git
+          apt-get install -y python3-pip git cmake build-essential
           # btest is distributed as a python package
           pip3 install btest --break-system-packages
+
+      - name: Build plugin
+        run: |
+          cd zeek
+          ./configure
+          cd build
+          make -j$(nproc)
 
       - name: Run btest
         run: |
