@@ -12,6 +12,7 @@ on:
       - 'zeek/**'
       - '.github/workflows/zeek-test.yml'
   workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   test:
