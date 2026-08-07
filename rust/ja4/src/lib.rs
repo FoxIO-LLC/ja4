@@ -184,11 +184,7 @@ fn hash12(s: impl AsRef<str>) -> String {
     if s.is_empty() {
         "000000000000".to_owned()
     } else {
-        let digest = Sha256::digest(s.as_bytes());
-        format!(
-            "{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
-            digest[0], digest[1], digest[2], digest[3], digest[4], digest[5]
-        )
+        hex::encode(&Sha256::digest(s.as_bytes())[..6])
     }
 }
 
