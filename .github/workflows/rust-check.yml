@@ -42,9 +42,6 @@ jobs:
   clippy:
     name: ${{ matrix.toolchain }} / clippy
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
     strategy:
       fail-fast: false
       matrix:
@@ -59,14 +56,8 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
       - name: cargo clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          # Github Actions don't support `working-dir` in the `uses` context.
-          # Specify `--manifest-path` as a workaround.
-          #
-          # See https://github.com/actions-rs/clippy-check/issues/28
-          args: --all-features --workspace --manifest-path rust/Cargo.toml -- -D warnings
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: cargo clippy --all-features --workspace -- -D warnings
+        working-directory: rust/
 
   doc:
     name: nightly / doc
