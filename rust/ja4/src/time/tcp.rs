@@ -182,9 +182,11 @@ mod state {
             let ja4l_s = (t_b.timestamp - t_a.timestamp) / 2;
             debug_assert!(ja4l_s >= 0); // 0 if the difference == 1
 
+            let c_ttl = client_ttl.0;
+            let s_ttl = server_ttl.0;
             Self::Done(Fingerprints {
-                ja4l_c: format!("{ja4l_c}_{client_ttl}", client_ttl = client_ttl.0),
-                ja4l_s: format!("{ja4l_s}_{server_ttl}", server_ttl = server_ttl.0),
+                ja4l_c: format!("{ja4l_c}_{c_ttl}"),
+                ja4l_s: format!("{ja4l_s}_{s_ttl}"),
             })
         }
     }

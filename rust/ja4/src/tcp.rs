@@ -108,8 +108,7 @@ impl Stream {
     pub(crate) fn into_out(self, flags: FormatFlags) -> Option<OutStream> {
         let client = self.client?;
 
-        let raw = client.to_ja4t();
-        let ja4t = if flags.with_raw { raw.clone() } else { raw };
+        let ja4t = client.to_ja4t();
 
         Some(OutStream {
             ja4t,

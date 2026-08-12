@@ -114,8 +114,7 @@ impl Cli {
 
         if let Some(keylog) = &keylog_file {
             let Some(keylog_path) = keylog.to_str() else {
-                // SAFETY: we've just established that `keylog_file` is Some
-                return Err(Error::NonUtf8Path(keylog_file.unwrap()));
+                return Err(Error::NonUtf8Path(keylog.clone()));
             };
             builder = builder.keylog_file(keylog_path);
         }
