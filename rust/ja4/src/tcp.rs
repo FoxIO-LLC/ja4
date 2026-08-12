@@ -105,7 +105,7 @@ impl Stream {
     }
 
     /// Convert internal state into output.
-    pub(crate) fn into_out(self, flags: FormatFlags) -> Option<OutStream> {
+    pub(crate) fn into_out(self, _flags: FormatFlags) -> Option<OutStream> {
         let client = self.client?;
 
         let ja4t = client.to_ja4t();

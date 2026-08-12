@@ -503,7 +503,7 @@ mod tests {
         let cookie_pairs = cookie_pairs(get_header_value("Cookie: ").split("; ")).collect();
         let headers = pre_headers
             .into_iter()
-            .map(|s| s.split_once(':').map_or(s.as_str(), |(prefix, _)| prefix).to_owned())
+            .map(|s| s.split_once(':').map_or(&s[..], |(prefix, _)| prefix).to_owned())
             .filter(|s| s != "Cookie" && s != "Referer")
             .collect();
 
