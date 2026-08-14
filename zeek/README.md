@@ -2,24 +2,24 @@
 
 A compiled Zeek plugin implementing JA4+ network fingerprinting. Replaces the pure-script implementation with C++ BiF functions for performance-critical fingerprints.
 
-JA4SSH will output to its own log.
+For the non-plugin, scripts-only version of JA4+, see: https://github.com/FoxIO-LLC/ja4-zeek-scripts
 
 C++ accelerated (BiF):
-
-JA4 &rarr; `ssl.log`
-JA4S &rarr; `ssl.log`
-JA4H &rarr; `http.log`
-JA4SSH &rarr; `ja4ssh.log`
-JA4T &rarr; `conn.log` (raw packet parsing)
-
+  
+JA4 &rarr; `ssl.log`  
+JA4S &rarr; `ssl.log`  
+JA4H &rarr; `http.log`  
+JA4SSH &rarr; `ja4ssh.log` (new log file)  
+JA4T &rarr; `conn.log` (raw packet parsing)  
+  
 Pure script (bundled):
 
-JA4L &rarr; `conn.log`
-JA4LS &rarr; `conn.log`
-JA4TS &rarr; `conn.log`
-JA4D &rarr; `ja4d.log`
-JA4D6 &rarr; `ja4d.log` (awaiting Zeek DHCPv6 suppport)
-JA4X &rarr; `x509.log` (awaiting Zeek object support)
+JA4L &rarr; `conn.log`  
+JA4LS &rarr; `conn.log`  
+JA4TS &rarr; `conn.log`  
+JA4D &rarr; `ja4d.log`  
+JA4D6 &rarr; `ja4d.log` (awaiting Zeek DHCPv6 suppport)  
+JA4X &rarr; `x509.log` (awaiting Zeek object support)  
 
 See [JA4+ and implementations into other open source tools](../README.md) for more detail on JA4+ and implementations into other open source tools.
 
