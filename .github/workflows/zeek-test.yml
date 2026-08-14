@@ -11,10 +11,19 @@ on:
     paths:
       - 'zeek/**'
       - '.github/workflows/zeek-test.yml'
+  workflow_dispatch:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     container:
@@ -26,11 +35,18 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y python3-pip git
+          apt-get install -y python3-pip git cmake build-essential libssl-dev libpcap-dev
           # btest is distributed as a python package
           pip3 install btest --break-system-packages
 
+      - name: Build plugin
+        run: |
+          cd zeek
+          ./configure
+          cd build
+          make -j$(nproc)
+
       - name: Run btest
         run: |
-          cd zeek/tests
-          btest -d Scripts/
+          cd zeek/testing
+          btest -d tests/

@@ -1,0 +1,57 @@
+module JA4;
+
+%%{
+#include "ja4.h"
+#include "ja4h.h"
+#include "ja4s.h"
+#include "ja4ssh.h"
+#include "ja4t.h"
+#include <string>
+#include <cctype>
+#include <sstream>
+#include <vector>
+#include "zeek/util.h"
+#include "zeek/net_util.h"
+#include "zeek/ZeekString.h"
+#include "zeek/Val.h"
+#include "zeek/ZVal.h"
+#include "zeek/Conn.h"
+#include "zeek/ZeekArgs.h"
+#include "zeek/analyzer/protocol/ssl/SSL.h"
+#include "zeek/OpaqueVal.h"
+
+%%}
+
+
+function calculate_ja4%(connection_val: any, delimiter: string%): any %{
+    zeek::ValPtr signature;
+    zeek::RecordVal* connection = connection_val->AsRecordVal();
+    signature = do_ja4(connection, delimiter);
+    return signature;
+%}
+
+function calculate_ja4s%(connection_val: any, delimiter: string%): any %{
+    zeek::ValPtr signature;
+    zeek::RecordVal* connection = connection_val->AsRecordVal();
+    signature = do_ja4s(connection, delimiter);
+    return signature;
+%}
+
+function calculate_ja4ssh%(connection_val: any%): any %{
+    zeek::ValPtr signature;
+    zeek::RecordVal* connection = connection_val->AsRecordVal();
+    signature = do_ja4ssh(connection);
+    return signature;
+%}
+
+function calculate_ja4h%(connection_val: any, delimiter: string%): any %{
+    zeek::ValPtr signature;
+    zeek::RecordVal* connection = connection_val->AsRecordVal();
+    signature = do_ja4h(connection, delimiter);
+    return signature;
+%}
+
+function parse_tcp_options%(pkt_data: string, caplen: count, ip_hl: count, tcp_hl: count%): any %{
+    return parse_tcp_options(pkt_data, static_cast<uint32_t>(caplen),
+                             static_cast<uint32_t>(ip_hl), static_cast<uint32_t>(tcp_hl));
+%}
