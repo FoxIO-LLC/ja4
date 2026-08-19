@@ -74,9 +74,7 @@ impl HttpStats {
         let headers = http
             .values("http.request.line")
             .filter_map(|s| {
-                // SAFETY: `str::split` never returns an empty iterator, so it's safe to
-                // unwrap.
-                let name = s.split(':').next().unwrap();
+                let name = s.split_once(':').map_or(s, |(prefix, _)| prefix);
                 // Field names are case-insensitive.
                 // See https://www.rfc-editor.org/rfc/rfc2616#section-4.2
                 if name.eq_ignore_ascii_case("cookie") {
@@ -503,7 +501,11 @@ mod tests {
         let cookie_pairs = cookie_pairs(get_header_value("Cookie: ").split("; ")).collect();
         let headers = pre_headers
             .into_iter()
-            .map(|s| s.split_once(':').map_or(&s[..], |(prefix, _)| prefix).to_owned())
+            .map(|s| {
+                s.split_once(':')
+                    .map_or(&s[..], |(prefix, _)| prefix)
+                    .to_owned()
+            })
             .filter(|s| s != "Cookie" && s != "Referer")
             .collect();
 
