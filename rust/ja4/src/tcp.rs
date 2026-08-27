@@ -190,3 +190,16 @@ fn test_ja4t_format_zero_window_scale() {
 
     assert_eq!(client.to_ja4t(), "5744_2-4-8-1-3_1436_00");
 }
+
+#[test]
+fn test_ja4t_format_present_single_digit_mss() {
+    let client = ClientStats {
+        pkt_num: None,
+        window_size: 8192,
+        options: vec![2],
+        mss: Some(9),
+        window_scale: None,
+    };
+
+    assert_eq!(client.to_ja4t(), "8192_2_09_00");
+}
