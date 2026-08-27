@@ -8,7 +8,7 @@ expression: output
   dst: 172.28.2.3
   src_port: 40264
   dst_port: 22
-  ja4t: 5744_2-4-8-1-3_1436_0
+  ja4t: 5744_2-4-8-1-3_1436_00
   ja4l_c: 36_255
   ja4l_s: 22952_236
   ja4ssh:
