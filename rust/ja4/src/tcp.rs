@@ -125,12 +125,14 @@ impl ClientStats {
     /// Example:
     ///   64240_2-1-3-1-1-4_1460_8
     fn to_ja4t(&self) -> String {
-        let opts = self
-            .options
-            .iter()
-            .map(|v| v.to_string())
-            .collect::<Vec<_>>()
-            .join("-");
+        use std::fmt::Write;
+        let mut opts = String::with_capacity(self.options.len() * 3);
+        for (i, v) in self.options.iter().enumerate() {
+            if i > 0 {
+                opts.push('-');
+            }
+            let _ = write!(opts, "{}", v);
+        }
 
         format!(
             "{}_{}_{}_{}",

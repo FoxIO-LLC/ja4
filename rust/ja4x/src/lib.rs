@@ -138,10 +138,8 @@ impl Oid {
         let short_name = short_name?;
         let value = value?;
         let mut chars = short_name.chars();
-        let key: String = match chars.next() {
-            None => return None,
-            Some(first) => first.to_uppercase().chain(chars).collect(),
-        };
+        let first = chars.next()?;
+        let key: String = first.to_uppercase().chain(chars).collect();
         Some((format!("{key_prefix}{key}"), value))
     }
 }
