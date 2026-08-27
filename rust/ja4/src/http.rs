@@ -120,29 +120,8 @@ impl HttpStats {
             .ok()
             .map(str::to_owned);
 
-        let mut has_cookie_header = false;
-        let mut has_referer_header = false;
-        let headers = http2
-            .values("http2.header.name")
-            .filter_map(|s| {
-                // Just as in HTTP/1.x, header field names are strings of ASCII
-                // characters that are compared in a case-insensitive fashion.  However,
-                // header field names MUST be converted to lowercase prior to their
-                // encoding in HTTP/2.  A request or response containing uppercase
-                // header field names MUST be treated as malformed
-                //
-                // Reference: https://www.rfc-editor.org/rfc/rfc7540.html#section-8.1.2
-                if s == "cookie" {
-                    has_cookie_header = true;
-                    None
-                } else if s == "referer" {
-                    has_referer_header = true;
-                    None
-                } else {
-                    Some(s.to_owned())
-                }
-            })
-            .collect();
+        let (headers, has_cookie_header, has_referer_header) =
+            collect_http2_headers(http2.values("http2.header.name"));
 
         // Reference: https://datatracker.ietf.org/doc/html/rfc7540#section-8.1.2.5
         let cookie_pairs = cookie_pairs(http2.values("http2.headers.cookie")).collect();
@@ -217,6 +196,42 @@ impl HttpStats {
             ja4h_r,
         }
     }
+}
+
+/// Collects JA4H-relevant header names from `http2.header.name` values,
+/// dropping pseudo-headers and noting the presence of `cookie` and `referer`
+/// headers, which JA4H counts separately.
+fn collect_http2_headers<'a>(names: impl Iterator<Item = &'a str>) -> (Vec<String>, bool, bool) {
+    let mut has_cookie = false;
+    let mut has_referer = false;
+    let headers = names
+        .filter_map(|s| match s {
+            // Just as in HTTP/1.x, header field names are strings of ASCII
+            // characters that are compared in a case-insensitive fashion.  However,
+            // header field names MUST be converted to lowercase prior to their
+            // encoding in HTTP/2.  A request or response containing uppercase
+            // header field names MUST be treated as malformed
+            //
+            // Reference: https://www.rfc-editor.org/rfc/rfc7540.html#section-8.1.2
+
+            // Pseudo-headers (`:method`, `:scheme`, ...) are not HTTP header fields
+            // and are excluded from the fingerprint, matching the Python and
+            // Wireshark implementations.
+            //
+            // Reference: https://www.rfc-editor.org/rfc/rfc9113.html#section-8.3
+            _ if s.starts_with(':') => None,
+            "cookie" => {
+                has_cookie = true;
+                None
+            }
+            "referer" => {
+                has_referer = true;
+                None
+            }
+            _ => Some(s.to_owned()),
+        })
+        .collect();
+    (headers, has_cookie, has_referer)
 }
 
 fn cookie_pairs<'a, I>(cookies: I) -> impl Iterator<Item = (String, Option<String>)> + 'a
@@ -553,6 +568,53 @@ mod tests {
             {
               "pkt_ja4h": 113,
               "ja4h": "ge11cr13enus_88d2d584d47f_0f2659b474bf_161698816dab"
+            }"#]]
+        .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
+    }
+
+    #[test]
+    fn test_http2_pseudo_headers_do_not_affect_ja4h() {
+        let (headers, has_cookie_header, has_referer_header) = collect_http2_headers(
+            [
+                ":method",
+                ":scheme",
+                ":authority",
+                ":path",
+                "sec-ch-ua",
+                "sec-ch-ua-mobile",
+                "sec-ch-ua-platform",
+                "upgrade-insecure-requests",
+                "user-agent",
+                "accept",
+                "sec-fetch-site",
+                "sec-fetch-mode",
+                "sec-fetch-user",
+                "sec-fetch-dest",
+                "accept-encoding",
+                "accept-language",
+            ]
+            .into_iter(),
+        );
+
+        let stats = HttpStats {
+            packet: None,
+            req_method: HttpRequestMethod::Get,
+            version: HttpVersion::Http2,
+            has_cookie_header,
+            has_referer_header,
+            language: Some("en-US,en;q=0.9".to_owned()),
+            headers,
+            cookie_pairs: Vec::new(),
+        };
+
+        let out = stats.into_out(FormatFlags {
+            with_raw: true,
+            ..Default::default()
+        });
+        expect![[r#"
+            {
+              "ja4h": "ge20nn12enus_60f823d07c94_000000000000_000000000000",
+              "ja4h_r": "ge20nn12enus_sec-ch-ua,sec-ch-ua-mobile,sec-ch-ua-platform,upgrade-insecure-requests,user-agent,accept,sec-fetch-site,sec-fetch-mode,sec-fetch-user,sec-fetch-dest,accept-encoding,accept-language__"
             }"#]]
         .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
     }
