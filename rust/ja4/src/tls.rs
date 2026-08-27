@@ -24,7 +24,12 @@ pub(crate) struct Stream {
 }
 
 impl Stream {
-    pub(crate) fn update(&mut self, pkt: &Packet, store_pkt_num: bool) -> Result<()> {
+    pub(crate) fn update(
+        &mut self,
+        pkt: &Packet,
+        is_quic_context: bool,
+        store_pkt_num: bool,
+    ) -> Result<()> {
         // Some QUIC frames contain fragmented TLS protocols that do not have `tls.handshake.type` field:
         //
         // ```xml
@@ -63,7 +68,8 @@ impl Stream {
                     );
                     // We only process a single TLS Client Hello packet per stream.
                     if self.client.is_none() {
-                        self.client = Some(ClientStats::new(pkt, &tls, store_pkt_num)?);
+                        self.client =
+                            Some(ClientStats::new(pkt, &tls, is_quic_context, store_pkt_num)?);
                     }
                 }
                 SERVER_HELLO => {
@@ -167,6 +173,7 @@ pub(crate) struct OutX509 {
 #[cfg_attr(test, derive(Clone))]
 pub(crate) struct ClientStats {
     packet: Option<PacketNum>,
+    is_quic: bool,
     tls_ver: TlsVersion,
     ciphers: Vec<String>,
     exts: Vec<u16>,
@@ -177,8 +184,17 @@ pub(crate) struct ClientStats {
 }
 
 impl ClientStats {
-    fn new(pkt: &Packet, tls: &Proto, store_pkt_num: bool) -> Result<Self> {
+    fn new(pkt: &Packet, tls: &Proto, is_quic_context: bool, store_pkt_num: bool) -> Result<Self> {
         let exts = tls_extensions_client(tls);
+        let has_quic_transport_parameters = exts.contains(&TLS_EXT_QUIC_TRANSPORT_PARAMETERS);
+        if is_quic_context != has_quic_transport_parameters {
+            debug!(
+                %pkt.num,
+                is_quic_context,
+                has_quic_transport_parameters,
+                "QUIC packet context and TLS QUIC transport parameters disagree"
+            );
+        }
         let tls_ver = TlsVersion::new(tls, exts.contains(&TLS_EXT_SUPPORTED_VERSIONS))?;
         let sni = tls
             .first("tls.handshake.extensions_server_name")
@@ -201,6 +217,7 @@ impl ClientStats {
 
         Ok(Self {
             packet: store_pkt_num.then_some(pkt.num),
+            is_quic: is_quic_context,
             tls_ver,
             ciphers,
             exts,
@@ -305,6 +322,7 @@ impl PartsOfClientFingerprint {
     fn from_client_stats(stats: ClientStats, original_order: bool) -> Self {
         let ClientStats {
             packet,
+            is_quic,
             tls_ver,
             mut ciphers,
             mut exts,
@@ -315,7 +333,7 @@ impl PartsOfClientFingerprint {
         // We've taken these out in `ClientStats::into_out`.
         assert!(packet.is_none() && sni.is_none());
 
-        let quic = quic_marker(exts.contains(&TLS_EXT_QUIC_TRANSPORT_PARAMETERS));
+        let quic = quic_marker(is_quic);
         let sni_marker = if exts.contains(&TLS_EXT_SERVER_NAME) {
             'd'
         } else {
@@ -673,6 +691,7 @@ mod tests {
 
         let stats = ClientStats {
             packet: None,
+            is_quic: false,
             tls_ver: TlsVersion::Tls1_3,
             ciphers,
             exts,
@@ -734,6 +753,30 @@ mod tests {
               "ja4": "t13d1516h2_8daaf6152771_e5627efa2ab1"
             }"#]]
         .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
+    }
+
+    #[test]
+    fn test_client_quic_marker_uses_packet_context() {
+        let stats = ClientStats {
+            packet: None,
+            is_quic: false,
+            tls_ver: TlsVersion::Tls1_3,
+            ciphers: Vec::new(),
+            exts: vec![TLS_EXT_QUIC_TRANSPORT_PARAMETERS],
+            sni: None,
+            alpn: (None, None),
+            sig_hash_algs: Vec::new(),
+        };
+
+        let parts = PartsOfClientFingerprint::from_client_stats(stats.clone(), false);
+        assert_eq!(parts.first_chunk, "t13i000100");
+
+        let stats = ClientStats {
+            is_quic: true,
+            ..stats
+        };
+        let parts = PartsOfClientFingerprint::from_client_stats(stats, false);
+        assert_eq!(parts.first_chunk, "q13i000100");
     }
 
     #[test]
