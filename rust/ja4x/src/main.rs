@@ -52,6 +52,7 @@ fn main() -> eyre::Result<()> {
             debug_assert!(rem.is_empty());
             pem.parse_x509()?.into()
         } else {
+            tracing::debug!(?path, format = "DER");
             let p_disp = path.display();
             let (rem, x509) = X509Certificate::from_der(&buf)
                 .wrap_err_with(|| format!("{p_disp}: unsupported file format"))
