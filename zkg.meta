@@ -5,6 +5,6 @@ script_dir = zeek/scripts/zkg-stub
 plugin_dir = zeek/build
 test_command = cd zeek/testing && btest -c btest.cfg
 build_command = cd zeek && ./configure && cd build && make
-version = 2.0
+version = 2.1
 credits = John Althouse
 depends = zeek >=7.0.0
