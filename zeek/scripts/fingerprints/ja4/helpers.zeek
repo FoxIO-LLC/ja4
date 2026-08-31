@@ -19,7 +19,7 @@ export {
     # The alpn values present in the ClientHello
     alpns: vector of string &optional;
 
-    # The signature and hashing algorithms offered by the client
+    # The signature and hashing algorithms offered by the client, GREASE removed
     signature_algos: vector of count &default=vector();
 
     # The sni values present in the ClientHello
@@ -130,7 +130,11 @@ event ssl_extension_signature_algorithm(c: connection, is_client: bool, signatur
       local val = signature_algorithms[idx];
       local ha: count = val$HashAlgorithm;
       local sa: count = val$SignatureAlgorithm;
-      c$fp$client_hello$signature_algos += make_quadword(ha, sa);
+      local quad: count = make_quadword(ha, sa);
+      if (quad in FINGERPRINT::TLS_GREASE_TYPES) {
+        next;
+      }
+      c$fp$client_hello$signature_algos += quad;
     }
   }
 }
