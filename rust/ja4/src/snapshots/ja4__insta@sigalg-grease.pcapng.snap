@@ -1,0 +1,16 @@
+---
+source: ja4/src/lib.rs
+expression: output
+---
+- stream: 0
+  transport: tcp
+  src: 192.168.0.1
+  dst: 10.10.10.1
+  src_port: 56544
+  dst_port: 443
+  ja4t: 65535_2-1-3-1-1-8-4-0-0_1460_6
+  tls_server_name: optimizationguide-pa.googleapis.com
+  ja4: t13d1517h2_8daaf6152771_cb7bf5808d99
+  ja4s: t130200_1302_234ea6891581
+  ja4l_c: 93_64
+  ja4l_s: 5403_120
