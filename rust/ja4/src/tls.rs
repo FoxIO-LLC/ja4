@@ -292,6 +292,7 @@ fn sig_hash_algs(pkt: &Packet, tls: &Proto) -> Vec<String> {
 
     iter.take_while(|&md| md.name().starts_with("tls.handshake.sig_hash_"))
         .filter(|&md| md.name() == "tls.handshake.sig_hash_alg")
+        .filter(|&md| !TLS_GREASE_VALUES_STR.contains(&md.value()))
         .filter_map(|md| {
             let s = md.value().strip_prefix("0x");
             if s.is_none() {
