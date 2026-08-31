@@ -10,9 +10,10 @@ For a quick explainer on JA4+ and to use as a reference during analysis see:
 [JA4+ Cheat Sheet](https://x.com/4A4133/status/1887269972545839559)
 
 For in-depth detail, please read our blogs on how JA4+ works, why it works, and examples of what can be detected/prevented with it:  
-[JA4+ Network Fingerprinting](https://blog.foxio.io/ja4%2B-network-fingerprinting) (JA4/S/H/L/X/SSH)  
-[JA4T: TCP Fingerprinting](https://blog.foxio.io/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)  
-[Investigating Surfshark and NordVPN with JA4T](https://blog.foxio.io/investigating-surfshark-and-nordvpn-with-ja4t) (JA4T)
+[JA4+ Network Fingerprinting](https://foxio.io/blog/ja4-network-fingerprinting) (JA4/S/H/L/X/SSH)  
+[JA4T: TCP Fingerprinting](https://foxio.io/blog/ja4t-tcp-fingerprinting) (JA4T/TS/TScan)  
+[Investigating Surfshark and NordVPN with JA4T](https://foxio.io/blog/investigating-surfshark-and-nordvpn-with-ja4t) (JA4T)  
+[JA4D and JA4D6: DHCP Fingerprinting](https://foxio.io/blog/ja4d-and-ja4d6-dhcp-fingerprinting) (JA4D/6)
 
 If you love JA4+, consider getting a t-shirt or hoodie:  
 [JA4+ Shirts, Hoodies, and Stickers](https://store.foxio.io/)
@@ -55,6 +56,9 @@ If you love JA4+, consider getting a t-shirt or hoodie:
 | [JA4TCPScan](https://github.com/FoxIO-LLC/ja4tscan) | [JA4TScan](https://github.com/FoxIO-LLC/ja4tscan) | [Active TCP Fingerprint Scanner](https://github.com/FoxIO-LLC/ja4tscan) |
 | JA4DHCP | JA4D | DHCP Fingerprinting |
 | JA4DHCPv6 | JA4D6 | DHCPv6 Fingerprinting |
+| JA4NTP | JA4N | NTP Fingerprinting |
+| JA4Scan-TLS | JA4Scan-TLS | Active TLS Server Fingerprint Scanner |
+| JA4Scan-QUIC | JA4Scan-QUIC | Active QUIC Server Fingerprint Scanner |
 
 The full name or short name can be used interchangeably. Additional JA4+ methods are in the works...
 
@@ -75,7 +79,7 @@ This repo includes JA4+ in
 |-------------|--------------|
 | [Wireshark](https://github.com/FoxIO-LLC/ja4/tree/main/wireshark) | JA4+ |
 | [Zeek](https://github.com/FoxIO-LLC/ja4/tree/main/zeek) | JA4+ |
-| [Arkime](https://arkime.com/settings#ja4plus) | JA4+ |
+| [Arkime](https://arkime.com/) | JA4+ (our recommended open source JA4+ tool) |
 | [Suricata](https://docs.suricata.io/en/latest/rules/ja-keywords.html#ja4-hash) | JA4+ (under development) |
 | [GreyNoise](https://www.greynoise.io/) | JA4+ |
 | [Hunt](https://hunt.io/) | JA4+ |
@@ -130,6 +134,8 @@ This repo includes JA4+ in
 | [Auth0](https://auth0.com/changelog#40upcFBPuFxKG7nacgSlQc) | JA4 |
 | [Security Onion](https://blog.securityonion.net/2026/03/security-onion-300-now-available-with.html) | JA4+ |
 | [bunny.net](https://docs.bunny.net/cdn/security/ja4-fingerprinting) | JA4 |
+| [ENEA](https://www.enea.com/) | JA4+ |
+| [F5 Distributed Cloud Services](https://www.f5.com/products/distributed-cloud-services) | JA4+ |
 
 with more to be announced...  
 
@@ -137,7 +143,7 @@ with more to be announced...
 
 | Application |JA4+ Fingerprints |
 |----|----|
-| Chrome | ```JA4=t13d1516h2_8daaf6152771_02713d6af862``` (TCP) <br/> ```JA4=q13d0312h3_55b375c5d22e_06cda9e17597``` (QUIC) <br/> ```JA4=t13d1517h2_8daaf6152771_b0da82dd1658``` (pre-shared key) <br/> ```JA4=t13d1517h2_8daaf6152771_b1ff8ab2d16f``` (no key) |
+| Chrome | ```JA4=t13d1517h2_8daaf6152771_cb7bf5808d99``` (TCP) <br/> ```JA4=q13d0312h3_55b375c5d22e_178839b6cec1``` (QUIC) |
 | IcedID Malware Dropper | ```JA4H=ge11cn020000_9ed1ff1f7b03_cd8dafe26982``` |
 | IcedID Malware | ```JA4=t13d201100_2b729b4bf6f3_9e7b989ebec8``` <br/> ```JA4S=t120300_c030_5e2616a54c73``` |
 | Sliver Malware | ```JA4=t13d190900_9dc949149365_97f8aa674fd9``` <br/> ```JA4S=t130200_1301_a56c5b993250``` <br/> ```JA4X=000000000000_4f24da86fad6_bf0f0589fc03``` <br/> ```JA4X=000000000000_7c32fa18c13e_bf0f0589fc03``` |
@@ -290,9 +296,8 @@ To understand how to read JA4+ fingerprints, see [Technical Details](./technical
 
 *JA4: TLS Client Fingerprinting* is [open-source, BSD 3-Clause](./LICENSE-JA4), same as JA3. FoxIO does not have patent claims and is not planning to pursue patent coverage for JA4 TLS Client Fingerprinting. This allows any company or tool currently utilizing JA3 to immediately upgrade to JA4 without delay.
 
-**JA4S, JA4L, JA4LS, JA4H, JA4X, JA4SSH, JA4T, JA4TS, JA4TScan and all future additions, (collectively referred to as JA4+)** are licensed under the [FoxIO License 1.1](./LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
+**JA4S, JA4L, JA4LS, JA4L-Delta, JA4H, JA4X, JA4SSH, JA4T, JA4TS, JA4TScan, JA4D, JA4D6, JA4Scan-TLS, JA4Scan-QUIC, JA4N and all future additions, (collectively referred to as JA4+)** are patent-pending and licensed under the [FoxIO License 1.1](./LICENSE). This license is permissive for most use cases, including for academic and internal business purposes, but is not permissive for monetization. If, for example, a company would like to use JA4+ internally to help secure their own company, that is permitted. If, for example, a vendor would like to sell JA4+ fingerprinting as part of their product offering, they would need to request an OEM license from us.
 
-All JA4+ methods are patent pending.  
 JA4+ is a trademark of FoxIO
 
 JA4+ can and is being implemented into open source tools, see the [License FAQ](./License%20FAQ.md) for details.
@@ -337,4 +342,4 @@ And engineers working at GreyNoise, Hunt, Google, ExtraHop, F5, Driftnet and oth
 Contact John Althouse at john@foxio.io for licensing and questions.
 
 <sub>JA4 and JA4+ are trademarks of FoxIO, Inc.  
-Copyright (c) 2025, FoxIO</sup>
+Copyright (c) 2026, FoxIO</sup>
