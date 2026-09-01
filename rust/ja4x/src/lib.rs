@@ -168,8 +168,7 @@ fn hash12(s: impl AsRef<str>) -> String {
     if s.is_empty() {
         "000000000000".to_owned()
     } else {
-        let sha256 = hex::encode(Sha256::digest(s));
-        sha256[..12].into()
+        hex::encode(&Sha256::digest(s.as_bytes())[..6])
     }
 }
 

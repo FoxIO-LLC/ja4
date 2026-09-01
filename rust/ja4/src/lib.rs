@@ -114,8 +114,7 @@ impl Cli {
 
         if let Some(keylog) = &keylog_file {
             let Some(keylog_path) = keylog.to_str() else {
-                // SAFETY: we've just established that `keylog_file` is Some
-                return Err(Error::NonUtf8Path(keylog_file.unwrap()));
+                return Err(Error::NonUtf8Path(keylog.clone()));
             };
             builder = builder.keylog_file(keylog_path);
         }
@@ -184,8 +183,7 @@ fn hash12(s: impl AsRef<str>) -> String {
     if s.is_empty() {
         "000000000000".to_owned()
     } else {
-        let sha256 = hex::encode(Sha256::digest(s));
-        sha256[..12].into()
+        hex::encode(&Sha256::digest(s.as_bytes())[..6])
     }
 }
 

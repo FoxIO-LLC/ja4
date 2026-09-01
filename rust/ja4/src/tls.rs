@@ -480,9 +480,10 @@ impl ServerStats {
         // Note that we are preserving the original order of server's TLS extensions.
         let exts = exts.into_iter().map(|v| format!("{v:04x}")).join(",");
 
+        let hash = crate::hash12(&exts);
         OutServer {
             pkt_ja4s: packet,
-            ja4s: format!("{two_chunks}_{hash}", hash = crate::hash12(&exts)),
+            ja4s: format!("{two_chunks}_{hash}"),
             ja4s_r: flags.with_raw.then(|| format!("{two_chunks}_{exts}")),
         }
     }
