@@ -23,7 +23,7 @@ def to_ja4h(x, debug_stream=-1):
         x['headers'] = [h.strip() for h in x['headers'].split('\n') if h.strip()]
     
     header_fields = [y.lower().split(':')[0] for y in x['headers']]
-    referer = 'r' if 'referer' in str(header_fields) else 'n'
+    referer = 'r' if 'referer' in header_fields else 'n'
 
     method = http_method(x['method'])
     
