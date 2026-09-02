@@ -139,7 +139,7 @@ output_types = [ 'ja4x', 'ja4h' , 'ja4', 'ja4s', 'ja4ssh', 'ja4l']
 ########### JA4 / JA4S FUNCTIONS #####################
 def hops(x):
     x = int(x)
-    initial_ttl = 54
+    initial_ttl = 64
     if x > 64 and x <= 128:
         initial_ttl = 128
     if x > 128:
