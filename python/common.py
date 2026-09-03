@@ -6,7 +6,7 @@
 #
 
 from hashlib import sha256
-from datetime import datetime
+from datetime import datetime, timedelta
 
 conn_cache = {}
 quic_cache = {}
@@ -179,7 +179,9 @@ def parse_timestamp(timestamp):
 def epoch_diff(t1, t2):
     dt1 = parse_timestamp(t1)
     dt2 = parse_timestamp(t2)
-    return int((dt2-dt1).microseconds/2)
+    # timedelta.microseconds only holds the sub-second component, so any
+    # difference of a second or more was silently truncated before.
+    return (dt2 - dt1) // timedelta(microseconds=2)
 
 
 # Scan for tls
