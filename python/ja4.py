@@ -146,6 +146,21 @@ def hops(x):
         initial_ttl = 255
     return (initial_ttl - x)
 
+def first_last_alpn(alpn):
+    # Keep the first and last character of the ALPN value, which is all the
+    # fingerprint needs. Matches the rust implementation: a non-ascii
+    # character is replaced with '9', a single character is followed by '0',
+    # and an empty value (or a missing ALPN extension) becomes '00'.
+    if isinstance(alpn, list):
+        alpn = alpn[0] if alpn else ''
+    if not alpn:
+        return '00'
+    first = alpn[0] if ord(alpn[0]) < 128 else '9'
+    if len(alpn) == 1:
+        return f"{first}0"
+    last = alpn[-1] if ord(alpn[-1]) < 128 else '9'
+    return f"{first}{last}"
+
 def calculate_ja4_latency(x, ptype, STREAM):
     try:
         cache = get_cache(x)
@@ -195,16 +210,7 @@ def to_ja4s(x, debug_stream):
         x['version'] = get_supported_version(x['supported_versions'])
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
   
-    alpn = '00' 
-    if 'alpn_list' in x:
-        if isinstance(x['alpn_list'], list):
-            alpn = x['alpn_list'][0]
-        else:
-            alpn = x['alpn_list']
-    if len(alpn) > 2:
-        alpn = f"{alpn[0]}{alpn[-1]}"
-    if ord(alpn[0]) > 127:
-        alpn = '99'
+    alpn = first_last_alpn(x['alpn_list'] if 'alpn_list' in x else '')
 
     x['JA4S'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{extensions}"
     x['JA4S_r'] = f"{ptype}{version}{ext_len}{alpn}_{x['ciphers']}_{','.join(x['extensions'])}"
@@ -266,18 +272,7 @@ def to_ja4(x, debug_stream):
         x['version'] = get_supported_version(x['supported_versions'])
     version = TLS_MAPPER[x['version']] if x['version'] in TLS_MAPPER else '00'
 
-    alpn = '00' 
-    if 'alpn_list' in x:
-        if isinstance(x['alpn_list'], list):
-            alpn = x['alpn_list'][0]
-        else:
-            alpn = x['alpn_list']
-
-    if len(alpn) > 2:
-        alpn = f"{alpn[0]}{alpn[-1]}"
-
-    if ord(alpn[0]) > 127:
-        alpn = '99'
+    alpn = first_last_alpn(x['alpn_list'] if 'alpn_list' in x else '')
 
     entry = get_cache(x)[x['stream']]
     if not entry.get('count'):
