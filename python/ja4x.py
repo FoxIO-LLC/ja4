@@ -37,7 +37,15 @@ def to_ja4x(x, debug_stream=-1):
     # we need to convert them into hex codes and then use sha256
     if 'extension_lengths' not in x:
         return
-    
+
+    # tshark reports a field with a single value as a plain string. The
+    # certificate counts are iterated below, and a string would be walked
+    # one digit at a time: a certificate with 10 or more extensions ('12')
+    # was read as two certificates with 1 and 2 extensions.
+    for field in ('extension_lengths', 'issuer_sequence', 'subject_sequence'):
+        if field in x and not isinstance(x[field], list):
+            x[field] = [x[field]]
+
     x['issuers'] = []
     x['subjects'] = []
     x['issuer_hashes'] = []
