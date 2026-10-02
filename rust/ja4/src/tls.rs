@@ -642,14 +642,16 @@ fn first_last(s: &str) -> (Option<char>, Option<char>) {
     };
     let mut chars = s.chars();
     let first = chars.next().map(replace_nonascii_with_9);
-    let last = chars.next_back().map(replace_nonascii_with_9);
+    let last = chars.next_back().map(replace_nonascii_with_9).or(first);
     (first, last)
 }
 
 #[test]
 fn test_first_last() {
     assert_eq!(first_last(""), (None, None));
-    assert_eq!(first_last("a"), (Some('a'), None));
+    assert_eq!(first_last("a"), (Some('a'), Some('a')));
+    assert_eq!(first_last("x"), (Some('x'), Some('x')));
+    assert_eq!(first_last("7"), (Some('7'), Some('7')));
     assert_eq!(first_last("ab"), (Some('a'), Some('b')));
     assert_eq!(first_last("abc"), (Some('a'), Some('c')));
 }
@@ -657,7 +659,7 @@ fn test_first_last() {
 #[test]
 fn test_first_last_non_ascii() {
     assert_eq!('�', char::REPLACEMENT_CHARACTER);
-    assert_eq!(first_last("�"), (Some('9'), None));
+    assert_eq!(first_last("�"), (Some('9'), Some('9')));
     assert_eq!(first_last("��"), (Some('9'), Some('9')));
     assert_eq!(first_last("�x�"), (Some('9'), Some('9')));
     assert_eq!(first_last("x�"), (Some('x'), Some('9')));
@@ -821,5 +823,32 @@ mod tests {
               "ja4s": "t120400_c030_4e8089b08790"
             }"#]]
         .assert_eq(&serde_json::to_string_pretty(&out).unwrap());
+    }
+
+    #[test]
+    fn test_single_char_alpn_fingerprints() {
+        let stats = ClientStats {
+            packet: None,
+            is_quic: false,
+            tls_ver: TlsVersion::Tls1_3,
+            ciphers: Vec::new(),
+            exts: Vec::new(),
+            sni: None,
+            alpn: first_last("x"),
+            sig_hash_algs: Vec::new(),
+        };
+        let parts = PartsOfClientFingerprint::from_client_stats(stats, false);
+        assert_eq!(parts.first_chunk, "t13i0000xx");
+
+        let server_stats = ServerStats {
+            packet: None,
+            is_quic: false,
+            tls_ver: TlsVersion::Tls1_3,
+            cipher: "1301".to_owned(),
+            exts: Vec::new(),
+            alpn: first_last("x"),
+        };
+        let out = server_stats.into_out(FormatFlags::default());
+        assert!(out.ja4s.starts_with("t1300xx_1301_"));
     }
 }

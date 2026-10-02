@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Handle single-character ALPN according to the spec (#325).
+
 ## [0.18.5] - 2025-01-17
 
 - Update dependencies.
