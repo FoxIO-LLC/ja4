@@ -136,6 +136,7 @@ This repo includes JA4+ in
 | [bunny.net](https://docs.bunny.net/cdn/security/ja4-fingerprinting) | JA4 |
 | [ENEA](https://www.enea.com/) | JA4+ |
 | [F5 Distributed Cloud Services](https://www.f5.com/products/distributed-cloud-services) | JA4+ |
+| [IPScanner](https://ipscanner.io/bot/ja4-fingerprint) | JA4 |
 
 with more to be announced...  
 
