@@ -4,5 +4,4 @@ FINGERPRINT::JA4 - JA4+ network fingerprinting (JA4/JA4S/JA4H/JA4SSH/JA4T/JA4L/J
     [Function] JA4::calculate_ja4s
     [Function] JA4::calculate_ja4ssh
     [Function] JA4::calculate_ja4h
-    [Function] JA4::parse_tcp_options
 

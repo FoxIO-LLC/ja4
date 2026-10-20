@@ -76,32 +76,52 @@ function get_current_packet_timestamp(): double {
 }
 
 event new_connection(c: connection) {
+    if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
+}
 
+# A and B come from connection_SYN_packet rather than the raw packet header.
+# get_current_packet_header() describes the outermost packet, so for tunneled
+# connections (GENEVE, VXLAN, GRE, ...) it carries the tunnel's UDP/IP header
+# and the tunnel's TTL. The SYN_packet record is built from the inner headers.
+event connection_SYN_packet(c: connection, pkt: SYN_packet) {
     if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
 
-    local rp = get_current_packet_header();
-    if (rp?$tcp) {
-        # Packet must have the SYN flag but not the ACK flag
-        if ((rp$tcp$flags & TH_SYN) == 0 || (rp$tcp$flags & TH_ACK) == TH_ACK) {
+    if (pkt$is_orig) {
+        # Opening SYN only: skip retransmissions and mid-stream pickups.
+        if (c$fp$ja4l$syn != 0 || c$orig$num_pkts > 1) {
             return;
         }
-    }
-
-    c$fp$ja4l$syn = get_current_packet_timestamp();
-    if (rp?$ip) {
-        c$fp$ja4l$ttl_c = rp$ip$ttl;
-    } else if (rp?$ip6) {
-        c$fp$ja4l$ttl_c = rp$ip6$hlim;
-    } else {
+        c$fp$ja4l$syn = get_current_packet_timestamp();
+        c$fp$ja4l$ttl_c = pkt$ttl;
         return;
     }
 
-    ConnThreshold::set_packets_threshold(c,1,F);
+    # First SYN-ACK, and it has to be the responder's first packet.
+    if (c$fp$ja4l$syn == 0 || c$fp$ja4l$synack != 0 || c$resp$num_pkts > 1) {
+        return;
+    }
+    c$fp$ja4l$synack = get_current_packet_timestamp();
+    c$fp$ja4l$ttl_s = pkt$ttl;
+    local dt3 = (c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0;
+    if (dt3 < 0.0) {
+        if (!suppress_neg_ja4l_errors)
+            Reporter::error(fmt("JA4L negative duration: (synack - syn)/2=%f uid=%s id=%s",
+                                dt3, c$uid, c$id));
+        return;
+    }
+    c$fp$ja4l$ja4l_s = cat(double_to_count(dt3));
+    c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
+    c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
+
+    # C is the client's next packet.
+    ConnThreshold::set_packets_threshold(c,c$orig$num_pkts + 1,T);
 }
 
 event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, is_orig: bool) {
-    local rp = get_current_packet_header();
-    if (is_orig && threshold == 2) {
+    if (!c?$fp) {
+        return;
+    }
+    if (is_orig && threshold == 2 && c$fp$ja4l$synack != 0) {
         c$fp$ja4l$ack = get_current_packet_timestamp();
         local dt = (c$fp$ja4l$ack - c$fp$ja4l$synack) / 2.0;
         if (dt < 0.0) {
@@ -116,7 +136,15 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         c$fp$ja4l$uid = c$uid;
         c$fp$ja4l$ts = c$start_time;
         c$fp$ja4l$id = c$id;
-    } else if (is_orig && c?$fp && c$fp$ja4l$server_hello != 0 && c$fp$ja4l$first_client_data == 0) {
+    } else if (is_orig && c$fp$ja4l$server_hello != 0 && c$fp$ja4l$first_client_data == 0) {
+        # F needs the payload length of this packet. For a tunneled
+        # connection the only header we can read is the tunnel's, so leave
+        # F unset rather than log a timestamp from a packet that may carry
+        # no data.
+        if (c?$tunnel) {
+            return;
+        }
+        local rp = get_current_packet_header();
         if (rp?$tcp && rp$tcp$dl == 0) {
             # wait for actual data
             ConnThreshold::set_packets_threshold(c,threshold + 1,T);
@@ -132,33 +160,6 @@ event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, 
         }
         c$fp$ja4l$ja4l_c += FINGERPRINT::delimiter;
         c$fp$ja4l$ja4l_c += cat(double_to_count(dt2));
-    } else if (threshold != 1) {
-        return;
-    } else {
-        c$fp$ja4l$synack = get_current_packet_timestamp();
-        if(!rp?$tcp) {
-            # UDP only works for QUIC that is handled separately
-            return;
-        }
-        if (rp?$ip) {
-            c$fp$ja4l$ttl_s = rp$ip$ttl;
-        } else if (rp?$ip6) {
-            c$fp$ja4l$ttl_s = rp$ip6$hlim;
-        } else {
-            return;   #breaks the chain
-        }
-        local dt3 = (c$fp$ja4l$synack - c$fp$ja4l$syn) / 2.0;
-        if (dt3 < 0.0) {
-            if (!suppress_neg_ja4l_errors)
-                Reporter::error(fmt("JA4L negative duration: (synack - syn)/2=%f uid=%s id=%s",
-                                    dt3, c$uid, c$id));
-            return;
-        }
-        c$fp$ja4l$ja4l_s = cat(double_to_count(dt3));
-        c$fp$ja4l$ja4l_s += FINGERPRINT::delimiter;
-        c$fp$ja4l$ja4l_s += cat(c$fp$ja4l$ttl_s);
-
-        ConnThreshold::set_packets_threshold(c,c$orig$num_pkts + 1,T);
     }
 }
 
@@ -173,8 +174,9 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
 event ssl_server_hello(c: connection, version: count, record_version: count, possible_ts: time,
   server_random: string, session_id: string, cipher: count, comp_method: count)
 {
-    local rp = get_current_packet_header();
-    if(!rp?$tcp) {
+    # Use the connection's own protocol, not the outer packet header, which
+    # is UDP for anything inside a UDP tunnel.
+    if (get_port_transport_proto(c$id$resp_p) != tcp) {
         # UDP only works for QUIC that is handled separately
         return;
     }

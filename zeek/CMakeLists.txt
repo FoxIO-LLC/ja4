@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 zeek_plugin_begin(FINGERPRINT JA4 ${ZEEK_PLUGIN_BEGIN_OPTS})
-zeek_plugin_cc(src/Plugin.cc src/ja4.cc src/ja4h.cc src/ja4s.cc src/ja4ssh.cc src/ja4t.cc src/common.cc)
+zeek_plugin_cc(src/Plugin.cc src/ja4.cc src/ja4h.cc src/ja4s.cc src/ja4ssh.cc src/common.cc)
 zeek_plugin_bif(src/ja4.bif)
 zeek_plugin_dist_files(README COPYING VERSION)
 zeek_plugin_scripts(scripts/__load__.zeek)

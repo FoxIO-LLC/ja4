@@ -1,5 +1,6 @@
 @load ../config
 @load base/protocols/conn
+@load base/protocols/conn/thresholds
 
 module FINGERPRINT::JA4T;
 
@@ -20,6 +21,21 @@ export {
     synack_done: bool &default=F;
     last_ts: double &default=0;
     rst_ts: double &default=0;
+
+    # Packet timestamps (usec) of the opening SYN and the first SYN-ACK.
+    # Zero means not seen yet.
+    syn_ts: double &default=0;
+    synack_ts: double &default=0;
+
+    # Zeek raises connection_SYN_packet and tcp_options as two separate
+    # events for the same packet. Whichever arrives first parks its data
+    # here, and the second one claims it when the packet timestamps match.
+    syn_opts_done: bool &default=F;
+    synack_opts_done: bool &default=F;
+    orig_pending_opts: TCP::OptionList &optional;
+    orig_pending_ts: double &default=0;
+    resp_pending_opts: TCP::OptionList &optional;
+    resp_pending_ts: double &default=0;
   };
 }
 
@@ -32,100 +48,173 @@ redef record Conn::Info += {
   ja4ts: string &log &default = "";
 };
 
+# The packet timestamp is the same for the outer and inner packet, so this
+# stays correct for tunneled connections. Packet *headers* do not: the
+# raw_pkt_hdr from get_current_packet_header() always describes the outermost
+# packet, which is why everything below gets its TCP data from events.
 function get_current_packet_timestamp(): double {
   local cp = get_current_packet();
   return cp$ts_sec * 1000000.0 + cp$ts_usec;
 }
 
-function do_get_tcp_options(): TCP_Options {
+function options_to_ja4t(options: TCP::OptionList): TCP_Options {
   local opts: TCP_Options;
-  local rph = get_current_packet_header();
-  if (!rph?$tcp || rph$tcp$hl <= 20) {
-    return opts;
+  for ( _, opt in options ) {
+    if ( opt$kind == 0 ) {
+      break;  # EOL
+    }
+    opts$option_kinds += opt$kind;
+    if ( opt$kind == 2 && opt?$mss ) {
+      opts$max_segment_size = opt$mss;
+    }
+    if ( opt$kind == 3 && opt?$window_scale ) {
+      opts$window_scale = opt$window_scale;
+    }
   }
-
-  local pkt = get_current_packet();
-
-  if (rph$l2$encap != LINK_ETHERNET) {
-    return opts;
-  }
-
-  local ip_hl: count = 0;
-  if (rph?$ip) {
-    ip_hl = rph$ip$hl;
-  }
-
-  # Call the C++ BiF for raw packet byte parsing
-  return JA4::parse_tcp_options(pkt$data, pkt$caplen, ip_hl, rph$tcp$hl);
+  return opts;
 }
 
 event new_connection(c: connection) {
-  local rph = get_current_packet_header();
-  if (!rph?$tcp || rph$tcp$flags != TH_SYN) {
+  if ( ! c?$fp ) { c$fp = FINGERPRINT::Info(); }
+}
+
+event connection_SYN_packet(c: connection, pkt: SYN_packet) {
+  if ( ! c?$fp ) { c$fp = FINGERPRINT::Info(); }
+  local j = c$fp$ja4t;
+  local ts = get_current_packet_timestamp();
+
+  if ( pkt$is_orig ) {
+    # Only the SYN that opened the connection counts. This skips SYN
+    # retransmissions and connections picked up mid-stream.
+    if ( j$syn_ts != 0 || c$orig$num_pkts > 1 ) {
+      return;
+    }
+    j$syn_ts = ts;
+    j$last_ts = ts;
+    j$syn_window_size = pkt$win_size;
+    if ( j?$orig_pending_opts ) {
+      if ( j$orig_pending_ts == ts ) {
+        j$syn_opts = options_to_ja4t(j$orig_pending_opts);
+        j$syn_opts_done = T;
+      }
+      delete j$orig_pending_opts;
+    }
+    # The client's next packet ends SYN-ACK retransmission tracking.
+    ConnThreshold::set_packets_threshold(c, 2, T);
     return;
   }
 
-  if(!c?$fp) { c$fp = FINGERPRINT::Info(); }
+  if ( j$syn_ts == 0 || j$synack_done ) {
+    return;
+  }
 
-  c$fp$ja4t$syn_window_size = rph$tcp$win;
-  c$fp$ja4t$syn_opts = do_get_tcp_options();
-  c$fp$ja4t$last_ts = get_current_packet_timestamp();
+  if ( ts - j$last_ts > 120000000 ) {
+    j$synack_done = T;
+    return;
+  }
 
-  ConnThreshold::set_packets_threshold(c,1,F);
-  ConnThreshold::set_packets_threshold(c,2,T);
+  if ( j$synack_ts == 0 ) {
+    # The SYN-ACK has to be the responder's first packet.
+    if ( c$resp$num_pkts > 1 ) {
+      j$synack_done = T;
+      return;
+    }
+    j$synack_ts = ts;
+    j$synack_window_size = pkt$win_size;
+    if ( j?$resp_pending_opts ) {
+      if ( j$resp_pending_ts == ts ) {
+        j$synack_opts = options_to_ja4t(j$resp_pending_opts);
+        j$synack_opts_done = T;
+      }
+      delete j$resp_pending_opts;
+    }
+  } else {
+    j$synack_delays += double_to_count(ts - j$last_ts) / 1000000;
+  }
+
+  j$last_ts = ts;
+
+  if ( ! FINGERPRINT::JA4TS_enabled || |j$synack_delays| == 10 ) {
+    j$synack_done = T;
+  }
+}
+
+# Raised for every TCP packet carrying options, so each branch bails out as
+# early as it can once the handshake options are settled.
+event tcp_options(c: connection, is_orig: bool, options: TCP::OptionList) {
+  if ( ! c?$fp ) {
+    return;
+  }
+  local j = c$fp$ja4t;
+
+  if ( is_orig ) {
+    if ( j$syn_opts_done ) {
+      return;
+    }
+    if ( j$syn_ts != 0 ) {
+      # connection_SYN_packet ran first. Keep these options only if they
+      # came from that same SYN. Either way the SYN's options are settled.
+      if ( j$syn_ts == get_current_packet_timestamp() ) {
+        j$syn_opts = options_to_ja4t(options);
+      }
+      j$syn_opts_done = T;
+      return;
+    }
+    if ( c$orig$num_pkts > 1 ) {
+      j$syn_opts_done = T;  # no opening SYN, nothing to wait for
+      return;
+    }
+    j$orig_pending_opts = options;
+    j$orig_pending_ts = get_current_packet_timestamp();
+  } else {
+    if ( j$synack_opts_done ) {
+      return;
+    }
+    if ( j$synack_ts != 0 ) {
+      if ( j$synack_ts == get_current_packet_timestamp() ) {
+        j$synack_opts = options_to_ja4t(options);
+      }
+      j$synack_opts_done = T;
+      return;
+    }
+    if ( j$syn_ts == 0 || c$resp$num_pkts > 1 ) {
+      j$synack_opts_done = T;
+      return;
+    }
+    j$resp_pending_opts = options;
+    j$resp_pending_ts = get_current_packet_timestamp();
+  }
+}
+
+event connection_reset(c: connection) {
+  if ( ! c?$fp ) {
+    return;
+  }
+  local j = c$fp$ja4t;
+  if ( j$synack_ts == 0 || j$synack_done ) {
+    return;
+  }
+  # Only a responder RST counts ("r" in history), same as the old
+  # packet-header check.
+  if ( "r" !in c$history ) {
+    return;
+  }
+  local ts = get_current_packet_timestamp();
+  if ( ts - j$last_ts <= 120000000 ) {
+    j$rst_ts = ts;
+  }
+  j$synack_done = T;
 }
 
 event ConnThreshold::packets_threshold_crossed(c: connection, threshold: count, is_orig: bool) {
-  if(is_orig) {
-    if(c?$fp) {
-      c$fp$ja4t$synack_done = T;
-    }
-    return;
-  }
-
-  if(!c?$fp || c$fp$ja4t$synack_done) {
-    return;
-  }
-
-  local rph = get_current_packet_header();
-  if (!rph?$tcp) {
-    return;
-  }
-
-  local ts = get_current_packet_timestamp();
-  if (ts - c$fp$ja4t$last_ts > 120000000) {
+  # Any further packet from the client means the handshake moved on.
+  if ( is_orig && c?$fp ) {
     c$fp$ja4t$synack_done = T;
-    return;
-  }
-
-  if (rph$tcp$flags & TH_RST != 0) {
-    c$fp$ja4t$rst_ts = ts;
-    c$fp$ja4t$synack_done = T;
-    return;
-  } else if (rph$tcp$flags == (TH_SYN | TH_ACK)) {
-  } else {
-    return;
-  }
-
-  if (threshold == 1) {
-    c$fp$ja4t$synack_window_size = rph$tcp$win;
-    c$fp$ja4t$synack_opts = do_get_tcp_options();
-  } else {
-    c$fp$ja4t$synack_delays += double_to_count(ts - c$fp$ja4t$last_ts)/1000000;
-  }
-
-  c$fp$ja4t$last_ts = ts;
-
-  if (|c$fp$ja4t$synack_delays| == 10) {
-    return;
-  }
-  if (FINGERPRINT::JA4TS_enabled) {
-    ConnThreshold::set_packets_threshold(c,threshold + 1,F);
   }
 }
 
 event connection_state_remove(c: connection) {
-  if (!FINGERPRINT::JA4T_enabled) {
+  if ( ! FINGERPRINT::JA4T_enabled || ! c?$fp ) {
     return;
   }
   if(c$fp$ja4t$syn_window_size > 0) {
