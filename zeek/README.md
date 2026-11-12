@@ -10,7 +10,6 @@ JA4 &rarr; `ssl.log`
 JA4S &rarr; `ssl.log`  
 JA4H &rarr; `http.log`  
 JA4SSH &rarr; `ja4ssh.log` (new log file)  
-JA4T &rarr; `conn.log` (raw packet parsing)  
   
 Pure script (bundled):
 
@@ -18,6 +17,7 @@ JA4L &rarr; `conn.log`
 JA4L-Delta &rarr; `conn.log`  
 JA4LS &rarr; `conn.log`  
 JA4LS-Delta &rarr; `conn.log`  
+JA4T &rarr; `conn.log`  
 JA4TS &rarr; `conn.log`  
 JA4D &rarr; `ja4d.log`  
 JA4D6 &rarr; `ja4d.log` (awaiting Zeek DHCPv6 suppport)  
