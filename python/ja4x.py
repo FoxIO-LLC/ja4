@@ -90,9 +90,11 @@ def to_ja4x(x, debug_stream=-1):
         if isinstance(x['cert_extensions'], list):
             del x['cert_extensions'][:i]
         hex_strings = [ oid_to_hex(ext) for ext in exts ]
+        # 按规范要求，对 extensions OID 进行排序后再生成哈希
+        hex_strings_sorted = sorted(hex_strings)
 
-        # compute the ja4x hash for each cert
-        x[f'JA4X.{idx+1}'] = f'{x["issuer_hashes"][idx]}_{x["subject_hashes"][idx]}_' + sha256(",".join(hex_strings).encode('utf8')).hexdigest()[:12]
+        # 计算每个证书的 ja4x 哈希
+        x[f'JA4X.{idx+1}'] = f'{x["issuer_hashes"][idx]}_{x["subject_hashes"][idx]}_' + sha256(",".join(hex_strings_sorted).encode('utf8')).hexdigest()[:12]
         cache_update(x, f'JA4X.{idx+1}', x[f'JA4X.{idx+1}'], debug_stream)
     return x
 
@@ -110,7 +112,10 @@ def issuers_subjects(x):
             subject = x['rdn_oids'].pop(0)
             subjects.append(oid_to_hex(subject))
 
-        yield issuers, subjects, sha_encode(issuers), sha_encode(subjects)
+        # 按规范要求，对 issuer 和 subject 的 OID 进行排序后再生成哈希
+        sorted_issuers = sorted(issuers)
+        sorted_subjects = sorted(subjects)
+        yield issuers, subjects, sha_encode(sorted_issuers), sha_encode(sorted_subjects)
 
 
 def get_CN_ON(certs, seq):
