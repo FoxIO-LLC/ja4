@@ -10,6 +10,7 @@ JA4 &rarr; `ssl.log`
 JA4S &rarr; `ssl.log`  
 JA4H &rarr; `http.log`  
 JA4SSH &rarr; `ja4ssh.log` (new log file)  
+JA4N &rarr; `ja4n.log` (new log file)
   
 Pure script (bundled):
 
@@ -52,15 +53,15 @@ CMake 3.15+.
 ## Usage
 
 ```sh
-# Plugin auto-loads JA4/JA4S/JA4H/JA4SSH/JA4T/JA4L/JA4D
+# Plugin auto-loads JA4/JA4S/JA4H/JA4SSH/JA4T/JA4L/JA4D/JA4N
 zeek -C -r trace.pcap
 ```
 
-Fingerprint fields are added to `ssl.log`, `conn.log`, and `http.log`, plus dedicated `ja4ssh.log` / `ja4d.log` streams.
+Fingerprint fields are added to `ssl.log`, `conn.log`, and `http.log`, plus dedicated `ja4ssh.log` / `ja4d.log` / `ja4n.log` streams.
 
 ## Config
 
-Individual JA4+ methods (`JA4_enabled`, `JA4S_enabled`, `JA4H_enabled`, `JA4SSH_enabled`, `JA4T_enabled`, `JA4TS_enabled`, `JA4L_enabled`, `JA4D_enabled`) can be toggled at runtime without rebuilding, via `-e` or a `redef` script:
+Individual JA4+ methods (`JA4_enabled`, `JA4S_enabled`, `JA4H_enabled`, `JA4SSH_enabled`, `JA4T_enabled`, `JA4TS_enabled`, `JA4L_enabled`, `JA4D_enabled`, `JA4N_enabled`) can be toggled at runtime without rebuilding, via `-e` or a `redef` script:
 
 ```sh
 zeek -e 'redef FINGERPRINT::JA4H_enabled = F;' -C -r trace.pcap
@@ -69,6 +70,20 @@ zeek -e 'redef FINGERPRINT::JA4H_enabled = F;' -C -r trace.pcap
 Disabling a method stops it from computing and populating its field(s), but the log column(s) it uses still exist — they'll simply be empty.
 
 The `_raw` flags (`JA4_raw`, `JA4S_raw`, `JA4H_raw`) work differently: they control whether extra (non-hashed) log columns exist at all. These must be set in `config.zeek` before building — they cannot be toggled via runtime `redef`.
+
+### JA4N
+
+JA4N fingerprints NTP and follows the JA4N reference implementation in [arkime/ja4](https://github.com/arkime/ja4) (`ja4plus.c`). Each UDP connection with port 123 on either side is a candidate. It is fingerprinted once the first non-empty payload of either direction (only the first one per direction is checked) looks like NTP (at least 48 bytes, stratum 16 or less, version 1-4, non-zero mode); from then on every payload of 48 bytes or more in both directions is fingerprinted, without re-checking those fields, so later fingerprints can show any version (0-7) or mode. `ja4n.log` gets one record per distinct fingerprint per connection, timestamped with the first message that produced it. Whether a message came from client or server is in the fingerprint's mode character.
+
+The timestamp section compares NTP timestamps with the whole seconds of the connection's first packet, so results are reproducible from a pcap.
+
+Notes:
+
+- The plugin adds `123/udp` to Zeek's `udp_content_ports` so payloads reach the `udp_contents` event. Other scripts handling `udp_contents` will also see NTP payloads.
+- `FINGERPRINT::JA4N::max_fingerprints_per_conn` (default 100) caps distinct fingerprints logged per connection.
+- Records are per Zeek connection. Zeek ends idle UDP connections after `udp_inactivity_timeout` (default 1 min), so a client polling every 64 s or more starts a new connection, and gets new records, for each exchange.
+- Like the rest of Zeek, packets with bad UDP checksums are dropped unless checksums are ignored (`-C`).
+- The reference clamps the payload to the UDP header's length field; Zeek uses the IP payload length. The two differ only for malformed packets whose UDP length is shorter than the datagram.
 
 ## Tests
 
