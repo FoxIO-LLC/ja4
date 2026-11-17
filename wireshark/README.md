@@ -2,7 +2,7 @@
 
 This Wireshark plugin implements JA4+, a fingerprinting methodology for network traffic analysis. It extracts JA4+ fingerprints for multiple protocols, including TLS, SSH, and TCP, directly within Wireshark, enabling efficient identification and classification of traffic. This plugin is useful for security research, threat detection, and network traffic investigation.
 
-For more details on JA4+ and its implementations in other open-source tools (Python, Rust, and Zeek), see the [main JA4+ README](../README.md).
+For more details on JA4+ and its implementations in other open-source tools (Zeek), see the [main JA4+ README](../README.md).
 
 ## Table of Contents <!-- omit from toc -->
 
@@ -36,7 +36,7 @@ For more details on JA4+ and its implementations in other open-source tools (Pyt
 
 ## Binaries
 
-Download the latest JA4+ Wireshark plugin binaries from the [Releases](https://github.com/FoxIO-LLC/ja4/releases) page. The release versions for the Wireshark plugin are marked as `ja4-wireshark-plugins-YYYY.MM.DD.idx`, unlike Rust implementation releases.
+Download the latest JA4+ Wireshark plugin binaries from the [Releases](https://github.com/FoxIO-LLC/ja4/releases) page.
 
 ### Release Assets
 
@@ -50,7 +50,7 @@ These files are attached to a release named like `wireshark-vX.Y.Z`. Choose the 
 
 ### Supported Wireshark Versions
 
-Current JA4+ Wireshark plugin releases support Wireshark 4.4.0 or later.
+Current JA4+ Wireshark plugin releases support Wireshark 4.6.x.
 
 ## Building
 
