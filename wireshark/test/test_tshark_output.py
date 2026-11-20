@@ -17,9 +17,25 @@ def get_expected_output(pcap_file):
     with expected_file.open() as f:
         return [line.strip() for line in f.readlines()]
 
+
+def _tshark_has_brotli() -> bool:
+    result = subprocess.run(
+        ["tshark", "-v"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+    return "+brotli" in result.stdout
+
+
+TSHARK_HAS_BROTLI = _tshark_has_brotli()
+
+# Captures with brotli-compressed certificates (RFC 8879). Their expected
+# output includes JA4X, which needs a tshark built with brotli.
+BROTLI_CERT_PCAP = "chrome-cloudflare-quic-with-secrets.pcapng"
+
 # Run tshark on each PCAP file and compare the output to the expected output
 @pytest.mark.parametrize("pcap_file", pcap_files)
 def test_tshark_output_matches_expected(pcap_file):
+    if pcap_file.name == BROTLI_CERT_PCAP and not TSHARK_HAS_BROTLI:
+        pytest.skip("tshark lacks brotli; covered by the no-brotli test")
     result = subprocess.run(
         [
             "tshark",
@@ -54,6 +70,34 @@ def test_tshark_output_matches_expected(pcap_file):
     expected_lines = get_expected_output(pcap_file)
 
     assert actual_lines == expected_lines, f"Mismatch for {pcap_file.name}"
+
+
+@pytest.mark.skipif(TSHARK_HAS_BROTLI, reason="needs a tshark built without brotli")
+def test_compressed_certificate_without_brotli() -> None:
+    """Undecompressable certificates yield no JA4X; the rest still works."""
+    result = subprocess.run(
+        [
+            "tshark",
+            "-r", str(PCAP_DIR / BROTLI_CERT_PCAP),
+            "-Y", "ja4.ja4s || tls.handshake.type == 25",
+            "-T", "fields",
+            "-e", "frame.number",
+            "-e", "ja4.ja4s",
+            "-e", "ja4.ja4x",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    assert result.returncode == 0, f"tshark failed: {result.stderr}"
+    rows = [line.split("\t") for line in result.stdout.splitlines()]
+    assert rows == [
+        ["6", "t130200_1301_234ea6891581", ""],
+        ["8", "", ""],
+        ["49", "q130200_1301_234ea6891581", ""],
+        ["51", "", ""],
+    ]
 
 
 # Regression for FoxIO #269 / Wireshark #20600:
