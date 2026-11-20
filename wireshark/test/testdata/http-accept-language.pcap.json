@@ -1,0 +1,162 @@
+[
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03enus_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03enus_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "3"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03enus_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "4"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03da00_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03da00_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03da00_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "5"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03enus_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03enus_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "6"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03ruru_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03ruru_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03ruru_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "7"
+        ],
+        "ja4.ja4h": [
+          "ge11nn03da00_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn03da00_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn03da00_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-11-20",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "8"
+        ],
+        "ja4.ja4h": [
+          "ge11nn032a00_ea59799162d6_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn032a00_Host,User-Agent,Accept-Language__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn032a00_Host,User-Agent,Accept-Language__"
+        ]
+      }
+    }
+  }
+]
