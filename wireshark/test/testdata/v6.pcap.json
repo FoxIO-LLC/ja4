@@ -33,6 +33,29 @@
     "_source": {
       "layers": {
         "frame.number": [
+          "22"
+        ],
+        "ja4.ja4l": [
+          "271_64_25298"
+        ],
+        "ja4.ja4l_delta": [
+          "93.4"
+        ],
+        "ja4.ja4ls": [
+          "28494_61_44083"
+        ],
+        "ja4.ja4ls_delta": [
+          "1.5"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-1999-03-11",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
           "72"
         ],
         "ja4.ja4ssh": [
