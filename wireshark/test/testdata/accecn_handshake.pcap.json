@@ -1,0 +1,50 @@
+[
+  {
+    "_index": "packets-2022-07-26",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "1"
+        ],
+        "ja4.ja4t": [
+          "65535_2-1-3-4-8_1460_6"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2022-07-26",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "2"
+        ],
+        "ja4.ja4ts": [
+          "65160_2-4-8-254-3_1460_7"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2022-07-26",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "4"
+        ],
+        "ja4.ja4h": [
+          "ge11nn030000_fe444ad14866_000000000000_000000000000"
+        ],
+        "ja4.ja4h_r": [
+          "ge11nn030000_Host,User-Agent,Accept__"
+        ],
+        "ja4.ja4h_ro": [
+          "ge11nn030000_Host,User-Agent,Accept__"
+        ]
+      }
+    }
+  }
+]
