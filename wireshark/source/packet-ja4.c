@@ -123,6 +123,7 @@ static const char *interesting_hfids[] = {
     "http2.headers.referer",
     "http2.header.name",
     "ip.ttl",
+    "ipv6.hlim",
     "tcp.stream",
     "tcp.srcport",
     "tcp.dstport",
@@ -1215,7 +1216,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
             // JA4L processng
 
-            if (strcmp(field->hfinfo->abbrev, "ip.ttl") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "ip.ttl") == 0) ||
+                (strcmp(field->hfinfo->abbrev, "ipv6.hlim") == 0)) {
                 curr_ttl = fvalue_get_uinteger(get_value_ptr(field));
             }
 
