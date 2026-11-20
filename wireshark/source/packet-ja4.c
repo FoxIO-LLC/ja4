@@ -1260,10 +1260,11 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
             if (strcmp(field->hfinfo->abbrev, "tcp.flags") == 0) {
                 conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
-                uint32_t tcp_flags = fvalue_get_uinteger(get_value_ptr(field));
+                // Ignore the congestion bits (ACE).
+                uint32_t tcp_flags = fvalue_get_uinteger(get_value_ptr(field)) & ~0x1C0;
 
-                // SYN for this stream - signal JA4T
-                if (tcp_flags == 0x02) {
+                // SYN for this stream - signal JA4T (SYN set, ACK unset - other flags ignored)
+                if ((tcp_flags & 0x012) == 0x002) {
                     syn = 1;
                     if ((srcport > 0) && (dstport > 0)) {
                         conn->client_port = srcport;
@@ -1275,8 +1276,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                     }
                 }
 
-                // SYN ACK for JA4TS - server latency
-                if (tcp_flags == 0x012) {
+                // SYN ACK for JA4TS - server latency (SYN and ACK set - other flags ignored)
+                if ((tcp_flags & 0x012) == 0x012) {
                     syn = 2;
                     if ((srcport > 0) && (dstport > 0) && (conn->client_port == 0) &&
                         (conn->server_port == 0)) {
