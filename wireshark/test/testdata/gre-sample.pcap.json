@@ -5,6 +5,57 @@
     "_source": {
       "layers": {
         "frame.number": [
+          "11"
+        ],
+        "ja4.ja4t": [
+          "5744_2-4-8-1-3_1436_00"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2003-06-11",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "12"
+        ],
+        "ja4.ja4ts": [
+          "5792_2-4-8-1-3_1460_00"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2003-06-11",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
+          "22"
+        ],
+        "ja4.ja4l": [
+          "36_64_63648"
+        ],
+        "ja4.ja4l_delta": [
+          "1768"
+        ],
+        "ja4.ja4ls": [
+          "22952_63_44015"
+        ],
+        "ja4.ja4ls_delta": [
+          "1.9"
+        ]
+      }
+    }
+  },
+  {
+    "_index": "packets-2003-06-11",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame.number": [
           "30"
         ],
         "ja4.ja4ssh": [
