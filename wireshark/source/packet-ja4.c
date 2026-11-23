@@ -473,11 +473,8 @@ static void decode_http_lang(wmem_allocator_t *scope, wmem_strbuf_t **out, const
     wmem_strbuf_t *lang = wmem_strbuf_new(scope, "");
     int count = 0;
 
-    // Format the language string
-    for (int i = 0; i < 5; i++) {
-        if ((val[i] == ',') || (val[i] == ';') || (count >= 4) || (val[i] == '\0')) {
-            break;
-        }
+    // Format the language string: scan until 4 output characters are produced or end of first value.
+    for (int i = 0; (val[i] != '\0') && (val[i] != ',') && (val[i] != ';') && (count < 4); i++) {
         if ((g_ascii_isspace(val[i])) || (val[i] == '-')) {
             continue;
         }
