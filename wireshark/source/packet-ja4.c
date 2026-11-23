@@ -31,6 +31,8 @@
 #define MAX_SSL_VERSION(a, b) ((a) > (b) ? (a) : (b))
 #define IS_GREASE_TLS(x) ((((x) & 0x0f0f) == 0x0a0a) && (((x) & 0xff) == (((x) >> 8) & 0xff)))
 #define SAMPLE_COUNT 200
+// Certificate (11) or CompressedCertificate (25)
+#define IS_CERTIFICATE_HANDSHAKE(x) ((x) == 11 || (x) == 25)
 
 static inline fvalue_t *get_value_ptr(field_info *field) {
 #if FIELD_VALUE_IS_PTR
@@ -978,7 +980,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 }
 
                 // Again for DTLS, we break
-                if (handshake_type == 11)
+                if (IS_CERTIFICATE_HANDSHAKE(handshake_type))
                     break;
 
                 handshake_type = fvalue_get_uinteger(get_value_ptr(field));
@@ -1047,7 +1049,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 oid_type = 1;
             }
 
-            if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
+            if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) &&
+                IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
                 cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, cert_num);
 
                 // Append a comma to previous OIDs, if any
@@ -1062,7 +1065,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             }
 
             if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) &&
-                (handshake_type == 11)) {
+                IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
                 cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, cert_num);
                 oid_type = 2;
 
@@ -1615,7 +1618,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         mark_complete(pinfo->num);
     }
 
-    if (handshake_type == 11) {
+    if (IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
         for (unsigned i = 0; i < cert_num + 1; i++) {
             cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, i);
             wmem_strbuf_append_printf(
