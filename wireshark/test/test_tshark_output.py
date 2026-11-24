@@ -72,6 +72,39 @@ def test_tshark_output_matches_expected(pcap_file):
     assert actual_lines == expected_lines, f"Mismatch for {pcap_file.name}"
 
 
+@pytest.mark.parametrize(
+    "capture,spacing,frame,expected",
+    [
+        ("sshv1.pcap", "1", 22, ["500000_64_500000", "500000_61_500000", "1", "1"]),
+        ("tcpdump-geneve.pcap", "1.25", 13, ["625000_64_625000", "625000_64_2500000", "1", "4"]),
+        ("https-connect.pcap", "1.25", 6, ["625000_64_tcp", "625000_57_tcp", "", ""]),
+        (BROTLI_CERT_PCAP, "1.25", 52, ["1250000_64_quic", "625000_56_quic", "", ""]),
+    ],
+)
+def test_ja4l_long_intervals(tmp_path, capture, spacing, frame, expected):
+    retimed = tmp_path / "retimed.pcapng"
+    # A negative strict adjustment sets the same interval between adjacent frames.
+    subprocess.run(
+        ["editcap", "-S", f"-{spacing}", str(PCAP_DIR / capture), str(retimed)],
+        check=True, capture_output=True, text=True,
+    )
+
+    result = subprocess.run(
+        [
+            "tshark", "-r", str(retimed), "-Y", f"ja4 && frame.number == {frame}",
+            "-T", "fields",
+            "-e", "ja4.ja4l", "-e", "ja4.ja4ls",
+            "-e", "ja4.ja4l_delta", "-e", "ja4.ja4ls_delta",
+            # Prime the HTTP protocol for the JA4L TCP handshake-only path.
+            "-e", "http",
+        ],
+        capture_output=True, text=True,
+    )
+    assert result.returncode == 0, f"tshark failed: {result.stderr}"
+    (row,) = result.stdout.splitlines()
+    assert row.split("\t")[:4] == expected
+
+
 @pytest.mark.skipif(TSHARK_HAS_BROTLI, reason="needs a tshark built without brotli")
 def test_compressed_certificate_without_brotli() -> None:
     """Undecompressable certificates yield no JA4X; the rest still works."""
