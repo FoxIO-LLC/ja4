@@ -1392,8 +1392,10 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     );
                                     update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
-                                    double delta = latency_ratio(&latency2, &latency);
-                                    update_tree_item(pinfo->num, hf_ja4ls_delta, &delta, "tcp");
+                                    if (!nstime_is_zero(&latency)) {
+                                        double delta = latency_ratio(&latency2, &latency);
+                                        update_tree_item(pinfo->num, hf_ja4ls_delta, &delta, "tcp");
+                                    }
 
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
@@ -1404,8 +1406,10 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     );
                                     update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
 
-                                    double delta2 = latency_ratio(&latency2, &latency);
-                                    update_tree_item(pinfo->num, hf_ja4l_delta, &delta2, "tcp");
+                                    if (!nstime_is_zero(&latency)) {
+                                        double delta = latency_ratio(&latency2, &latency);
+                                        update_tree_item(pinfo->num, hf_ja4l_delta, &delta, "tcp");
+                                    }
                                     mark_complete(pinfo->num);
                                 }
                             }

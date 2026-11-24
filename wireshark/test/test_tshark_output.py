@@ -75,13 +75,15 @@ def test_tshark_output_matches_expected(pcap_file):
 @pytest.mark.parametrize(
     "capture,spacing,frame,expected",
     [
+        ("sshv1.pcap", "0", 22, ["0_64_0", "0_61_0", "", ""]),
+        ("sshv1.pcap", "0.000001", 22, ["0_64_0", "0_61_0", "1", "1"]),
         ("sshv1.pcap", "1", 22, ["500000_64_500000", "500000_61_500000", "1", "1"]),
         ("tcpdump-geneve.pcap", "1.25", 13, ["625000_64_625000", "625000_64_2500000", "1", "4"]),
         ("https-connect.pcap", "1.25", 6, ["625000_64_tcp", "625000_57_tcp", "", ""]),
         (BROTLI_CERT_PCAP, "1.25", 52, ["1250000_64_quic", "625000_56_quic", "", ""]),
     ],
 )
-def test_ja4l_long_intervals(tmp_path, capture, spacing, frame, expected):
+def test_ja4l_intervals(tmp_path, capture, spacing, frame, expected):
     retimed = tmp_path / "retimed.pcapng"
     # A negative strict adjustment sets the same interval between adjacent frames.
     subprocess.run(
