@@ -20,8 +20,12 @@
 #  * "lost": records without a ja4n for a packet that has a reference value
 #    (must be empty).
 #  * "missing": fingerprinted packets that get no ntp.log record at all
-#    because Zeek's NTP analyzer does not log them (mode 0, mode 6/7, or a
-#    payload it cannot parse). Their fingerprints are not logged anywhere.
+#    because Zeek's NTP analyzer does not log them: mode 0, mode 6/7, a
+#    payload it cannot parse, or any later message on a connection where it
+#    already rejected a payload (Zeek removes an analyzer after a protocol
+#    violation). Flows 10.1.0.60 (47-byte first payload) and 10.1.0.66
+#    (empty first payload) are the last case. Their fingerprints are not
+#    logged anywhere.
 #
 # @TEST-EXEC: zeek -C -r $TRACES/ja4n-synthetic.pcap %INPUT
 # @TEST-EXEC: test ! -f ja4n.log
