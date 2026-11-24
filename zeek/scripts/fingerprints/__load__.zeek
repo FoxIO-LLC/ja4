@@ -20,3 +20,4 @@ redef record connection += { fp: FINGERPRINT::Info &optional; };
 @load ./ja4t
 @load ./ja4l
 @load ./ja4d
+@load ./ja4n

@@ -19,7 +19,7 @@ zeek::plugin::Configuration Plugin::Configure()
 	{
 	zeek::plugin::Configuration config;
 	config.name = "FINGERPRINT::JA4";
-	config.description = "JA4+ network fingerprinting (JA4/JA4S/JA4H/JA4SSH/JA4T/JA4L/JA4D)";
+	config.description = "JA4+ network fingerprinting (JA4/JA4S/JA4H/JA4SSH/JA4T/JA4L/JA4D/JA4N)";
 	config.version.major = 1;
 
 	config.version.minor = 0;
