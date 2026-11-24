@@ -16,21 +16,21 @@ module FINGERPRINT::JA4N;
 # Each fingerprint is written to the ja4n field of the record Zeek's NTP
 # analyzer logs for the same message: NTP::Info (ntp.log), and on Zeek
 # versions that have them NTP::ControlInfo (ntp_control.log) and
-# NTP::PrivateInfo (ntp_private.log). A message the NTP analyzer does not log,
-# such as mode 0 or a payload it fails to parse, has no record to carry its
-# fingerprint and it is dropped. Zeek removes an analyzer after a protocol
-# violation, so once the NTP analyzer rejects a payload, every later message
-# on that connection is dropped the same way.
+# NTP::PrivateInfo (ntp_private.log). A message the NTP analyzer does not log
+# has no record to carry its fingerprint and it is dropped: a payload it fails
+# to parse, mode 6/7 on Zeek versions without ntp_control.log and
+# ntp_private.log, and mode 0 on versions with them. Zeek removes an analyzer
+# after a protocol violation, so once the NTP analyzer rejects a payload,
+# every later message on that connection is dropped the same way.
 #
-# The payload comes from udp_contents and the log record from ntp_message.
-# In Zeek 7.0 and 8.0 the UDP analyzer computes is_orig and queues
-# udp_contents before handing the packet to protocol analyzers, so for each
-# packet udp_contents runs first and leaves the fingerprint in State$pending.
-# ntp_message for the same packet then copies it into the record between
-# base/protocols/ntp's handlers at priority 5 (which builds the record) and
-# -5 (which writes it). udp_contents clears pending at the start of every
-# packet, so a payload the NTP analyzer rejects cannot leak its fingerprint
-# into the next message's record.
+# The payload comes from udp_contents and the log record from ntp_message. The
+# UDP analyzer computes is_orig and queues udp_contents before handing the
+# packet to protocol analyzers, so for each packet udp_contents runs first and
+# leaves the fingerprint in State$pending. ntp_message for the same packet
+# then copies it into the record between base/protocols/ntp's handlers at
+# priority 5 (which builds the record) and -5 (which writes it). udp_contents
+# clears pending at the start of every packet, so a payload the NTP analyzer
+# rejects cannot leak its fingerprint into the next message's record.
 #
 # A direction is a sending endpoint, not Zeek's originator flag. Zeek's NTP
 # analyzer can swap a connection's roles. Because of the ordering above, a
@@ -203,15 +203,34 @@ event udp_contents(u: connection, is_orig: bool, contents: string) {
 # These run between base/protocols/ntp's ntp_message handlers at priority 5,
 # which builds the message's record, and -5, which logs it. Each one always
 # assigns the field, to the empty string when there is no fingerprint, so a
-# record reused across messages never shows an older message's fingerprint. pending is left alone here; the next udp_contents
-# clears it.
+# record reused across messages never shows an older message's fingerprint.
+# pending is left alone here; the next udp_contents clears it.
+
+function set_ntp_ja4n(c: connection) {
+  if ( c$fp$ja4n?$pending ) { c$ntp$ja4n = c$fp$ja4n$pending; }
+  else { c$ntp$ja4n = ""; }
+}
+
+@ifdef ( NTP::CONTROL_LOG )
+# This base/protocols/ntp builds c$ntp only for standard (mode 1-5) messages
+# and keeps it across messages, so only a standard message may touch it.
 event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
   if ( ! FINGERPRINT::JA4N_enabled || ! msg?$std_msg || ! c?$ntp || ! c?$fp || ! c$fp?$ja4n ) {
     return;
   }
-  if ( c$fp$ja4n?$pending ) { c$ntp$ja4n = c$fp$ja4n$pending; }
-  else { c$ntp$ja4n = ""; }
+  set_ntp_ja4n(c);
 }
+@else
+# The older base/protocols/ntp (no ntp_control.log) builds a fresh c$ntp for
+# every message and logs it for modes 0-5, including mode 0 messages that
+# have no standard header, so every message's record gets the field.
+event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
+  if ( ! FINGERPRINT::JA4N_enabled || ! c?$ntp || ! c?$fp || ! c$fp?$ja4n ) {
+    return;
+  }
+  set_ntp_ja4n(c);
+}
+@endif
 
 @ifdef ( NTP::CONTROL_LOG )
 event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {

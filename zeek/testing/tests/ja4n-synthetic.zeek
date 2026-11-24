@@ -20,12 +20,14 @@
 #  * "lost": records without a ja4n for a packet that has a reference value
 #    (must be empty).
 #  * "missing": fingerprinted packets that get no ntp.log record at all
-#    because Zeek's NTP analyzer does not log them: mode 0, mode 6/7, a
-#    payload it cannot parse, or any later message on a connection where it
-#    already rejected a payload (Zeek removes an analyzer after a protocol
+#    because Zeek's NTP analyzer does not log them: mode 6/7, a payload it
+#    cannot parse, or any later message on a connection where it already
+#    rejected a payload (Zeek removes an analyzer after a protocol
 #    violation). Flows 10.1.0.60 (47-byte first payload) and 10.1.0.66
-#    (empty first payload) are the last case. Their fingerprints are not
-#    logged anywhere.
+#    (empty first payload) are the last case. Zeek versions that write
+#    ntp_control.log also leave mode 0 out of ntp.log (10.1.0.61's second
+#    packet), so the baseline depends on the version: missing-ntp-control or
+#    missing-no-ntp-control.
 #
 # @TEST-EXEC: zeek -C -r $TRACES/ja4n-synthetic.pcap %INPUT
 # @TEST-EXEC: test ! -f ja4n.log
@@ -38,7 +40,7 @@
 # @TEST-EXEC: cut -f1-3 messages-reference | sort | comm -12 unfingerprinted - > lost
 # @TEST-EXEC: diff -u /dev/null lost
 # @TEST-EXEC: awk -F'\t' 'BEGIN { OFS = "\t" } NR == FNR { seen[$1 FS $2 FS $3] = 1; next } !(($1 FS $2 FS $3) in seen) { print $2, $3, $4 }' logged messages-reference > missing
-# @TEST-EXEC: btest-diff missing
+# @TEST-EXEC: if %DIR/../scripts/zeek-has-ntp-control-log; then v=ntp-control; else v=no-ntp-control; fi; cp missing missing-$v && btest-diff missing-$v
 
 @TEST-START-FILE arkime-reference
 10.1.0.10:123	10.2.0.10:123	b4-0-1-6-20-00_0001_ipv4_64
