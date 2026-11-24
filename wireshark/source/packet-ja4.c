@@ -31,6 +31,8 @@
 #define MAX_SSL_VERSION(a, b) ((a) > (b) ? (a) : (b))
 #define IS_GREASE_TLS(x) ((((x) & 0x0f0f) == 0x0a0a) && (((x) & 0xff) == (((x) >> 8) & 0xff)))
 #define SAMPLE_COUNT 200
+// Certificate (11) or CompressedCertificate (25)
+#define IS_CERTIFICATE_HANDSHAKE(x) ((x) == 11 || (x) == 25)
 
 static inline fvalue_t *get_value_ptr(field_info *field) {
 #if FIELD_VALUE_IS_PTR
@@ -121,6 +123,7 @@ static const char *interesting_hfids[] = {
     "http2.headers.referer",
     "http2.header.name",
     "ip.ttl",
+    "ipv6.hlim",
     "tcp.stream",
     "tcp.srcport",
     "tcp.dstport",
@@ -473,11 +476,8 @@ static void decode_http_lang(wmem_allocator_t *scope, wmem_strbuf_t **out, const
     wmem_strbuf_t *lang = wmem_strbuf_new(scope, "");
     int count = 0;
 
-    // Format the language string
-    for (int i = 0; i < 5; i++) {
-        if ((val[i] == ',') || (val[i] == ';') || (count >= 4) || (val[i] == '\0')) {
-            break;
-        }
+    // Format the language string: scan until 4 output characters are produced or end of first value.
+    for (int i = 0; (val[i] != '\0') && (val[i] != ',') && (val[i] != ';') && (count < 4); i++) {
         if ((g_ascii_isspace(val[i])) || (val[i] == '-')) {
             continue;
         }
@@ -981,7 +981,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 }
 
                 // Again for DTLS, we break
-                if (handshake_type == 11)
+                if (IS_CERTIFICATE_HANDSHAKE(handshake_type))
                     break;
 
                 handshake_type = fvalue_get_uinteger(get_value_ptr(field));
@@ -1050,7 +1050,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                 oid_type = 1;
             }
 
-            if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) && (handshake_type == 11)) {
+            if ((strcmp(field->hfinfo->abbrev, "x509if.oid") == 0) &&
+                IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
                 cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, cert_num);
 
                 // Append a comma to previous OIDs, if any
@@ -1065,7 +1066,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             }
 
             if ((strcmp(field->hfinfo->abbrev, "x509af.extension.id") == 0) &&
-                (handshake_type == 11)) {
+                IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
                 cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, cert_num);
                 oid_type = 2;
 
@@ -1215,7 +1216,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
             // JA4L processng
 
-            if (strcmp(field->hfinfo->abbrev, "ip.ttl") == 0) {
+            if ((strcmp(field->hfinfo->abbrev, "ip.ttl") == 0) ||
+                (strcmp(field->hfinfo->abbrev, "ipv6.hlim") == 0)) {
                 curr_ttl = fvalue_get_uinteger(get_value_ptr(field));
             }
 
@@ -1260,10 +1262,11 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
             if (strcmp(field->hfinfo->abbrev, "tcp.flags") == 0) {
                 conn_info_t *conn = conn_lookup(ja4_data.proto, stream);
-                uint32_t tcp_flags = fvalue_get_uinteger(get_value_ptr(field));
+                // Ignore the congestion bits (ACE).
+                uint32_t tcp_flags = fvalue_get_uinteger(get_value_ptr(field)) & ~0x1C0;
 
-                // SYN for this stream - signal JA4T
-                if (tcp_flags == 0x02) {
+                // SYN for this stream - signal JA4T (SYN set, ACK unset - other flags ignored)
+                if ((tcp_flags & 0x012) == 0x002) {
                     syn = 1;
                     if ((srcport > 0) && (dstport > 0)) {
                         conn->client_port = srcport;
@@ -1275,8 +1278,8 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                     }
                 }
 
-                // SYN ACK for JA4TS - server latency
-                if (tcp_flags == 0x012) {
+                // SYN ACK for JA4TS - server latency (SYN and ACK set - other flags ignored)
+                if ((tcp_flags & 0x012) == 0x012) {
                     syn = 2;
                     if ((srcport > 0) && (dstport > 0) && (conn->client_port == 0) &&
                         (conn->server_port == 0)) {
@@ -1617,7 +1620,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
         mark_complete(pinfo->num);
     }
 
-    if (handshake_type == 11) {
+    if (IS_CERTIFICATE_HANDSHAKE(handshake_type)) {
         for (unsigned i = 0; i < cert_num + 1; i++) {
             cert_t *current_cert = (cert_t *)wmem_array_index(certificate_list, i);
             wmem_strbuf_append_printf(
