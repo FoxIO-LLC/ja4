@@ -20,14 +20,15 @@
 #  * "lost": records without a ja4n for a packet that has a reference value
 #    (must be empty).
 #  * "missing": fingerprinted packets that get no ntp.log record at all
-#    because Zeek's NTP analyzer does not log them: mode 6/7, a payload it
-#    cannot parse, or any later message on a connection where it already
-#    rejected a payload (Zeek removes an analyzer after a protocol
-#    violation). Flows 10.1.0.60 (47-byte first payload) and 10.1.0.66
-#    (empty first payload) are the last case. Zeek versions that write
-#    ntp_control.log also leave mode 0 out of ntp.log (10.1.0.61's second
-#    packet), so the baseline depends on the version: missing-ntp-control or
-#    missing-no-ntp-control.
+#    because Zeek's NTP analyzer does not log them. Which ones depends on the
+#    Zeek version, so the check is that every missing packet is listed in
+#    may-be-missing:
+#      - 10.1.0.64: mode 7, never in ntp.log.
+#      - 10.1.0.61's second packet: mode 0, left out of ntp.log by versions
+#        that write ntp_control.log (9.0), logged by older ones.
+#      - 10.1.0.60 and 10.1.0.66: their first payloads are 47 bytes and
+#        empty. After that, 8.2 and 9.0 log nothing more for the connection;
+#        7.0 logs the later messages.
 #
 # @TEST-EXEC: zeek -C -r $TRACES/ja4n-synthetic.pcap %INPUT
 # @TEST-EXEC: test ! -f ja4n.log
@@ -40,7 +41,8 @@
 # @TEST-EXEC: cut -f1-3 messages-reference | sort | comm -12 unfingerprinted - > lost
 # @TEST-EXEC: diff -u /dev/null lost
 # @TEST-EXEC: awk -F'\t' 'BEGIN { OFS = "\t" } NR == FNR { seen[$1 FS $2 FS $3] = 1; next } !(($1 FS $2 FS $3) in seen) { print $2, $3, $4 }' logged messages-reference > missing
-# @TEST-EXEC: if %DIR/../scripts/zeek-has-ntp-control-log; then v=ntp-control; else v=no-ntp-control; fi; cp missing missing-$v && btest-diff missing-$v
+# @TEST-EXEC: sort -u missing | comm -23 - may-be-missing > unexpected-missing
+# @TEST-EXEC: diff -u /dev/null unexpected-missing
 
 @TEST-START-FILE arkime-reference
 10.1.0.10:123	10.2.0.10:123	b4-0-1-6-20-00_0001_ipv4_64
@@ -124,6 +126,14 @@
 2001:db8:1::2e:40000	2001:db8:2::2e:123	s4-0-1-6-20-00_0001_ipv6_64
 2001:db8:1::2f:40000	2001:db8:2::2f:123	s4-0-1-6-20-00_0001_GPS0_64
 2001:db8:1::30:40000	2001:db8:2::30:123	s4-0-0-6-20-00_0001_0000_64
+@TEST-END-FILE
+
+@TEST-START-FILE may-be-missing
+10.1.0.60:40000	10.2.0.60:123	c4-0-0-7-20-00_0001_0000_128
+10.1.0.60:40000	10.2.0.60:123	s4-0-1-6-20-00_0001_ipv4_64
+10.1.0.61:40000	10.2.0.61:123	07-0-1-6-20-00_0001_ipv4_64
+10.1.0.64:40000	10.2.0.64:123	72-0-0-3-214-00_0000_0000_8
+10.1.0.66:40000	10.2.0.66:123	c4-0-0-6-20-00_0001_0000_64
 @TEST-END-FILE
 
 @TEST-START-FILE messages-reference

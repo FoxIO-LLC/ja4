@@ -1,8 +1,0 @@
-#! /usr/bin/env bash
-#
-# Exits 0 if this Zeek's base/protocols/ntp writes ntp_control.log and
-# ntp_private.log (it defines NTP::ControlInfo), 1 otherwise. Older versions
-# also log mode 0 messages in ntp.log, which changes what ja4n-synthetic
-# expects to be missing from it.
-
-zeek -b base/protocols/ntp -e 'event zeek_init() { if ( "NTP::ControlInfo" !in global_ids() ) exit(1); }' >/dev/null 2>&1

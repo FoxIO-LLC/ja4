@@ -19,9 +19,9 @@ module FINGERPRINT::JA4N;
 # NTP::PrivateInfo (ntp_private.log). A message the NTP analyzer does not log
 # has no record to carry its fingerprint and it is dropped: a payload it fails
 # to parse, mode 6/7 on Zeek versions without ntp_control.log and
-# ntp_private.log, and mode 0 on versions with them. Zeek removes an analyzer
-# after a protocol violation, so once the NTP analyzer rejects a payload,
-# every later message on that connection is dropped the same way.
+# ntp_private.log, and mode 0 on versions with them. On some versions (8.2
+# and 9.0, but not 7.0), once the NTP analyzer rejects a payload, every later
+# message on that connection goes unlogged and is dropped the same way.
 #
 # The payload comes from udp_contents and the log record from ntp_message. The
 # UDP analyzer computes is_orig and queues udp_contents before handing the
