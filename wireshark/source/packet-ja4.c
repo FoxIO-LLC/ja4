@@ -1335,8 +1335,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
                             bool is_http = false;
                             GPtrArray *proto_http_array = proto_find_first_finfo(tree, proto_http);
-                            if (proto_http_array && proto_http_array->len > 0) {
-                                is_http = true;
+                            if (proto_http_array) {
+                                is_http = proto_http_array->len > 0;
+                                g_ptr_array_free(proto_http_array, true);
                             }
 
                             if ((packet_time != NULL) && !nstime_is_zero(&conn->timestamp_D) &&
