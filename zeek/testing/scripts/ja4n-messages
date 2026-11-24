@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+#
+# Reduce an NTP log with a ja4n column (read from stdin) to one
+# "<ts>\t<endpoint-a>\t<endpoint-b>\t<ja4n>" line per logged message, with the
+# endpoints sorted as in ja4n-normalize. <ja4n> is "-" for messages without a
+# fingerprint.
+
+export LC_ALL=C
+
+zeek-cut ts id.orig_h id.orig_p id.resp_h id.resp_p ja4n |
+    awk -F'\t' 'BEGIN { OFS = "\t" }
+        { a = $2 ":" $3; b = $4 ":" $5; if ( a > b ) { t = a; a = b; b = t }; print $1, a, b, $6 }' |
+    sort -u

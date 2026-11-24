@@ -1,12 +1,14 @@
 #! /usr/bin/env bash
 #
-# Reduce ja4n.log (read from stdin) to one "<endpoint-a>\t<endpoint-b>\t<ja4n>"
-# line per fingerprint, with the two endpoints in sorted order so the result
-# does not depend on which side Zeek considers the originator.
+# Reduce an NTP log with a ja4n column (ntp.log, ntp_control.log or
+# ntp_private.log, read from stdin) to one "<endpoint-a>\t<endpoint-b>\t<ja4n>"
+# line per distinct fingerprint per connection, with the two endpoints in
+# sorted order so the result does not depend on which side Zeek considers the
+# originator. Messages without a fingerprint are skipped.
 
 export LC_ALL=C
 
 zeek-cut id.orig_h id.orig_p id.resp_h id.resp_p ja4n |
     awk -F'\t' 'BEGIN { OFS = "\t" }
-        { a = $1 ":" $2; b = $3 ":" $4; if ( a > b ) { t = a; a = b; b = t }; print a, b, $5 }' |
-    sort
+        $5 != "-" { a = $1 ":" $2; b = $3 ":" $4; if ( a > b ) { t = a; a = b; b = t }; print a, b, $5 }' |
+    sort -u

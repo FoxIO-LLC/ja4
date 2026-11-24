@@ -3,10 +3,14 @@
 # lines below are the "ntp.ja4n" values in arkime/ja4 pcap/gre-sample.test
 # (commit 27099fb11f351f35d69f4ce366374aa91536af04), not output of this plugin.
 #
+# Every message here is a plain 48-byte NTPv4 client or server packet, so each
+# one has an ntp.log record and together they carry all six golden values.
+#
 # @TEST-EXEC: zeek -C -r $TRACES/gre-sample.pcap %INPUT
-# @TEST-EXEC: %DIR/../scripts/ja4n-normalize < ja4n.log > actual
+# @TEST-EXEC: %DIR/../scripts/ja4n-normalize < ntp.log > actual
 # @TEST-EXEC: diff -u arkime-golden actual
-# @TEST-EXEC: cp ja4n.log output
+# @TEST-EXEC: %DIR/../scripts/ja4n-check-fields < ntp.log
+# @TEST-EXEC: zeek-cut uid id.orig_h id.orig_p id.resp_h id.resp_p mode ja4n < ntp.log > output
 # @TEST-EXEC: btest-diff output
 
 @TEST-START-FILE arkime-golden

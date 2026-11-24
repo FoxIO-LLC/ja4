@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+#
+# Check that the mode and version encoded at the start of each ja4n value in
+# an NTP log (read from stdin) match that record's own mode and version
+# columns, which catches a fingerprint attached to the wrong message. Prints
+# the offending records and exits non-zero on a mismatch.
+
+export LC_ALL=C
+
+zeek-cut uid mode version ja4n |
+    awk -F'\t' '
+        # Indexed by mode + 1, as MODE_CODES in src/ja4n.cc.
+        BEGIN { codes = "0apcsbn7"; bad = 0 }
+        $4 != "-" {
+            want = substr(codes, $2 + 1, 1) $3
+            if ( substr($4, 1, 2) != want ) { print "mismatch: " $0; bad = 1 }
+        }
+        END { exit bad }'

@@ -1,3 +1,4 @@
+@load base/protocols/ntp
 @load ../config
 
 module FINGERPRINT::JA4N;
@@ -11,14 +12,29 @@ module FINGERPRINT::JA4N;
 #    Only the first payload of each direction is classified.
 #  * From then on every payload of at least 48 bytes, in both directions, is
 #    fingerprinted, including the one that passed classification.
-#  * Each distinct fingerprint is reported once per connection.
+#
+# Each fingerprint is written to the ja4n field of the record Zeek's NTP
+# analyzer logs for the same message: NTP::Info (ntp.log), and on Zeek
+# versions that have them NTP::ControlInfo (ntp_control.log) and
+# NTP::PrivateInfo (ntp_private.log). A message the NTP analyzer does not log,
+# such as mode 0 or a payload it fails to parse, has no record to carry its
+# fingerprint and it is dropped.
+#
+# The payload comes from udp_contents and the log record from ntp_message.
+# In Zeek 7.0 and 8.0 the UDP analyzer computes is_orig and queues
+# udp_contents before handing the packet to protocol analyzers, so for each
+# packet udp_contents runs first and leaves the fingerprint in State$pending.
+# ntp_message for the same packet then copies it into the record between
+# base/protocols/ntp's handlers at priority 5 (which builds the record) and
+# -5 (which writes it). udp_contents clears pending at the start of every
+# packet, so a payload the NTP analyzer rejects cannot leak its fingerprint
+# into the next message's record.
 #
 # A direction is a sending endpoint, not Zeek's originator flag. Zeek's NTP
-# analyzer can swap a connection's roles. In Zeek 7.0 and 8.0 the UDP analyzer
-# computes is_orig and queues udp_contents before handing the packet to
-# protocol analyzers, so a swap made for a packet appears in u$id for that
-# packet's udp_contents (records are updated before handlers run) while its
-# connection_flipped event is queued after it. Hence:
+# analyzer can swap a connection's roles. Because of the ordering above, a
+# swap made for a packet appears in u$id for that packet's udp_contents
+# (records are updated before handlers run) while its connection_flipped
+# event is queued after it. Hence:
 #
 #  * for every packet after the first, is_orig is relative to the roles as
 #    u$id showed them at the previous packet's udp_contents, and
@@ -26,18 +42,6 @@ module FINGERPRINT::JA4N;
 #    that arrive before the second packet.
 
 export {
-  ## One record per distinct JA4N fingerprint seen in a connection.
-  type Info: record {
-    ## Time of the first message that produced this fingerprint.
-    ts: time &log;
-    ## The connection's unique id.
-    uid: string &log;
-    ## The connection's 4-tuple of endpoint addresses/ports.
-    id: conn_id &log;
-    ## The JA4N fingerprint.
-    ja4n: string &log;
-  };
-
   ## Per-connection JA4N state; not logged.
   type State: record {
     ## Originator as u$id showed it at the last udp_contents. The responder
@@ -58,33 +62,41 @@ export {
     second_dir_classified: bool &default=F;
     ## A classified payload qualified the connection for fingerprinting.
     fingerprinting: bool &default=F;
-    ## Fingerprints already logged for this connection.
-    seen: set[string] &default=set();
+    ## Fingerprint of the payload seen by the latest udp_contents, waiting
+    ## for that packet's ntp_message to put it into the log record.
+    pending: string &optional;
   };
-
-  ## Upper bound on distinct fingerprints logged per connection, so a
-  ## long-lived or hostile flow cannot grow per-connection state and log
-  ## volume without limit. Ordinary NTP exchanges produce one or two.
-  option max_fingerprints_per_conn: count = 100;
-
-  redef enum Log::ID += { LOG };
-  global log_fingerprint_ja4n: event(rec: Info);
-  global log_policy: Log::PolicyHook;
 }
 
 redef record FINGERPRINT::Info += {
   ja4n: FINGERPRINT::JA4N::State &optional;
 };
 
+redef record NTP::Info += {
+  ## The JA4N fingerprint of this message, if the connection qualified for
+  ## JA4N fingerprinting.
+  ja4n: string &log &optional;
+};
+
+@ifdef ( NTP::CONTROL_LOG )
+redef record NTP::ControlInfo += {
+  ## The JA4N fingerprint of this message, if the connection qualified for
+  ## JA4N fingerprinting.
+  ja4n: string &log &optional;
+};
+@endif
+
+@ifdef ( NTP::PRIVATE_LOG )
+redef record NTP::PrivateInfo += {
+  ## The JA4N fingerprint of this message, if the connection qualified for
+  ## JA4N fingerprinting.
+  ja4n: string &log &optional;
+};
+@endif
+
 # Deliver NTP payloads in both directions via udp_contents, whether port 123
 # is the source or the destination, and only for that port.
 redef udp_content_ports += { 123/udp };
-
-event zeek_init() &priority=5 {
-  Log::create_stream(FINGERPRINT::JA4N::LOG,
-    [$columns=FINGERPRINT::JA4N::Info, $ev=log_fingerprint_ja4n, $path="ja4n", $policy=log_policy]
-  );
-}
 
 # Role swaps while the first packet is processed are queued after its
 # udp_contents and before the next packet's. Swaps made when the connection
@@ -148,6 +160,9 @@ event udp_contents(u: connection, is_orig: bool, contents: string) {
   if ( first_packet ) { u$fp$ja4n = State(); }
   local st = u$fp$ja4n;
 
+  # Whatever the previous packet left behind belongs to that packet.
+  delete st$pending;
+
   # Directions only matter until the first non-empty payload of each one has
   # been classified. After that a connection either never qualifies or only
   # needs fingerprinting, so the bookkeeping stops.
@@ -176,15 +191,42 @@ event udp_contents(u: connection, is_orig: bool, contents: string) {
   }
 
   # Shorter payloads have no NTP header to fingerprint.
-  if ( ! st$fingerprinting || |contents| < 48 || |st$seen| >= max_fingerprints_per_conn ) {
+  if ( ! st$fingerprinting || |contents| < 48 ) {
     return;
   }
 
-  local fp = JA4::calculate_ja4n(contents, is_v6_addr(u$id$orig_h), u$start_time);
-  if ( fp in st$seen ) {
-    return;
-  }
-  add st$seen[fp];
-
-  Log::write(FINGERPRINT::JA4N::LOG, Info($ts=network_time(), $uid=u$uid, $id=u$id, $ja4n=fp));
+  st$pending = JA4::calculate_ja4n(contents, is_v6_addr(u$id$orig_h), u$start_time);
 }
+
+# These run between base/protocols/ntp's ntp_message handlers at priority 5,
+# which builds the message's record, and -5, which logs it. Each one sets or
+# clears the field, so a record reused across messages never shows an older
+# message's fingerprint. pending is left alone here; the next udp_contents
+# clears it.
+event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
+  if ( ! FINGERPRINT::JA4N_enabled || ! msg?$std_msg || ! c?$ntp || ! c?$fp || ! c$fp?$ja4n ) {
+    return;
+  }
+  if ( c$fp$ja4n?$pending ) { c$ntp$ja4n = c$fp$ja4n$pending; }
+  else { delete c$ntp$ja4n; }
+}
+
+@ifdef ( NTP::CONTROL_LOG )
+event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
+  if ( ! FINGERPRINT::JA4N_enabled || ! msg?$control_msg || ! c?$ntp_control || ! c?$fp || ! c$fp?$ja4n ) {
+    return;
+  }
+  if ( c$fp$ja4n?$pending ) { c$ntp_control$ja4n = c$fp$ja4n$pending; }
+  else { delete c$ntp_control$ja4n; }
+}
+@endif
+
+@ifdef ( NTP::PRIVATE_LOG )
+event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
+  if ( ! FINGERPRINT::JA4N_enabled || ! msg?$mode7_msg || ! c?$ntp_private || ! c?$fp || ! c$fp?$ja4n ) {
+    return;
+  }
+  if ( c$fp$ja4n?$pending ) { c$ntp_private$ja4n = c$fp$ja4n$pending; }
+  else { delete c$ntp_private$ja4n; }
+}
+@endif
