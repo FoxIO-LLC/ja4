@@ -163,7 +163,7 @@ typedef struct {
     bool sni;    // only for JA4 client
     int cipher_len; // only for ja4 client
     int ext_len;
-    wmem_strbuf_t *alpn;
+    char alpn[3];
     wmem_strbuf_t *ciphers;
     wmem_strbuf_t *extensions;
     wmem_list_t *sorted_ciphers;    // only for ja4 client
@@ -544,15 +544,30 @@ static void create_sorted_cookies(wmem_strbuf_t **fields, wmem_strbuf_t **values
     );
 }
 
+static void set_ja4s_alpn(ja4_info_t *data, const field_info *field) {
+    // Use the original bytes because the decoded string can replace or truncate them.
+    if (field->length <= 0 || !field->ds_tvb ||
+        !tvb_bytes_exist(field->ds_tvb, field->start, field->length)) {
+        return;
+    }
+
+    uint8_t first = tvb_get_uint8(field->ds_tvb, field->start);
+    uint8_t last = tvb_get_uint8(field->ds_tvb, field->start + field->length - 1);
+    if (g_ascii_isalnum(first) && g_ascii_isalnum(last)) {
+        data->alpn[0] = first;
+        data->alpn[1] = last;
+    } else {
+        static const char hex[] = "0123456789abcdef";
+        data->alpn[0] = hex[first >> 4];
+        data->alpn[1] = hex[last & 0x0f];
+    }
+}
+
 static char *ja4s_r(wmem_allocator_t *scope, ja4_info_t *data) {
     wmem_strbuf_t *display = wmem_strbuf_new(scope, "");
     wmem_strbuf_append_printf(
-        display, "%c%s%02d%c%c_%s_%s", data->proto,
-        val_to_str_const(data->version, ssl_versions, "00"), data->ext_len,
-        (wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
-        (wmem_strbuf_get_len(data->alpn) > 0)
-            ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
-            : '0',
+        display, "%c%s%02d%s_%s_%s", data->proto,
+        val_to_str_const(data->version, ssl_versions, "00"), data->ext_len, data->alpn,
         wmem_strbuf_get_str(data->ciphers), wmem_strbuf_get_str(data->extensions)
     );
     return wmem_strbuf_finalize(display);
@@ -563,12 +578,8 @@ static char *ja4s(wmem_allocator_t *scope, ja4_info_t *data) {
     char *_hash =
         g_compute_checksum_for_string(G_CHECKSUM_SHA256, wmem_strbuf_get_str(data->extensions), -1);
     wmem_strbuf_append_printf(
-        display, "%c%s%02d%c%c_%s_%12.12s", data->proto,
-        val_to_str_const(data->version, ssl_versions, "00"), data->ext_len,
-        (wmem_strbuf_get_len(data->alpn) > 0) ? wmem_strbuf_get_str(data->alpn)[0] : '0',
-        (wmem_strbuf_get_len(data->alpn) > 0)
-            ? wmem_strbuf_get_str(data->alpn)[wmem_strbuf_get_len(data->alpn) - 1]
-            : '0',
+        display, "%c%s%02d%s_%s_%12.12s", data->proto,
+        val_to_str_const(data->version, ssl_versions, "00"), data->ext_len, data->alpn,
         wmem_strbuf_get_str(data->ciphers),
         wmem_strbuf_get_len(data->extensions) ? _hash : "000000000000"
     );
@@ -736,7 +747,7 @@ static void init_ja4_data(packet_info *pinfo, ja4_info_t *ja4_data) {
     ja4_data->ciphers = wmem_strbuf_new(pinfo->pool, "");
     ja4_data->extensions = wmem_strbuf_new(pinfo->pool, "");
     ja4_data->signatures = wmem_strbuf_new(pinfo->pool, "");
-    ja4_data->alpn = wmem_strbuf_new(pinfo->pool, "");
+    memcpy(ja4_data->alpn, "00", sizeof(ja4_data->alpn));
 }
 
 static void set_ja4s_extensions(proto_tree *tree, ja4_info_t *data) {
@@ -1023,12 +1034,7 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
             if ((strcmp(field->hfinfo->abbrev, "tls.handshake.extensions_alpn_str") == 0) ||
                 (strcmp(field->hfinfo->abbrev, "dtls.handshake.extensions_alpn_str") == 0)) {
                 if (!alpn_visited) {
-                    const char *alpn_str = fvalue_get_string(get_value_ptr(field));
-                    if (!g_ascii_isalnum(alpn_str[0])) {
-                        wmem_strbuf_append(ja4_data.alpn, "99");
-                    } else {
-                        wmem_strbuf_append(ja4_data.alpn, alpn_str);
-                    }
+                    set_ja4s_alpn(&ja4_data, field);
                     alpn_visited = true;
                 }
             }
