@@ -73,24 +73,24 @@ redef record FINGERPRINT::Info += {
 };
 
 redef record NTP::Info += {
-  ## The JA4N fingerprint of this message, if the connection qualified for
-  ## JA4N fingerprinting.
-  ja4n: string &log &optional;
+  ## The JA4N fingerprint of this message, or empty if the message produced
+  ## none.
+  ja4n: string &log &default="";
 };
 
 @ifdef ( NTP::CONTROL_LOG )
 redef record NTP::ControlInfo += {
-  ## The JA4N fingerprint of this message, if the connection qualified for
-  ## JA4N fingerprinting.
-  ja4n: string &log &optional;
+  ## The JA4N fingerprint of this message, or empty if the message produced
+  ## none.
+  ja4n: string &log &default="";
 };
 @endif
 
 @ifdef ( NTP::PRIVATE_LOG )
 redef record NTP::PrivateInfo += {
-  ## The JA4N fingerprint of this message, if the connection qualified for
-  ## JA4N fingerprinting.
-  ja4n: string &log &optional;
+  ## The JA4N fingerprint of this message, or empty if the message produced
+  ## none.
+  ja4n: string &log &default="";
 };
 @endif
 
@@ -199,16 +199,16 @@ event udp_contents(u: connection, is_orig: bool, contents: string) {
 }
 
 # These run between base/protocols/ntp's ntp_message handlers at priority 5,
-# which builds the message's record, and -5, which logs it. Each one sets or
-# clears the field, so a record reused across messages never shows an older
-# message's fingerprint. pending is left alone here; the next udp_contents
+# which builds the message's record, and -5, which logs it. Each one always
+# assigns the field, to the empty string when there is no fingerprint, so a
+# record reused across messages never shows an older message's fingerprint. pending is left alone here; the next udp_contents
 # clears it.
 event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
   if ( ! FINGERPRINT::JA4N_enabled || ! msg?$std_msg || ! c?$ntp || ! c?$fp || ! c$fp?$ja4n ) {
     return;
   }
   if ( c$fp$ja4n?$pending ) { c$ntp$ja4n = c$fp$ja4n$pending; }
-  else { delete c$ntp$ja4n; }
+  else { c$ntp$ja4n = ""; }
 }
 
 @ifdef ( NTP::CONTROL_LOG )
@@ -217,7 +217,7 @@ event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
     return;
   }
   if ( c$fp$ja4n?$pending ) { c$ntp_control$ja4n = c$fp$ja4n$pending; }
-  else { delete c$ntp_control$ja4n; }
+  else { c$ntp_control$ja4n = ""; }
 }
 @endif
 
@@ -227,6 +227,6 @@ event ntp_message(c: connection, is_orig: bool, msg: NTP::Message) &priority=3 {
     return;
   }
   if ( c$fp$ja4n?$pending ) { c$ntp_private$ja4n = c$fp$ja4n$pending; }
-  else { delete c$ntp_private$ja4n; }
+  else { c$ntp_private$ja4n = ""; }
 }
 @endif

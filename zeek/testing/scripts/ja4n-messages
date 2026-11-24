@@ -2,8 +2,8 @@
 #
 # Reduce an NTP log with a ja4n column (read from stdin) to one
 # "<ts>\t<endpoint-a>\t<endpoint-b>\t<ja4n>" line per logged message, with the
-# endpoints sorted as in ja4n-normalize. <ja4n> is "-" for messages without a
-# fingerprint.
+# endpoints sorted as in ja4n-normalize. <ja4n> is "(empty)" for messages
+# without a fingerprint.
 
 export LC_ALL=C
 

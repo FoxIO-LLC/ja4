@@ -1,4 +1,4 @@
-# With JA4N disabled the ja4n column is still in ntp.log but never set.
+# With JA4N disabled the ja4n column is still in ntp.log but always empty.
 #
 # @TEST-EXEC: zeek -C -r $TRACES/ja4n-synthetic.pcap %INPUT
 # @TEST-EXEC: test ! -f ja4n.log

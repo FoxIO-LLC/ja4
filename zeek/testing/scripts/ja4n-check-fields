@@ -11,7 +11,7 @@ zeek-cut uid mode version ja4n |
     awk -F'\t' '
         # Indexed by mode + 1, as MODE_CODES in src/ja4n.cc.
         BEGIN { codes = "0apcsbn7"; bad = 0 }
-        $4 != "-" {
+        $4 != "(empty)" {
             want = substr(codes, $2 + 1, 1) $3
             if ( substr($4, 1, 2) != want ) { print "mismatch: " $0; bad = 1 }
         }

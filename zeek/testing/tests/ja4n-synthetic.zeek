@@ -28,9 +28,9 @@
 # @TEST-EXEC: cut -f2- messages-reference | sort -u | diff -u arkime-reference -
 # @TEST-EXEC: %DIR/../scripts/ja4n-check-fields < ntp.log
 # @TEST-EXEC: %DIR/../scripts/ja4n-messages < ntp.log > logged
-# @TEST-EXEC: awk -F'\t' '$4 != "-"' logged | comm -23 - messages-reference > unexpected
+# @TEST-EXEC: awk -F'\t' '$4 != "(empty)"' logged | comm -23 - messages-reference > unexpected
 # @TEST-EXEC: diff -u /dev/null unexpected
-# @TEST-EXEC: awk -F'\t' 'BEGIN { OFS = "\t" } $4 == "-" { print $1, $2, $3 }' logged | sort > unfingerprinted
+# @TEST-EXEC: awk -F'\t' 'BEGIN { OFS = "\t" } $4 == "(empty)" { print $1, $2, $3 }' logged | sort > unfingerprinted
 # @TEST-EXEC: cut -f1-3 messages-reference | sort | comm -12 unfingerprinted - > lost
 # @TEST-EXEC: diff -u /dev/null lost
 # @TEST-EXEC: awk -F'\t' 'BEGIN { OFS = "\t" } NR == FNR { seen[$1 FS $2 FS $3] = 1; next } !(($1 FS $2 FS $3) in seen) { print $2, $3, $4 }' logged messages-reference > missing

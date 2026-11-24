@@ -10,5 +10,5 @@ export LC_ALL=C
 
 zeek-cut id.orig_h id.orig_p id.resp_h id.resp_p ja4n |
     awk -F'\t' 'BEGIN { OFS = "\t" }
-        $5 != "-" { a = $1 ":" $2; b = $3 ":" $4; if ( a > b ) { t = a; a = b; b = t }; print a, b, $5 }' |
+        $5 != "(empty)" { a = $1 ":" $2; b = $3 ":" $4; if ( a > b ) { t = a; a = b; b = t }; print a, b, $5 }' |
     sort -u

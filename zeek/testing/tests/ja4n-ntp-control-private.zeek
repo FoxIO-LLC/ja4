@@ -5,5 +5,5 @@
 # @TEST-REQUIRES: zeek -b base/protocols/ntp -e 'event zeek_init() { if ( "NTP::PrivateInfo" !in global_ids() ) exit(1); }'
 # @TEST-EXEC: zeek -C -r $TRACES/ja4n-synthetic.pcap %INPUT
 # @TEST-EXEC: test ! -f ntp_control.log || grep -q '^#fields.*ja4n$' ntp_control.log
-# @TEST-EXEC: zeek-cut id.orig_h id.resp_h mode ja4n < ntp_private.log | awk -F'\t' '$4 != "-"' > output
+# @TEST-EXEC: zeek-cut id.orig_h id.resp_h mode ja4n < ntp_private.log | awk -F'\t' '$4 != "(empty)"' > output
 # @TEST-EXEC: btest-diff output
