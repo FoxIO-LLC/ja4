@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+#
+# Reduce an NTP log with a ja4n column (read from stdin) to one
+# "<ts>\t<endpoint-a>\t<endpoint-b>\t<ja4n>" line per logged message, with the
+# endpoints sorted as in ja4n-normalize. <ja4n> is "(empty)" for messages
+# without a fingerprint.
+#
+# The output goes through "sort -u" because Zeek can write the same NTP record
+# twice. base/protocols/ntp never clears c$ntp, c$ntp_control or c$ntp_private,
+# and its priority -5 ntp_message handler logs whichever of them is set. A
+# message that doesn't fill a record (mode 0 after a standard message, for
+# example) therefore rewrites the previous message's record with its original
+# ts and ja4n. In ja4n-synthetic, flow 10.1.0.61 does this. The duplicate is
+# identical to the first copy, so de-duplicating keeps the per-message checks
+# in ja4n-synthetic from counting it as a second message.
+
+export LC_ALL=C
+
+zeek-cut ts id.orig_h id.orig_p id.resp_h id.resp_p ja4n |
+    awk -F'\t' 'BEGIN { OFS = "\t" }
+        { a = $2 ":" $3; b = $4 ":" $5; if ( a > b ) { t = a; a = b; b = t }; print $1, a, b, $6 }' |
+    sort -u

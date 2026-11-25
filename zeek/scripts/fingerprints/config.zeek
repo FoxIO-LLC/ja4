@@ -23,5 +23,7 @@ export {
 
   option JA4D_enabled:   bool = T;
 
+  option JA4N_enabled:   bool = T;
+
   option JA4X_enabled:   bool = F;
 }

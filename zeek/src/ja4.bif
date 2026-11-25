@@ -5,6 +5,8 @@ module JA4;
 #include "ja4h.h"
 #include "ja4s.h"
 #include "ja4ssh.h"
+#include "ja4n.h"
+#include <cmath>
 #include <string>
 #include <cctype>
 #include <sstream>
@@ -48,4 +50,29 @@ function calculate_ja4h%(connection_val: any, delimiter: string%): any %{
     zeek::RecordVal* connection = connection_val->AsRecordVal();
     signature = do_ja4h(connection, delimiter);
     return signature;
+%}
+
+## Returns whether an NTP payload qualifies a connection for JA4N
+## fingerprinting. The JA4N script applies this to the first non-empty
+## payload in each direction only, matching the reference implementation.
+function ja4n_classify%(payload: string%): bool %{
+    return zeek::val_mgr->Bool(FINGERPRINT::JA4N::classify(payload->Bytes(), payload->Len()));
+%}
+
+## Calculates the JA4N fingerprint of one NTP payload (FoxIO License 1.1).
+##
+## payload: the UDP payload.
+## is_v6: whether the connection is IPv6.
+## first_packet_ts: the connection's start time; its whole seconds are the
+##                  reference point for the timestamp section.
+##
+## Returns: the fingerprint, or an empty string if the payload is shorter
+##          than an NTP header.
+function calculate_ja4n%(payload: string, is_v6: bool, first_packet_ts: time%): string %{
+    int64_t now = 0;
+    if ( std::isfinite(first_packet_ts) && std::fabs(first_packet_ts) < 9.0e15 )
+        now = static_cast<int64_t>(std::floor(first_packet_ts));
+
+    auto fp = FINGERPRINT::JA4N::fingerprint(payload->Bytes(), payload->Len(), is_v6, now);
+    return zeek::make_intrusive<zeek::StringVal>(fp);
 %}
