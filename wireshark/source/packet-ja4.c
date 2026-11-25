@@ -280,6 +280,18 @@ static int64_t timediff(nstime_t *current, nstime_t *prev) {
     return (int64_t)(round(nstime_to_sec(&result)));
 }
 
+static int64_t half_latency_us(const nstime_t *interval) {
+    int64_t interval_us = (int64_t)interval->secs * G_USEC_PER_SEC + interval->nsecs / 1000;
+    return interval_us / 2;
+}
+
+static double latency_ratio(const nstime_t *application, const nstime_t *handshake) {
+    // Dividing in nanoseconds avoids extra rounding from converting each interval to seconds.
+    double application_ns = application->secs * 1e9 + application->nsecs;
+    double handshake_ns = handshake->secs * 1e9 + handshake->nsecs;
+    return round(application_ns / handshake_ns * 10.0) / 10.0;
+}
+
 static int sort_by_string(const void *s1, const void *s2) {
     return strcmp(
         wmem_strbuf_get_str(((http_cookie_t *)s1)->field),
@@ -1335,8 +1347,9 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
                             bool is_http = false;
                             GPtrArray *proto_http_array = proto_find_first_finfo(tree, proto_http);
-                            if (proto_http_array && proto_http_array->len > 0) {
-                                is_http = true;
+                            if (proto_http_array) {
+                                is_http = proto_http_array->len > 0;
+                                g_ptr_array_free(proto_http_array, true);
                             }
 
                             if ((packet_time != NULL) && !nstime_is_zero(&conn->timestamp_D) &&
@@ -1348,13 +1361,14 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                 if (is_http) {
                                     nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
                                     wmem_strbuf_append_printf(
-                                        display, "%d_%d_tcp", latency.nsecs / 2 / 1000, conn->server_ttl
+                                        display, "%" PRId64 "_%d_tcp", half_latency_us(&latency),
+                                        conn->server_ttl
                                     );
                                     update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     wmem_strbuf_append_printf(
-                                        display2, "%d_%d_tcp", latency.nsecs / 2 / 1000,
+                                        display2, "%" PRId64 "_%d_tcp", half_latency_us(&latency),
                                         conn->client_ttl
                                     );
                                     update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
@@ -1372,26 +1386,30 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
                                     nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
                                     nstime_delta(&latency2, &conn->timestamp_E, &conn->timestamp_D);
                                     wmem_strbuf_append_printf(
-                                        display, "%d_%d_%d", latency.nsecs / 2 / 1000, conn->server_ttl,
-                                        latency2.nsecs / 2 / 1000
+                                        display, "%" PRId64 "_%d_%" PRId64,
+                                        half_latency_us(&latency), conn->server_ttl,
+                                        half_latency_us(&latency2)
                                     );
                                     update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "tcp");
 
-                                    double delta = (double)latency2.nsecs / (double)latency.nsecs;
-                                    delta = round(delta * 10.0) / 10.0;
-                                    update_tree_item(pinfo->num, hf_ja4ls_delta, &delta, "tcp");
+                                    if (!nstime_is_zero(&latency)) {
+                                        double delta = latency_ratio(&latency2, &latency);
+                                        update_tree_item(pinfo->num, hf_ja4ls_delta, &delta, "tcp");
+                                    }
 
                                     nstime_delta(&latency, &conn->timestamp_C, &conn->timestamp_B);
                                     nstime_delta(&latency2, &conn->timestamp_F, &conn->timestamp_E);
                                     wmem_strbuf_append_printf(
-                                        display2, "%d_%d_%d", latency.nsecs / 2 / 1000,
-                                        conn->client_ttl, latency2.nsecs / 2 / 1000
+                                        display2, "%" PRId64 "_%d_%" PRId64,
+                                        half_latency_us(&latency), conn->client_ttl,
+                                        half_latency_us(&latency2)
                                     );
                                     update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "tcp");
 
-                                    double delta2 = (double)latency2.nsecs / (double)latency.nsecs;
-                                    delta2 = round(delta2 * 10.0) / 10.0;
-                                    update_tree_item(pinfo->num, hf_ja4l_delta, &delta2, "tcp");
+                                    if (!nstime_is_zero(&latency)) {
+                                        double delta = latency_ratio(&latency2, &latency);
+                                        update_tree_item(pinfo->num, hf_ja4l_delta, &delta, "tcp");
+                                    }
                                     mark_complete(pinfo->num);
                                 }
                             }
@@ -1441,13 +1459,15 @@ static int dissect_ja4(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void
 
                         nstime_delta(&latency, &conn->timestamp_B, &conn->timestamp_A);
                         wmem_strbuf_append_printf(
-                            display, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->server_ttl
+                            display, "%" PRId64 "_%d_quic", half_latency_us(&latency),
+                            conn->server_ttl
                         );
                         update_tree_item(pinfo->num, hf_ja4ls, wmem_strbuf_get_str(display), "quic");
 
                         nstime_delta(&latency, &conn->timestamp_D, &conn->timestamp_C);
                         wmem_strbuf_append_printf(
-                            display2, "%d_%d_quic", latency.nsecs / 2 / 1000, conn->client_ttl
+                            display2, "%" PRId64 "_%d_quic", half_latency_us(&latency),
+                            conn->client_ttl
                         );
                         update_tree_item(pinfo->num, hf_ja4l, wmem_strbuf_get_str(display2), "quic");
                         mark_complete(pinfo->num);
