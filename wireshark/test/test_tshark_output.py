@@ -185,3 +185,44 @@ def test_ja4_fields_extraction_without_protocol_filter(pcap_name, field, expecte
         f"{field} extraction wrong for {pcap_name}.\n"
         f"Output:\n{result.stdout}"
     )
+
+
+def test_ja4s_alpn_encoding():
+    tls_alpn_codes = [
+        "00",  # empty list
+        "00",  # empty first value, then h2
+        "hh",  # h
+        "h1",  # http/1.1, then h2
+        "20",  # 20
+        "ab",  # ab
+        "60",  # 61 20
+        "21",  # 20 61
+        "3b",  # 30 ab
+        "01",  # 30 ab cd 31
+        "hz",  # 68 00 7a
+        "08",  # 00 68
+        "60",  # 68 00
+        "ab",  # ab, then h2
+        "ad",  # ab cd
+        "3d",  # 30 31 ab cd
+    ]
+    expected = [("t120000_002f_000000000000", "t120000_002f_")]  # absent extension
+    expected.extend(
+        (f"t1201{code}_002f_0b08e3dcc50f", f"t1201{code}_002f_0010")
+        for code in tls_alpn_codes
+    )
+    expected.append(("dd201ad_002f_0b08e3dcc50f", "dd201ad_002f_0010"))  # DTLS 1.2, ab cd
+
+    result = subprocess.run(
+        [
+            "tshark", "-r", str(EXPECTED_DIR / "ja4s-alpn.pcap"),
+            "-d", "udp.port==4433,dtls", "-T", "fields",
+            "-e", "ja4.ja4s", "-e", "ja4.ja4s_r",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, f"tshark failed: {result.stderr}"
+    actual = [tuple(line.split("\t")) for line in result.stdout.splitlines()]
+    assert actual == expected
